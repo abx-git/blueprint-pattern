@@ -8,10 +8,13 @@ The Review Studio is **not** served from the agm repo root. It is built from `do
 | **Live URL** | **https://abx-git.github.io/agm.github.io/** |
 | **Source in this repo** | `docs/studio/` → `npm run build` → `dist/` |
 | **CI status** | [Actions → Deploy AGM Review Studio](https://github.com/abx-git/agm/actions/workflows/pages.yml) |
+| **Jekyll off** | `docs/studio/public/.nojekyll` (copied into `dist/` by Vite; CI also `touch`es site-root `.nojekyll`) |
 
 Deploy uses an **SSH deploy key** (not a PAT). Org PATs often authenticate as `abx-git` and get **403** on `git push`.
 
 **Not here:** [abx-git/agm/deployments](https://github.com/abx-git/agm/deployments) stays empty — Studio is pushed into `agm.github.io`, it is not a GitHub Environment deploy of the `agm` repo.
+
+Empty `public/.nojekyll` disables Jekyll on GitHub Pages so Vite’s `_assets/`-style folders and SPA paths are not stripped. Keep that file in git; do not delete it.
 
 ## 1. Enable Pages on the Pages repository
 
