@@ -38,15 +38,15 @@ Do not re-download, clone, or duplicate files already installed.
 
 ## Phase B — Configure
 
-If the session prompt includes **Architecture documentation areas (bootstrap)**, extend `blueprint.md` with phase rows and stubs for each selected area (see [doc-extensions.md](./doc-extensions.md)). Do not skip areas the human selected.
+If the session prompt includes **Architecture documentation areas (bootstrap)**, extend `blueprint.md` with checklist rows and stubs for each selected area (see [doc-extensions.md](./doc-extensions.md)). Do not skip areas the human selected.
 
-If the session prompt includes **Project parameters** or **Adoption parameters** (with **File roles** / Documentation root), create or fill three separate files under `<doc-root>/` — do not merge:
+If the session prompt includes **Project parameters** or **Adoption parameters** (Documentation root), fill these under `<doc-root>/`:
 
 | File | Write |
 |------|-------|
-| `context/always-on.md` | Session context from parameters; interview only for gaps |
-| `blueprint.md` | Construction plan: phase rows for selected template, Spike + Review registers, initial `[ ]` / `[~]` states |
-| `entry-point.md` | Overview stub, navigation table, links to template sections, `process/`, and source paths |
+| `entry-point.md` | **Start here** — short facts (name, stack, source map) + links to chapters, `process/`, sources |
+| `blueprint.md` | **What's next** — checklist rows for selected template, Spikes + Reviews tables, initial `[ ]` / `[~]` |
+| `context/always-on.md` | Legacy stub only — merge leftover facts into entry-point |
 
 Remind the human only if IDE rules are missing.
 
@@ -54,12 +54,12 @@ Remind the human only if IDE rules are missing.
 
 Follow `<doc-root>/prompts/role-bootstrap.md`:
 
-- Record template in `entry-point.md`.
-- Populate `blueprint.md` phase table; mark first in-progress phase.
+- Record template and facts in `entry-point.md`.
+- Populate `blueprint.md` checklist; mark first in-progress item.
 - Populate interfaces/ and the first high-value section from evidence only.
-- Keep blueprint (plan/progress) and entry-point (navigation) in sync.
+- Keep entry-point (map) and blueprint (checklist) in sync.
 - Ensure `<doc-root>/process/spikes/` and `<doc-root>/process/reviews/` are ready for later SPK/REV items.
-- Session log + required anchors at end.
+- Short session note + required anchors at end.
 
 ## Lifecycle after Build (phase 1)
 

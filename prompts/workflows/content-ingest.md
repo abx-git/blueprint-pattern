@@ -25,7 +25,7 @@ Pasted content:
 <pasted-content>
 
 Instructions:
-1. Read <doc-root>context/always-on.md → <doc-root>blueprint.md → <doc-root>prompts/role-bootstrap.md → prompts/reference/content-ingest.md.
+1. Start with <doc-root>entry-point.md → <doc-root>blueprint.md → <doc-root>prompts/role-bootstrap.md → prompts/reference/content-ingest.md.
 2. Redact secrets, credentials, and PII from pasted content before writing files; ask the human if confidentiality is unclear.
 3. Create <doc-root>sources/ if missing (index.md, log.md). Persist the import in <doc-root>sources/YYYY-MM-DD-<slug>.md (type: source-ingest) with provenance frontmatter; update sources/index.md and sources/log.md.
 4. Extract structured facts into scoped architecture sections — e.g. use-cases/, <template>/introduction.md, context.md, glossary, interfaces/imports.md, constraints, context/on-demand.md, domain/ when installed. Link every extracted claim back to the source-ingest file.

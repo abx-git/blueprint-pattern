@@ -168,7 +168,7 @@ export function RunPhase() {
 
       {step === 'adopt' && (
         <div className="run-card">
-          <p>First docs session: creates/fills blueprint, entry-point, and the first chapter.</p>
+          <p>First docs session: fills entry-point (start here), blueprint (what's next), and the first chapter.</p>
           <details open>
             <summary>Preview</summary>
             <pre className="preview-box">{adoptText.slice(0, 4000)}{adoptText.length > 4000 ? '\n…' : ''}</pre>

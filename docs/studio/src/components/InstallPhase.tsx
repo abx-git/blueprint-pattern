@@ -33,7 +33,7 @@ export function InstallPhase() {
 
       <div className="install-card">
         <p>
-          Writes blueprint, entry-point, always-on context, template stubs, roles, and process
+          Writes entry-point, blueprint, template stubs, roles, and process
           templates into <code>{folderLabel}</code>. Run prompts will refer to{' '}
           <code>{project.docRoot || './'}</code>.
         </p>

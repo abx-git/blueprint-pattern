@@ -156,7 +156,7 @@ program
 
 program
   .command('init')
-  .description('Bootstrap 3 core files only (always-on, blueprint, entry-point). For full setup use: agm install')
+  .description('Bootstrap core files (entry-point, blueprint; always-on stub). For full setup use: agm install')
   .option('-y, --yes', 'Skip prompts and use defaults')
   .option('-f, --force', 'Overwrite existing core files')
   .option('--app-name <name>', 'Application name')

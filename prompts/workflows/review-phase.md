@@ -15,7 +15,7 @@
 AGM — Verify · Evaluate
 Role: review
 
-Read <doc-root>/context/always-on.md → <doc-root>/blueprint.md → <doc-root>/prompts/role-review.md.
+Start with <doc-root>/entry-point.md → <doc-root>/blueprint.md → <doc-root>/prompts/role-review.md.
 Select next unreviewed phase in ## Reviews. Report-only — do not fix files.
 
 Output [[ANCHOR:REVIEW_SCOPE]], [[ANCHOR:VERDICT]], [[ANCHOR:FINDINGS]], [[ANCHOR:TOP_RISKS]], [[ANCHOR:LINK_CHECK]] before stop.

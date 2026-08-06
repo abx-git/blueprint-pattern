@@ -20,7 +20,7 @@ DIFF_FROM=<diff-from>
 DIFF_TO=<diff-to>
 
 Instructions:
-1. Read <doc-root>context/always-on.md → <doc-root>blueprint.md → <doc-root>prompts/role-maintenance.md.
+1. Start with <doc-root>entry-point.md → <doc-root>blueprint.md → <doc-root>prompts/role-maintenance.md.
 2. Obtain the code diff between DIFF_FROM and DIFF_TO yourself — do not ask the human to paste it:
    a) If a Git MCP server is connected, use its diff/compare tool with the same refs.
    b) Otherwise run at repository root: git diff ${DIFF_FROM}..${DIFF_TO}

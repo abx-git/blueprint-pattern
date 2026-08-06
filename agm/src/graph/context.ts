@@ -11,22 +11,27 @@ export interface LoadedContext {
   entryPointPath: string;
 }
 
+/** Load session context: entry-point is required; always-on is optional (legacy). */
 export function loadContext(config: AgmConfig, cwd = process.cwd()): LoadedContext {
   const docRoot = docRootAbs(config, cwd);
   const alwaysOnPath = join(docRoot, 'context/always-on.md');
   const entryPointPath = join(docRoot, 'entry-point.md');
 
-  if (!existsSync(alwaysOnPath)) {
-    throw new Error(`always-on.md not found at ${alwaysOnPath}. Run agm init first.`);
-  }
   if (!existsSync(entryPointPath)) {
-    throw new Error(`entry-point.md not found at ${entryPointPath}. Run agm init first.`);
+    throw new Error(
+      `entry-point.md not found at ${entryPointPath}. Run agm init or AGM Studio Install first.`,
+    );
   }
+
+  const entryPoint = readFileSync(entryPointPath, 'utf8');
+  const alwaysOn = existsSync(alwaysOnPath)
+    ? readFileSync(alwaysOnPath, 'utf8')
+    : '_No always-on.md (legacy). Use entry-point.md as the single start file._\n';
 
   return {
     docRoot: config.docRoot,
-    alwaysOn: readFileSync(alwaysOnPath, 'utf8'),
-    entryPoint: readFileSync(entryPointPath, 'utf8'),
+    alwaysOn,
+    entryPoint,
     alwaysOnPath: join(config.docRoot, 'context/always-on.md'),
     entryPointPath: join(config.docRoot, 'entry-point.md'),
   };

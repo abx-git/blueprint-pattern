@@ -12,17 +12,16 @@ function workflowRole(workflow: Workflow): string {
   return r.split('`')[0].split('(')[0].trim() || 'bootstrap';
 }
 
-function buildAgentGraphDutiesBlock(docRoot: string): string {
+function buildCoreFilesBlock(docRoot: string): string {
   const r = normDocRoot(docRoot);
   return [
-    '## Agent-maintained graph (always — not in documentation areas)',
+    '## Core files (keep simple)',
     '',
-    'The human does not select these; you create and maintain them every session:',
-    `- ${r}entry-point.md — graph index (links to all content docs and sources)`,
-    `- ${r}blueprint.md — construction plan, phase status, session log`,
-    `- ${r}context/always-on.md — session context and source code map`,
+    `- ${r}entry-point.md — **start here** (short facts + links). Put this in AI context; keep it current.`,
+    `- ${r}blueprint.md — **what's next** (checklist + short session notes). Tick items when a chapter moves forward.`,
+    `- ${r}context/always-on.md — legacy only. If it still has unique facts, merge them into entry-point; do not maintain a third source of truth.`,
     '',
-    'When content areas change, update entry-point links and blueprint phases without being asked.',
+    'When chapters or links change, update entry-point. When work progresses, update blueprint checkmarks.',
     '',
   ].join('\n');
 }
@@ -116,7 +115,7 @@ function applyWorkflowInputs(
       /Focus dimensions: <focus-dimensions>/,
       `Focus dimensions: ${values.focusDimensions || '<unspecified>'}`
     );
-    const src = (values.sourcePaths as string)?.trim() || '<from always-on.md source map>';
+    const src = (values.sourcePaths as string)?.trim() || '<from entry-point.md source map>';
     out = out.replace(/Source paths \(optional\): <source-paths>/, `Source paths (optional): ${src}`);
     out = out.replace(
       /Compare to documented architecture: <compare-documentation>/,
@@ -228,7 +227,7 @@ function applyWorkflowInputs(
   if (workflowId === 'refinement' && values.goal) {
     const scopeText =
       (values.sessionFocusDetail as string)?.trim() ||
-      'Next open row in blueprint.md (agent picks content section from construction plan)';
+      'Next open row in blueprint.md (agent picks content section from the checklist)';
     out = out.replace(/Scope: <scope>[^\n]*/i, `Scope: ${scopeText}`);
     out = out.replace(/<scope>/g, scopeText);
   }
@@ -297,7 +296,7 @@ export function personalizeWorkflowPrompt(
     roleLine,
     `- Workflow reference: prompts/workflows/${workflow.id}.md`,
     '',
-    buildAgentGraphDutiesBlock(docRoot).trimEnd(),
+    buildCoreFilesBlock(docRoot).trimEnd(),
     '',
   ]
     .filter(Boolean)

@@ -34,7 +34,7 @@ export function registerAgmTools(server: McpServer): void {
 
   server.tool(
     'agm_load_context',
-    'Read always-on.md and entry-point.md to provide repository layout and session context for the LLM.',
+    'Read entry-point.md (and legacy always-on.md if present) for repository layout and session context.',
     {},
     async () => {
       const config = loadConfig();

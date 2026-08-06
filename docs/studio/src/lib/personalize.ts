@@ -33,17 +33,16 @@ export function substituteDocRoot(text: string, docRoot: string): string {
     .replace(/<doc-root>/g, noSlash)
 }
 
-function buildAgentGraphDutiesBlock(docRoot: string): string {
+function buildCoreFilesBlock(docRoot: string): string {
   const r = normDocRoot(docRoot)
   return [
-    '## Agent-maintained graph (always — not in documentation areas)',
+    '## Core files (keep simple)',
     '',
-    'The human does not select these; you create and maintain them every session:',
-    `- ${r}entry-point.md — graph index (links to all content docs and sources)`,
-    `- ${r}blueprint.md — construction plan, phase status, session log`,
-    `- ${r}context/always-on.md — session context and source code map`,
+    `- ${r}entry-point.md — **start here** (short facts + links). Put this in AI context; keep it current.`,
+    `- ${r}blueprint.md — **what's next** (checklist + short session notes). Tick items when a chapter moves forward.`,
+    `- ${r}context/always-on.md — legacy only. If it still has unique facts, merge them into entry-point; do not maintain a third source of truth.`,
     '',
-    'When content areas change, update entry-point links and blueprint phases without being asked.',
+    'When chapters or links change, update entry-point. When work progresses, update blueprint checkmarks.',
     '',
   ].join('\n')
 }
@@ -74,7 +73,7 @@ export function buildAdoptPrompt(base: string, params: ProjectParams): string {
   let prompt = substituteTemplate(substituteDocRoot(base, params.docRoot), resolvedTemplate(params))
   const blocks = [
     buildParameterBlock(params),
-    buildAgentGraphDutiesBlock(params.docRoot),
+    buildCoreFilesBlock(params.docRoot),
   ]
   return `${blocks.join('\n')}\n---\n\n${prompt}`
 }
@@ -150,7 +149,7 @@ export function personalizeWorkflowPrompt(
   const header = [
     buildParameterBlock(params).trimEnd(),
     '',
-    buildAgentGraphDutiesBlock(params.docRoot).trimEnd(),
+    buildCoreFilesBlock(params.docRoot).trimEnd(),
     '',
     `## Session: ${workflowSessionTitle(workflow)}`,
     '',

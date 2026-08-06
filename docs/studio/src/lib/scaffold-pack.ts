@@ -28,52 +28,31 @@ export function buildStarterScaffold(params: ProjectParams): Record<string, stri
 
   const alwaysOn = okf(
     'architecture-context',
-    'Base context — always on',
-    `# Base context — always on
+    'Always-on (legacy)',
+    `# Always-on (legacy)
 
-## System identity
+Facts and session orientation now live in **[entry-point.md](../entry-point.md)**.
 
-**Application:** ${name}  
-**Domain:** ${purpose}  
-**Stack:** ${stack}
-
-## Blueprint
-
-- **Path:** [blueprint.md](../blueprint.md)
-- **Entry:** [entry-point.md](../entry-point.md)
-- **Index:** [index.md](../index.md)
-- **Log:** [log.md](../log.md)
-- **Template:** ${template}
-
-## Source code map
-
-| Module | Path |
-|--------|------|
-| — | ${params.sourceRoot || '—'} |
-
-## Session protocol
-
-1. Read always-on.md → blueprint.md → prompts/role-&lt;role&gt;.md.
-2. Traverse Markdown links; verify [[ANCHOR:LINK_CHECK]] before stop.
+Keep this file only for older repos. If anything unique remains here, merge it into entry-point and stop maintaining a third source of truth.
 `,
   )
 
   const blueprint = okf(
     'architecture-blueprint',
-    'Blueprint',
+    'Blueprint — what\'s next',
     `# Blueprint — ${name}
 
-Construction plan for the architecture graph. Status: \`[ ]\` open · \`[~]\` in progress · \`[x]\` done.
+**What's next** for the docs. Tick items as you go: \`[ ]\` open · \`[~]\` in progress · \`[x]\` done.
 
-## Phases
+## Checklist
 
-| Status | Phase | Target |
-|--------|-------|--------|
-| [ ] | Context | context/always-on.md |
+| Status | Chapter | File |
+|--------|---------|------|
+| [ ] | Fill entry-point facts | entry-point.md |
 | [ ] | Introduction | ${template}/introduction.md |
 | [ ] | Context view | ${template}/context.md |
 
-## Spike register
+## Spikes
 
 | ID | Track | Title | Type | Path | Status | Date |
 |----|-------|-------|------|------|--------|------|
@@ -81,11 +60,11 @@ Construction plan for the architecture graph. Status: \`[ ]\` open · \`[~]\` in
 
 ## Reviews
 
-| ID | Phase / target | Reviewed | Verdict | Report | Findings |
-|----|----------------|----------|---------|--------|----------|
+| ID | Target | Reviewed | Verdict | Report | Findings |
+|----|--------|----------|---------|--------|----------|
 | — | — | — | — | — | — |
 
-## Session log
+## Session notes
 
 | Date | Summary |
 |------|---------|
@@ -95,35 +74,40 @@ Construction plan for the architecture graph. Status: \`[ ]\` open · \`[~]\` in
 
   const entry = okf(
     'architecture-entry',
-    'Entry point',
+    'Entry point — start here',
     `# Entry point — ${name}
 
-Graph index (links only). Humans read template sections; agents start here.
+**Start here.** Put this file in the AI context. Short facts + links to everything else.
 
-## Orchestration
+## About this system
 
-- [always-on.md](context/always-on.md)
-- [blueprint.md](blueprint.md)
-- [index.md](index.md)
-- [log.md](log.md)
+**Application:** ${name}  
+**Domain:** ${purpose}  
+**Stack:** ${stack}  
+**Template:** ${template}
 
-## Template
+## Source code map
 
-- [${template}/](${template}/)
+| Module | Path |
+|--------|------|
+| — | ${params.sourceRoot || '—'} |
 
-## Spikes
+## Links
 
-- [process/spikes/](process/spikes/)
+| What | Where |
+|------|-------|
+| What's next (checklist) | [blueprint.md](blueprint.md) |
+| Template chapters | [${template}/](${template}/) |
+| Spikes | [process/spikes/](process/spikes/) |
+| Reviews | [process/reviews/](process/reviews/) |
+| Index | [index.md](index.md) |
+| Log | [log.md](log.md) |
 
-## Reviews
+## Session habit
 
-- [process/reviews/](process/reviews/)
-
-## Prompts
-
-- [role-bootstrap.md](prompts/role-bootstrap.md)
-- [role-maintenance.md](prompts/role-maintenance.md)
-- [role-review.md](prompts/role-review.md)
+1. Read this file → [blueprint.md](blueprint.md) → \`prompts/role-&lt;role&gt;.md\`.
+2. Follow links; update this map when chapters appear.
+3. Tick blueprint items when work moves forward.
 `,
   )
 
@@ -132,9 +116,8 @@ Graph index (links only). Humans read template sections; agents start here.
     'Architecture index',
     `# Architecture — ${name}
 
-- [Entry point](entry-point.md)
-- [Blueprint](blueprint.md)
-- [Always-on context](context/always-on.md)
+- [Entry point (start here)](entry-point.md)
+- [Blueprint (what's next)](blueprint.md)
 - [Process](process/) — spikes & reviews
 - Template: [${template}](${template}/)
 `,
@@ -157,7 +140,7 @@ Graph index (links only). Humans read template sections; agents start here.
     `# Role: bootstrap
 
 You are the bootstrap scribe for AGM. Follow the active workflow session prompt from AGM Studio.
-Maintain blueprint.md, entry-point.md, and context/always-on.md every session.
+Keep entry-point.md (start here) and blueprint.md (what's next) current every session.
 Human-in-the-loop: propose; do not silently invent architecture.
 Write new explorations under process/spikes/YYYY-MM-DD-&lt;slug&gt;/ (SPK register), not flat work/ files.
 `,
@@ -168,8 +151,8 @@ Write new explorations under process/spikes/YYYY-MM-DD-&lt;slug&gt;/ (SPK regist
     'Role — maintenance',
     `# Role: maintenance
 
-Keep the architecture graph aligned with the codebase. Prefer evidence from diffs and source.
-Update blueprint status and log.md each session. Output [[ANCHOR:LINK_CHECK]].
+Keep the architecture docs aligned with the codebase. Prefer evidence from diffs and source.
+Update entry-point links and blueprint checklist each session. Output [[ANCHOR:LINK_CHECK]].
 `,
   )
 

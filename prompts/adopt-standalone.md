@@ -4,7 +4,7 @@
    Alternative (CLI): `agm scaffold` / `agm-install.sh` with `--doc-root` matching your documentation path.
 2. **Adopt** — copy the adoption prompt below into a **new** agent chat at your **application repository root** (so paths like `<doc-root>…` resolve correctly).
 
-Starts **lifecycle phase 1 · Build**: agent fills `always-on.md`, `blueprint.md`, `entry-point.md`, and the first evidence-based section (scaffold already present).
+Starts **Build**: agent fills `entry-point.md` (start here) and `blueprint.md` (what's next), plus the first evidence-based section (scaffold already present).
 
 ---
 
@@ -22,13 +22,18 @@ Prerequisites: application repository open in the IDE; scaffold present under th
 
 Use the **Documentation root** from Project parameters for every architecture path — never hardcode another docs folder.
 
+Core files (keep simple):
+- <doc-root>/entry-point.md — start here (short facts + links). Put this in AI context.
+- <doc-root>/blueprint.md — what's next (checklist + short session notes).
+- <doc-root>/context/always-on.md — legacy only; merge leftover facts into entry-point.
+
 Instructions:
 1. If <doc-root>/blueprint.md already exists, stop and tell the human to paste the **Continue** session prompt (Build · Continue) from AGM Studio Run in a new chat instead.
 2. Verify Phase A: <doc-root>/prompts/role-bootstrap.md and prompts/core/system-prompt.md must exist. If missing, stop — ask the human to finish Install in AGM Studio (or run `agm scaffold` / install script) with the same documentation root.
-3. If an **Adoption parameters** / **Project parameters** block is present (with file roles or Documentation root), create always-on.md, blueprint.md, and entry-point.md as separate files under <doc-root>; interview only for missing facts.
-4. Bootstrap: follow <doc-root>/prompts/role-bootstrap.md — construction plan in <doc-root>/blueprint.md, navigation in <doc-root>/entry-point.md, first evidence-based template section under <doc-root>.
+3. If an **Adoption parameters** / **Project parameters** block is present, fill entry-point.md and blueprint.md under <doc-root>; interview only for missing facts.
+4. Bootstrap: follow <doc-root>/prompts/role-bootstrap.md — facts + links in entry-point.md, checklist in blueprint.md, first evidence-based template section under <doc-root>.
 5. Ensure <doc-root>/process/spikes/ exists (README + _template/ if missing). Prefer spikes for explorations, not flat work/ files.
-6. Verify relative links. Append a session log entry to <doc-root>/blueprint.md.
+6. Verify relative links. Append a short session note to <doc-root>/blueprint.md.
 
 Output [[ANCHOR:CHANGED_FILES]], [[ANCHOR:TEMPLATE_SELECTED]], [[ANCHOR:PHASE_STATUS]], [[ANCHOR:OPEN_QUESTIONS]], [[ANCHOR:LINK_CHECK]] before stop.
 ```

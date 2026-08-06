@@ -1,8 +1,8 @@
 # AGM — 10-minute quickstart
 
-**Thesis:** Architecture documentation is the **API of AI conversation**.
+**Thesis:** Architecture documentation is a small Markdown wiki next to the code — start from `entry-point.md`.
 
-**AGM in one sentence:** A repo-local Markdown link graph, orchestrated by `blueprint.md`, maintained by agents via MCP.
+**AGM in one sentence:** Repo-local Markdown with links, a checklist in `blueprint.md`, kept current with short AI sessions.
 
 *(Source: [github.com/abx-git/agm](https://github.com/abx-git/agm).)*
 
@@ -14,16 +14,16 @@ One onboarding path — everything else is advanced.
 
 | Step | What you do | Workflow |
 |------|-------------|----------|
-| **Install** | Run generated script at your app repo root | [Assistant → Build → Install](https://abx-git.github.io/agm.github.io/) → `agm-install.sh` |
-| **Adopt** | New chat — first evidence-based section | `bootstrap-adopt` |
-| **Continue** | New chat — next chapter from construction plan | `bootstrap-continue` |
+| **Install** | Connect folder in Studio (or run install script) | [AGM Studio](https://abx-git.github.io/agm.github.io/) |
+| **Adopt** | New chat — fill entry-point + first chapter | `bootstrap-adopt` |
+| **Continue** | New chat — next checklist item | `bootstrap-continue` |
 | **Maintain** | New chat — sync docs with code | `maintenance-diff-range` |
 | **Import** | New chat — paste Confluence, specs, use cases | `content-ingest` |
 | **Review** | **Fresh chat** — report only, never same chat as write | `review-maintenance` |
 
-Copy the session prompt from the Assistant UI (or `prompts/workflows/<id>.md`) into a new chat. **Default:** copy-paste. **Optional:** MCP `agm_trigger_workflow` — golden path works with the public starter pack ([agm/README.md](../agm/README.md)).
+Copy the session prompt from Studio (or `prompts/workflows/<id>.md`) into a new chat. **Default:** copy-paste. **Optional:** MCP `agm_trigger_workflow` — golden path works with the public starter pack ([agm/README.md](../agm/README.md)).
 
-**Install vs `agm init`:** use `agm-install.sh` (or `agm install`) for the full scaffold; `agm init` creates only three core files — [reference/install.md](./reference/install.md).
+**Install vs `agm init`:** use Studio Install or `agm-install.sh` for the full scaffold; `agm init` creates only the core files — [reference/install.md](./reference/install.md).
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/abx-git/agm/main/scripts/agm-install.sh | bash -s -- \
@@ -36,19 +36,19 @@ Templates at adopt time: **`arc42`** (multi-module, default) or **`lean-service`
 
 ---
 
-## Four orchestration files
+## Two core files (+ OKF helpers)
 
 ```
 docs/architecture/
-├── context/always-on.md   ← every session: app identity, stack, source map
-├── blueprint.md           ← agent: construction plan, [ ]/[~]/[x]/[!], WRK, session log
-├── entry-point.md         ← agent: graph index — links only, no status
+├── entry-point.md         ← start here: short facts + links (put in AI context)
+├── blueprint.md           ← what's next: checklist + short session notes
+├── context/always-on.md   ← legacy stub (prefer entry-point)
 └── index.md + log.md      ← OKF: per-folder disclosure + change log
 ```
 
-**Rule:** `entry-point.md` = agent navigation. `index.md` = OKF folder index. Never conflate them.
+**Rule:** `entry-point.md` = start here. `blueprint.md` = what's next. `index.md` = OKF folder index — don't conflate with entry-point.
 
-Work items: `work/YYYY-MM-DD-<slug>.md` + `WRK-NNN` in `blueprint.md`. Also traverse `interfaces/exports.md` and `interfaces/imports.md` every session — cross-service contracts, not wiki/RAG.
+Spikes live under `process/spikes/` (see [guide.md](./guide.md)). Also traverse `interfaces/exports.md` and `interfaces/imports.md` when relevant.
 
 ---
 
@@ -57,15 +57,15 @@ Work items: `work/YYYY-MM-DD-<slug>.md` + `WRK-NNN` in `blueprint.md`. Also trav
 ```text
 Traditional                         AGM
 ───────────                         ───
-Paste repo / long chat history  →   Agent reads always-on.md + blueprint.md
+Paste repo / long chat history  →   Open entry-point.md in AI context
 Similarity search (RAG)         →   Follow links from entry-point.md
 Stale wiki                      →   git diff → maintenance-diff-range
 Same chat writes + reviews      →   Fresh chat for Verify
 ```
 
-Three mechanisms: **Documentation API** (typed OKF Markdown the agent traverses) · **MCP transport** (code and docs on demand) · **Session discipline** (`blueprint.md` progress + fresh review chats).
+Habit: **entry-point in context** · **follow links** · **tick blueprint** · **fresh chat for Verify**.
 
-The graph is also the **spec API for implementation**: design WRK items + `interfaces/` guide code sessions; **Maintenance** syncs docs after merge. Distinction from feature-spec tools (e.g. Kiro): [reference/spec-driven-development.md](./reference/spec-driven-development.md).
+The docs also guide implementation: spikes + `interfaces/` inform code sessions; **Maintenance** syncs docs after merge. Distinction from feature-spec tools (e.g. Kiro): [reference/spec-driven-development.md](./reference/spec-driven-development.md).
 
 ---
 

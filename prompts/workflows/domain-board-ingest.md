@@ -29,7 +29,7 @@ Projection rules: prompts/reference/e2-board-projection.md
 PHASE 1 — PROVENANCE (no domain graph mutation yet)
 ═══════════════════════════════════════════════════════
 
-1. Read <doc-root>context/always-on.md → <doc-root>blueprint.md → <doc-root>prompts/role-domain-work.md → prompts/reference/e2-board-projection.md → prompts/reference/content-ingest.md.
+1. Start with <doc-root>entry-point.md → <doc-root>blueprint.md → <doc-root>prompts/role-domain-work.md → prompts/reference/e2-board-projection.md → prompts/reference/content-ingest.md.
 2. Validate snapshot: format "event-storming-tool", version 2 (or note v1→v2 migration). Schema: https://abx-git.github.io/E2/schemas/board-snapshot-v2.schema.json
 3. Redact secrets, credentials, and PII from labels/descriptions before writing files.
 4. Create <doc-root>sources/ if missing. Persist:

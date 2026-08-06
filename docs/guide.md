@@ -27,7 +27,7 @@ Architect/Domain and other Advanced intents: [reference/extended-workflows.md](.
 ## Setup (once)
 
 1. **Install** — [Assistant → Build → Install](https://abx-git.github.io/agm.github.io/) → run `agm-install.sh` at app repo root (default = golden path). See [reference/install.md](./reference/install.md).
-2. **Adopt** — copy adoption prompt → new chat. Agent creates `blueprint.md`, `entry-point.md`, `always-on.md`, first section.
+2. **Adopt** — copy adoption prompt → new chat. Agent fills `entry-point.md` (start here) and `blueprint.md` (what's next), plus the first chapter.
 3. **CI** — enable [agm-integrity](./reference/ci-integrity.md) on the app repo.
 
 **Templates at adopt:** `arc42` (multi-module, default) · `lean-service` (single service). Record choice in `entry-point.md`. Advanced: [reference/advanced-templates.md](./reference/advanced-templates.md).
@@ -39,10 +39,10 @@ Alternative: [adopt-standalone](../prompts/adopt-standalone.md) after manual ins
 ## Every session
 
 1. Copy session prompt → **new chat** (never Verify in the write chat).
-2. Agent reads `context/always-on.md` + `blueprint.md`, traverses from `entry-point.md`.
-3. Agent updates `blueprint.md` and outputs semantic anchors before stop.
+2. Put `entry-point.md` in AI context (or open it first). Agent follows its links; uses `blueprint.md` as the checklist.
+3. Agent updates entry-point links and blueprint checkmarks before stop.
 
-**Compaction:** new chat after ≥2 phases, ≥15 files, or ≥30 turns; resume from session log in `blueprint.md`.
+**Compaction:** new chat after ≥2 phases, ≥15 files, or ≥30 turns; resume from session notes in `blueprint.md`.
 
 ---
 
@@ -50,9 +50,9 @@ Alternative: [adopt-standalone](../prompts/adopt-standalone.md) after manual ins
 
 ```
 docs/architecture/
-├── context/always-on.md   ← every session: identity, stack, source map
-├── blueprint.md           ← construction plan, [ ]/[~]/[x]/[!], Spike + Review registers, session log
-├── entry-point.md         ← agent navigation — links only
+├── entry-point.md         ← start here: short facts + links (put in AI context)
+├── blueprint.md           ← what's next: checklist + short session notes
+├── context/always-on.md   ← legacy stub (prefer entry-point)
 ├── index.md + log.md      ← OKF per-folder index + change log
 ├── interfaces/            ← exports.md, imports.md
 ├── process/               ← lifecycle artifacts (not durable chapters)
@@ -64,7 +64,7 @@ docs/architecture/
 └── arc42/                 ← or lean-service/, etc.
 ```
 
-**Rule:** `entry-point.md` = agent navigation. `index.md` = OKF structure. Never conflate them.
+**Rule:** `entry-point.md` = start here (facts + map). `blueprint.md` = what's next. `index.md` = OKF folder index — don't conflate with entry-point.
 
 **Local drafts:** To keep spike drafts off Git (per developer), install with `--work-dir` (symlink target for `process/spikes/` or legacy paths) or run [external-work.md](./reference/external-work.md) / `agm work-link`. Agents write under `process/spikes/`; only the storage location changes.
 
@@ -83,8 +83,8 @@ After a graph exists, Advanced holds Architect and Domain (DDD) intents. Install
 | Term | Meaning |
 |------|---------|
 | **Graph** | Linked Markdown under `docs/architecture/` |
-| **Blueprint** | `blueprint.md` — construction plan, progress, Spike + Review registers |
-| **Entry** | `entry-point.md` — agent link map, no phase status |
+| **Entry** | `entry-point.md` — start here (facts + links); put in AI context |
+| **Blueprint** | `blueprint.md` — what's next (checklist + short session notes) |
 | **Session** | One chat = one workflow |
 | **Review** | Fresh-chat Verify — report only |
 | **Core prompt** | [prompts/core/system-prompt.md](../prompts/core/system-prompt.md) |
@@ -109,14 +109,14 @@ After a graph exists, Advanced holds Architect and Domain (DDD) intents. Install
 | Workflow | When |
 |----------|------|
 | `review-maintenance` | After `maintenance-diff-range` or code sync |
-| `review-phase` | After completing a blueprint construction phase |
+| `review-phase` | After completing a blueprint checklist chapter |
 | `review-milestone` | End of Build stage (extended catalog) |
 
 ---
 
 ## App layout reference
 
-Architect / Domain spikes: traverse links first; create `process/spikes/YYYY-MM-DD-<slug>/` (index.md, notes.md, boards/); register `SPK-NNN` in `blueprint.md` ## Spike register with Track `architecture` or `domain`. Verify sessions write `process/reviews/YYYY-MM-DD-<slug>/` (`REV-NNN`). Legacy top-level `spikes/` + `work/` + `WRK-*` remain readable.
+Architect / Domain spikes: traverse links first; create `process/spikes/YYYY-MM-DD-<slug>/` (index.md, notes.md, boards/); register `SPK-NNN` in `blueprint.md` ## Spikes with Track `architecture` or `domain`. Verify sessions write `process/reviews/YYYY-MM-DD-<slug>/` (`REV-NNN`). Legacy top-level `spikes/` + `work/` + `WRK-*` remain readable.
 
 Day to day: (1) core prompt in IDE rules, (2) content in `docs/architecture/`, (3) session prompt per chat.
 

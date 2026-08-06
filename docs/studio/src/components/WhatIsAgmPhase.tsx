@@ -33,12 +33,12 @@ export function WhatIsAgmPhase() {
         <h2>What you actually get</h2>
         <ul className="starter-list">
           <li>
-            A folder like <code>docs/architecture/</code> with a clear entry point, a blueprint
-            (what’s done / what’s next), and short pages you can open one by one.
+            A folder like <code>docs/architecture/</code> with an entry point (start here —
+            facts + links), a blueprint (what&apos;s next), and short pages you open one by one.
           </li>
           <li>
-            Rules for the agent: read the always-on context, follow links, don’t invent claims
-            without a source, leave a short session log when it stops.
+            Habit for the agent: open the entry point in context, follow links, don&apos;t invent
+            claims without a source, tick the blueprint when a chapter moves forward.
           </li>
           <li>
             Spikes for messy questions — a dated folder with notes and optional boards, instead of
@@ -75,9 +75,9 @@ export function WhatIsAgmPhase() {
       <section className="starter-section">
         <h2>Why “graph”?</h2>
         <p className="about-prose">
-          Because pages point at each other. From the entry point you walk to context, to a
-          component view, to an interface note. Agents follow those links the same way a person
-          would click around — so the structure matters more than one giant dump of text.
+          Because pages point at each other. From the entry point you walk to a context chapter,
+          to a component view, to an interface note. Agents follow those links the same way a
+          person would click around — so the structure matters more than one giant dump of text.
         </p>
       </section>
 

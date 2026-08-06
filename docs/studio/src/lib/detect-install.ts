@@ -12,11 +12,9 @@ function hasPath(files: FileMap, suffix: string): boolean {
 export function detectInstallStatus(files: FileMap): InstallStatus {
   const blueprint = hasPath(files, 'blueprint.md')
   const entry = hasPath(files, 'entry-point.md')
-  const alwaysOn = hasPath(files, 'always-on.md') || hasPath(files, 'context/always-on.md')
-  if (blueprint && entry && alwaysOn) return 'ready'
-  if (blueprint || entry || alwaysOn) return 'partial'
+  if (blueprint && entry) return 'ready'
+  if (blueprint || entry) return 'partial'
   if (files.size === 0) return 'missing'
-  // Folder has markdown but not AGM markers
   const anyMd = [...files.keys()].some((p) => p.endsWith('.md'))
   return anyMd ? 'partial' : 'missing'
 }

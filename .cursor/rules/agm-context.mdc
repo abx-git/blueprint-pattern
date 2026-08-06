@@ -20,16 +20,16 @@ These rules provide context and governance for AI-assisted architecture work.
 
 ## On session start
 
-1. Read `docs/architecture/context/always-on.md` (app identity, source map, session protocol).
-2. Read `docs/architecture/blueprint.md` (current state and next phases).
-3. Read `docs/architecture/index.md` for progressive disclosure when traversing large graphs.
+1. Read `docs/architecture/entry-point.md` (start here — short facts + links; put this in AI context).
+2. Read `docs/architecture/blueprint.md` (what's next — checklist).
 3. If `prompts/workflows/ACTIVE.md` defines a workflow, follow it and load the matching `docs/architecture/prompts/role-<role>.md`.
 4. If role is missing and ACTIVE is unset, request a workflow from [docs/guide.md](../../docs/guide.md) or run `./scripts/agm-workflow.sh checkout <id>`.
+5. If entry-point is thin and `context/always-on.md` still has unique facts, merge those into entry-point.
 
 ## On session stop
 
-1. Update all touched states in `blueprint.md` ([x] done, [~] in progress, etc.).
-2. Append a session log entry with date, decisions, open assumptions to `log.md` and blueprint session log.
+1. Tick checklist items in `blueprint.md` (`[x]` done, `[~]` in progress, etc.).
+2. Append a short session note to `blueprint.md` and `log.md`.
 3. Update OKF `timestamp` on every modified file.
 4. Run referential integrity and OKF frontmatter check on changed files.
 5. Output [[ANCHOR:LINK_CHECK]] as final status: `pass` or `fail`.
@@ -46,6 +46,6 @@ These rules provide context and governance for AI-assisted architecture work.
 
 Supported: `arc42` · `c4-light` · `adr-first` · `lean-service` · `custom`
 
-Record selected template and rationale in `entry-point.md` under ## Documentation template.
+Record selected template in `entry-point.md`.
 
 Core prompt: [prompts/core/system-prompt.md](../../prompts/core/system-prompt.md) · Procedure: [docs/guide.md](../../docs/guide.md)

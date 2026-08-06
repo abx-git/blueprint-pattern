@@ -16,8 +16,8 @@ alwaysApply: true
 
 Follow the AGM core prompt in [prompts/core/system-prompt.md](../../prompts/core/system-prompt.md).
 
-Human-in-the-loop scribe only. Read order: always-on.md → blueprint.md → role prompt.
-Paths: \`${docRootRule}/\` · Workflows: MCP \`agm_trigger_workflow\` or Assistant UI.
+Human-in-the-loop scribe only. Read order: entry-point.md → blueprint.md → role prompt.
+Paths: \`${docRootRule}/\` · Workflows: MCP \`agm_trigger_workflow\` or AGM Studio.
 Output semantic anchors before stopping.
 
 OKF: every architecture artifact needs YAML frontmatter with mandatory \`type\`; maintain \`index.md\` and \`log.md\`.
@@ -32,12 +32,12 @@ alwaysApply: true
 
 # Architecture Graph Method (AGM) — Context Rules
 
-1. Read \`${docRootRule}/context/always-on.md\`
-2. Read \`${docRootRule}/blueprint.md\`
+1. Read \`${docRootRule}/entry-point.md\` (start here — facts + links; put in AI context)
+2. Read \`${docRootRule}/blueprint.md\` (what's next)
 3. Load \`${docRootRule}/prompts/role-<role>.md\` from the session prompt or MCP workflow
 
 Invariants: relative Markdown links only; human-in-the-loop; traceable claims; OKF frontmatter with mandatory type; index.md and log.md at each level.
-On stop: update \`blueprint.md\`, \`log.md\`, OKF timestamps, [[ANCHOR:LINK_CHECK]].
+On stop: update entry-point links if needed, tick blueprint checklist, update \`log.md\`, [[ANCHOR:LINK_CHECK]].
 `
   );
   updated.push(relative(cwd, pattern), relative(cwd, context));
@@ -59,7 +59,7 @@ export function writeAiToolRulesFromScaffold(
 
 Follow [prompts/core/system-prompt.md](prompts/core/system-prompt.md).
 
-Each session: read \`${docRootRule}/context/always-on.md\` → \`${docRootRule}/blueprint.md\` → role prompt via MCP \`agm_trigger_workflow\`.
+Each session: read \`${docRootRule}/entry-point.md\` → \`${docRootRule}/blueprint.md\` → role prompt via MCP \`agm_trigger_workflow\` or AGM Studio.
 `
       );
       updated.push(relative(cwd, p));
@@ -74,8 +74,8 @@ Each session: read \`${docRootRule}/context/always-on.md\` → \`${docRootRule}/
 
 Follow [prompts/core/system-prompt.md](../prompts/core/system-prompt.md).
 
-Read \`${docRootRule}/context/always-on.md\` and \`${docRootRule}/blueprint.md\` at session start.
-Use MCP \`agm_trigger_workflow\` or the Assistant UI for session prompts.
+Read \`${docRootRule}/entry-point.md\` and \`${docRootRule}/blueprint.md\` at session start.
+Use MCP \`agm_trigger_workflow\` or AGM Studio for session prompts.
 `
       );
       updated.push(relative(cwd, p));
@@ -88,8 +88,8 @@ Use MCP \`agm_trigger_workflow\` or the Assistant UI for session prompts.
         `# AGM — ${project}
 
 Core rules: [prompts/core/system-prompt.md](prompts/core/system-prompt.md)
-Documentation: \`${docRootRule}/\`
-Workflows: MCP \`agm_trigger_workflow\` or AGM Assistant UI.
+Documentation: \`${docRootRule}/\` (start with entry-point.md)
+Workflows: MCP \`agm_trigger_workflow\` or AGM Studio.
 `
       );
       updated.push(relative(cwd, p));

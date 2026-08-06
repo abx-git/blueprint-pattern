@@ -15,7 +15,7 @@
 AGM — Evolve · Sync
 Role: maintenance
 
-Read <doc-root>/context/always-on.md → <doc-root>/blueprint.md → <doc-root>/prompts/role-maintenance.md.
+Start with <doc-root>/entry-point.md → <doc-root>/blueprint.md → <doc-root>/prompts/role-maintenance.md.
 
 Git diff:
 <paste git diff or PR diff summary>

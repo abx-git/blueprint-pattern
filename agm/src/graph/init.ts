@@ -1,8 +1,7 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { AgmConfig, TemplateId } from '../types.js';
 import { docRootAbs, normDocRoot, resolvedTemplate } from '../config/load.js';
-import { templatesPath } from '../paths.js';
 
 interface TemplatePhase {
   phase: string;
@@ -104,35 +103,24 @@ function buildStatusTable(template: TemplateId, customName?: string): string {
   ].join('\n');
 }
 
-function buildAlwaysOn(config: AgmConfig): string {
-  const templatePath = templatesPath('context/always-on.md');
-  let content = '';
-  if (existsSync(templatePath)) {
-    content = readFileSync(templatePath, 'utf8');
-  }
-
-  if (!content) {
-    content = `# Base context — always on
-
-## System identity
-
-**Application:** <App Name>
-**Domain:** <one sentence>
-**Stack:** <e.g. TypeScript / Node.js>
-`;
-  }
-
-  const template = resolvedTemplate(config);
-  const docRootDisplay = config.docRoot.replace(/\/$/, '');
-
-  return content
-    .replace(/<App Name>/g, config.appName)
-    .replace(/<one sentence>/g, config.purpose || '<one sentence>')
-    .replace(/<e.g. TypeScript \/ Node.js>/g, config.stack || '<stack>')
-    .replace(/<!-- arc42 \| c4-light \| adr-first \| lean-service \| custom -->/, template)
-    .replace(/docs\/architecture\//g, config.docRoot)
-    .replace(/docs\/architecture/g, docRootDisplay)
-    .replace(/<template>/g, template);
+function buildAlwaysOn(_config: AgmConfig): string {
+  return [
+    '---',
+    'type: architecture-context',
+    'title: "Always-on (legacy)"',
+    'description: "Legacy stub — prefer entry-point.md"',
+    'resource: "repo://"',
+    'tags: [architecture, context, legacy]',
+    `timestamp: "${new Date().toISOString().slice(0, 10)}"`,
+    '---',
+    '',
+    '# Always-on (legacy)',
+    '',
+    'Facts and session orientation now live in **[entry-point.md](../entry-point.md)**.',
+    '',
+    'Keep this file only for older repos. If anything unique remains here, merge it into entry-point and stop maintaining a third source of truth.',
+    '',
+  ].join('\n');
 }
 
 function buildBlueprint(config: AgmConfig): string {
@@ -142,22 +130,21 @@ function buildBlueprint(config: AgmConfig): string {
   return [
     `# Blueprint — ${config.appName}`,
     '',
+    "**What's next** for the docs. Tick items as you go: `[ ]` open · `[~]` in progress · `[x]` done.",
+    '',
     '## Documentation template',
     '',
     `Selected template: ${template}`,
     `Rationale: Initial bootstrap via agm init on ${today}.`,
     '',
     buildStatusTable(config.template, config.customTemplate),
-    '## Work register',
+    '## Spikes',
     '',
     '| ID | Track | Title | Type | File | Status | Date |',
     '|----|-------|-------|------|------|--------|------|',
     '| —  | —     | —     | —    | —    | —      | —    |',
     '',
     '**Track:** `architecture` · `domain`',
-    '**Types (architecture):** `question` · `analysis` · `design`',
-    '**Types (domain):** `domain-question` · `domain-discovery` · `domain-analysis` · `domain-design`',
-    '**Status:** `draft` · `reviewed` · `superseded`',
     '',
     '## Reviews',
     '',
@@ -165,21 +152,13 @@ function buildBlueprint(config: AgmConfig): string {
     '|----------------|----------|---------|--------|----------|',
     '| —              | —        | —       | —      | —        |',
     '',
-    'Verdict: `PASS` · `PASS WITH NOTES` · `FAIL`',
-    '',
-    '## Guardrail findings',
-    '',
-    '| File | Finding | Severity | Source |',
-    '|------|---------|----------|--------|',
-    '| —    | —       | —        | —      |',
-    '',
-    '## Session log',
+    '## Session notes',
     '',
     `### ${today} — Session 1`,
-    '- Completed: agm init — core graph files created',
+    '- Completed: agm init — entry-point + blueprint created',
     `- Key decisions: template=${template}, docRoot=${config.docRoot}`,
-    '- Next: Continue building via AGM Studio Run → Continue building (or MCP workflow bootstrap-continue)',
-    `- Resume prompt: "Continue AGM (Build · Continue). Read ${config.docRoot}blueprint.md."`,
+    '- Next: Continue building via AGM Studio Run → Continue building',
+    `- Resume: open ${config.docRoot}entry-point.md in AI context, then continue from blueprint.`,
     '',
   ].join('\n');
 }
@@ -189,38 +168,44 @@ function buildEntryPoint(config: AgmConfig): string {
   const docRoot = normDocRoot(config.docRoot);
 
   return [
-    `# ${config.appName} — Architecture Entry Point`,
+    `# ${config.appName} — Entry point`,
     '',
-    '## Documentation template',
+    '**Start here.** Put this file in the AI context. Short facts + links to everything else.',
     '',
-    `Selected template: ${template}`,
-    `Rationale: Bootstrapped via agm init.`,
+    '## About this system',
     '',
-    '## Purpose',
+    `**Application:** ${config.appName}`,
+    `**Domain:** ${config.purpose || '<one sentence>'}`,
+    `**Stack:** ${config.stack || '<stack>'}`,
+    `**Template:** ${template}`,
     '',
-    config.purpose || `<!-- One paragraph: what ${config.appName} does -->`,
+    '## Source code map',
     '',
-    '## Navigation',
-    '',
-    '| Section | File |',
-    '|---------|------|',
-    '| Blueprint (progress) | [blueprint.md](./blueprint.md) |',
-    '| Base context | [context/always-on.md](./context/always-on.md) |',
-    `| Template (${template}) | [${template}/](./${template}/) |`,
-    '| Interface exports | [interfaces/exports.md](./interfaces/exports.md) |',
-    '| Interface imports | [interfaces/imports.md](./interfaces/imports.md) |',
-    '| Architecture Work | [work/README.md](./work/README.md) |',
-    '| Domain | [domain/context-map.md](./domain/context-map.md) |',
-    '',
-    '## Source code',
-    '',
-    '| Component | Source |',
-    '|-----------|--------|',
+    '| Module | Path |',
+    '|--------|------|',
     config.sourceRoot
       ? `| Primary | [${config.sourceRoot}](../../${config.sourceRoot}) |`
       : '| — | — |',
     '',
-    `<!-- Agent-maintained graph index. Doc root: ${docRoot} -->`,
+    '## Links',
+    '',
+    '| What | Where |',
+    '|------|-------|',
+    "| What's next (checklist) | [blueprint.md](./blueprint.md) |",
+    `| Template (${template}) | [${template}/](./${template}/) |`,
+    '| Interface exports | [interfaces/exports.md](./interfaces/exports.md) |',
+    '| Interface imports | [interfaces/imports.md](./interfaces/imports.md) |',
+    '| Spikes | [process/spikes/](./process/spikes/) |',
+    '| Reviews | [process/reviews/](./process/reviews/) |',
+    '| Domain | [domain/context-map.md](./domain/context-map.md) |',
+    '',
+    '## Session habit',
+    '',
+    '1. Read this file → [blueprint.md](./blueprint.md) → `prompts/role-<role>.md`.',
+    '2. Follow links; update this map when chapters appear.',
+    '3. Tick blueprint items when work moves forward.',
+    '',
+    `<!-- Doc root: ${docRoot} -->`,
     '',
   ].join('\n');
 }

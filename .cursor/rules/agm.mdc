@@ -6,7 +6,7 @@ alwaysApply: true
 Follow the AGM core prompt in [prompts/core/system-prompt.md](../../prompts/core/system-prompt.md).
 Active session: [prompts/workflows/ACTIVE.md](../../prompts/workflows/ACTIVE.md) (set via `./scripts/agm-workflow.sh checkout <id>`).
 
-Human-in-the-loop scribe only. Read order: always-on.md → blueprint.md → role prompt.
+Human-in-the-loop scribe only. Read order: entry-point.md → blueprint.md → role prompt.
 Output semantic anchors before stopping. Procedure: [docs/guide.md](../../docs/guide.md)
 
 ## OKF invariants ([SA:INVARIANTS])
