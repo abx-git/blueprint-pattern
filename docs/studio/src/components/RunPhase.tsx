@@ -38,6 +38,7 @@ function aiLabel(tool: string): string {
 export function RunPhase() {
   const project = useStudioStore((s) => s.project)
   const setPhase = useStudioStore((s) => s.setPhase)
+  const goSetup = useStudioStore((s) => s.goSetup)
   const installStatus = useStudioStore((s) => s.installStatus)
   const folderLabel = useStudioStore((s) => s.folderLabel)
   const showToast = useStudioStore((s) => s.showToast)
@@ -45,10 +46,16 @@ export function RunPhase() {
 
   const [workflows, setWorkflows] = useState<WorkflowEntry[]>([])
   const [adoptBase, setAdoptBase] = useState('')
-  const [step, setStep] = useState<RunStep>('adopt')
+  const [step, setStep] = useState<RunStep>(() =>
+    installStatus === 'ready' ? 'continue' : 'adopt',
+  )
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [inputs, setInputs] = useState<Record<string, string>>({})
   const [loadError, setLoadError] = useState<string | null>(null)
+
+  useEffect(() => {
+    setStep(installStatus === 'ready' ? 'continue' : 'adopt')
+  }, [installStatus])
 
   useEffect(() => {
     let cancelled = false
@@ -107,10 +114,10 @@ export function RunPhase() {
   if (!folderLabel) {
     return (
       <div className="phase-panel">
-        <h2>Run</h2>
-        <p>Connect a folder first.</p>
-        <button type="button" className="btn primary" onClick={() => setPhase('connect')}>
-          Go to Connect
+        <h2>Schreiben</h2>
+        <p>Finish Setup first — choose your documentation folder.</p>
+        <button type="button" className="btn primary" onClick={() => goSetup()}>
+          Go to Setup
         </button>
       </div>
     )
@@ -119,38 +126,47 @@ export function RunPhase() {
   if (loadError) {
     return (
       <div className="phase-panel">
-        <h2>Run</h2>
+        <h2>Schreiben</h2>
         <p className="warn">{loadError}</p>
       </div>
     )
   }
 
+  const tabs: { id: RunStep; label: string }[] =
+    installStatus === 'ready'
+      ? [
+          { id: 'continue', label: 'Erweitern' },
+          { id: 'evolve', label: 'Sync / Import' },
+          { id: 'verify', label: 'Prüfen' },
+          { id: 'adopt', label: 'Erneut starten' },
+          { id: 'advanced', label: 'Mehr' },
+        ]
+      : [
+          { id: 'adopt', label: 'Starten' },
+          { id: 'continue', label: 'Erweitern' },
+          { id: 'evolve', label: 'Sync / Import' },
+          { id: 'verify', label: 'Prüfen' },
+          { id: 'advanced', label: 'Mehr' },
+        ]
+
   return (
     <div className="phase-panel run-phase">
-      <h2>Run sessions</h2>
+      <h2>Schreiben — Dokumentation erweitern</h2>
       <p className="lead">
-        Studio prepares the session prompt for documentation root{' '}
-        <strong>{project.docRoot || '(set on Connect)'}</strong>. Open <strong>{tool}</strong> on
-        the same repo, start a <strong>new chat</strong>, paste, and let the agent write into the
-        bound folder. Then return here for Process or Review.
+        Studio baut den Prompt für <strong>{project.docRoot || '(set in Setup)'}</strong>. Öffne{' '}
+        <strong>{tool}</strong> im gleichen Repo, starte einen <strong>neuen Chat</strong>, füge ein —
+        der Agent schreibt die Dateien. Danach zurück zu Spikes oder Lesen.
         {installStatus !== 'ready' && (
           <>
             {' '}
-            Install looks <strong>{installStatus}</strong> — Adopt may create missing files.
+            Starter fehlt noch (<strong>{installStatus}</strong>) — nutze Setup oder „Starten“
+            (Adopt).
           </>
         )}
       </p>
 
       <div className="run-steps" role="tablist">
-        {(
-          [
-            ['adopt', 'Adopt'],
-            ['continue', 'Continue building'],
-            ['evolve', 'Evolve'],
-            ['verify', 'Verify'],
-            ['advanced', 'More'],
-          ] as const
-        ).map(([id, label]) => (
+        {tabs.map(({ id, label }) => (
           <button
             key={id}
             type="button"
@@ -168,13 +184,16 @@ export function RunPhase() {
 
       {step === 'adopt' && (
         <div className="run-card">
-          <p>First docs session: fills entry-point (start here), blueprint (what's next), and the first chapter.</p>
+          <p>
+            Erste Docs-Session: füllt entry-point (start here), blueprint (what&apos;s next) und das
+            erste Kapitel.
+          </p>
           <details open>
             <summary>Preview</summary>
             <pre className="preview-box">{adoptText.slice(0, 4000)}{adoptText.length > 4000 ? '\n…' : ''}</pre>
           </details>
           <button type="button" className="btn primary" onClick={() => copyOut(adoptText)}>
-            {copyBtn('adoption prompt')}
+            {copyBtn('Starten / Adopt')}
           </button>
         </div>
       )}
@@ -187,7 +206,7 @@ export function RunPhase() {
             <pre className="preview-box">{continueText.slice(0, 4000)}</pre>
           </details>
           <button type="button" className="btn primary" onClick={() => copyOut(continueText)}>
-            {copyBtn('continue building')}
+            {copyBtn('Erweitern')}
           </button>
         </div>
       )}
@@ -295,14 +314,14 @@ export function RunPhase() {
 
       <div className="run-cta">
         <p>
-          After the agent finishes, open <strong>Spike</strong> to deepen explorations with notes and
-          boards, or <strong>Review</strong> to inspect the full graph.
+          Nach der Session: <strong>Spikes</strong> für Ideen, oder <strong>Lesen</strong> für den
+          Graph.
         </p>
         <button type="button" className="btn" onClick={() => setPhase('spike')}>
-          Open Spike
+          Spikes
         </button>
         <button type="button" className="btn primary" onClick={() => setPhase('review')}>
-          Open Review
+          Lesen
         </button>
       </div>
     </div>

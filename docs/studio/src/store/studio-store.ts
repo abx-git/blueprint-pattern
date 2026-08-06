@@ -23,6 +23,15 @@ import {
   type FileMap,
 } from '../lib/fs-access'
 import { loadProjectParams, saveProjectParams } from '../lib/project-params'
+import {
+  isDailyPhase,
+  loadBootDone,
+  loadFolderHint,
+  loadLastDailyPhase,
+  saveBootDone,
+  saveFolderHint,
+  saveLastDailyPhase,
+} from '../lib/session-persist'
 import { buildStarterScaffold } from '../lib/scaffold-pack'
 import { createDocSearch, type SearchHit } from '../lib/search'
 import {
@@ -63,6 +72,9 @@ interface StudioState {
   project: ProjectParams
   folderHandle: FileSystemDirectoryHandle | null
   folderLabel: string | null
+  /** Last known folder name when permission not yet granted */
+  folderHint: string | null
+  restoring: boolean
   /** Step 1 of connect: folder chosen, not yet confirmed */
   pendingBaseHandle: FileSystemDirectoryHandle | null
   pendingBaseName: string | null
@@ -85,6 +97,7 @@ interface StudioState {
   toast: string | null
 
   setPhase: (phase: JourneyPhase) => void
+  goSetup: () => void
   setProject: (patch: Partial<ProjectParams>) => void
   setActivePath: (path: string | null) => void
   setActiveSpikePath: (path: string | null) => void
@@ -124,19 +137,27 @@ function afterOpen(
   files: FileMap,
   handle: FileSystemDirectoryHandle | null,
   canWrite: boolean,
-  opts?: { keepPhase?: boolean },
+  opts?: { keepPhase?: boolean; preferDaily?: boolean },
 ) {
   const { index, searchFn: sf, preferred, installStatus, spikes, reviews } = applyIndex(files, label)
   searchFn = sf
   const prevPhase = get().phase
-  const phase: JourneyPhase = opts?.keepPhase
-    ? prevPhase
-    : installStatus === 'ready'
-      ? 'run'
-      : 'install'
+  let phase: JourneyPhase
+  if (opts?.keepPhase) {
+    phase = prevPhase
+  } else if (installStatus === 'ready') {
+    phase = opts?.preferDaily ? loadLastDailyPhase() : 'run'
+  } else if (get().folderLabel || label) {
+    phase = 'install'
+  } else {
+    phase = 'connect'
+  }
+  saveFolderHint(label)
+  saveBootDone(true)
   set({
     folderHandle: handle,
     folderLabel: label,
+    folderHint: label,
     canWrite,
     index,
     spikes,
@@ -147,16 +168,20 @@ function afterOpen(
     searchHits: [],
     browsePanel: 'doc',
     opening: false,
+    restoring: false,
     phase,
     error: null,
   })
+  if (isDailyPhase(phase)) saveLastDailyPhase(phase)
 }
 
 export const useStudioStore = create<StudioState>((set, get) => ({
-  phase: 'about',
+  phase: 'connect',
   project: loadProjectParams(),
   folderHandle: null,
   folderLabel: null,
+  folderHint: loadFolderHint(),
+  restoring: true,
   pendingBaseHandle: null,
   pendingBaseName: null,
   pendingCanWrite: false,
@@ -177,7 +202,17 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   installing: false,
   toast: null,
 
-  setPhase: (phase) => set({ phase }),
+  setPhase: (phase) => {
+    if (isDailyPhase(phase)) saveLastDailyPhase(phase)
+    set({ phase })
+  },
+
+  goSetup: () => {
+    const { folderLabel, installStatus } = get()
+    if (!folderLabel) set({ phase: 'connect' })
+    else if (installStatus !== 'ready') set({ phase: 'install' })
+    else set({ phase: 'connect' })
+  },
 
   setProject: (patch) => {
     const project = { ...get().project, ...patch }
@@ -277,7 +312,9 @@ export const useStudioStore = create<StudioState>((set, get) => ({
         pendingCanWrite: false,
         pendingSubpath: '',
       })
-      afterOpen(set, get, result.label, result.files, result.handle, result.canWrite)
+      afterOpen(set, get, result.label, result.files, result.handle, result.canWrite, {
+        preferDaily: false,
+      })
       get().showToast(`Confirmed · prompts use ${result.docRoot}`)
     } catch (err) {
       set({
@@ -317,17 +354,39 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   },
 
   tryRestoreFolder: async () => {
+    set({ restoring: true, error: null })
     const handle = await loadDirectoryHandle()
-    if (!handle) return
+    const hint = loadFolderHint()
+    if (!handle) {
+      const bootDone = loadBootDone()
+      set({
+        restoring: false,
+        folderHint: hint,
+        phase: bootDone ? 'connect' : 'start',
+      })
+      return
+    }
     const hydrated = await rehydrateFolder(handle)
-    if (!hydrated) return
-    afterOpen(set, get, handle.name, hydrated.files, handle, hydrated.canWrite)
+    if (!hydrated) {
+      set({
+        restoring: false,
+        folderHint: hint || handle.name,
+        phase: 'connect',
+        error:
+          'Previously chosen folder needs permission again. Click “Choose folder” (or Allow) to continue.',
+      })
+      return
+    }
+    afterOpen(set, get, hint || handle.name, hydrated.files, handle, hydrated.canWrite, {
+      preferDaily: true,
+    })
+    get().showToast(`Restored · ${hint || handle.name}`)
   },
 
   refreshIndex: async (opts) => {
     const handle = get().folderHandle
     if (!handle) {
-      set({ error: 'No folder bound — connect a folder first.' })
+      set({ error: 'No folder bound — finish Setup first.' })
       return
     }
     set({ opening: true, error: null })
@@ -349,7 +408,10 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   writeStarterScaffold: async () => {
     const handle = get().folderHandle
     if (!handle || !get().canWrite) {
-      set({ error: 'Write access required — reconnect the folder in Chrome/Edge/Brave and allow editing.' })
+      set({
+        error:
+          'Write access required — open Setup and choose the folder again in Chrome/Edge/Brave.',
+      })
       return
     }
     set({ installing: true, error: null })
@@ -358,6 +420,7 @@ export const useStudioStore = create<StudioState>((set, get) => ({
       await writeFileMap(handle, files)
       await get().refreshIndex({ keepPhase: true })
       set({ installing: false, phase: 'run', installStatus: 'ready' })
+      saveLastDailyPhase('run')
       get().showToast(`Wrote ${Object.keys(files).length} starter files`)
     } catch (err) {
       set({
@@ -369,9 +432,12 @@ export const useStudioStore = create<StudioState>((set, get) => ({
 
   clearFolder: () => {
     searchFn = null
+    saveFolderHint(null)
+    saveBootDone(false)
     set({
       folderHandle: null,
       folderLabel: null,
+      folderHint: null,
       pendingBaseHandle: null,
       pendingBaseName: null,
       pendingCanWrite: false,
@@ -387,8 +453,9 @@ export const useStudioStore = create<StudioState>((set, get) => ({
       searchHits: [],
       typeFilter: '',
       browsePanel: 'doc',
-      phase: 'about',
+      phase: 'start',
       error: null,
+      restoring: false,
     })
   },
 

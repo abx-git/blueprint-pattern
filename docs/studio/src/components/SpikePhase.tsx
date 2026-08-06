@@ -45,10 +45,10 @@ export function SpikePhase() {
   if (!folderLabel) {
     return (
       <div className="phase-panel">
-        <h2>Process</h2>
-        <p>Connect a folder first.</p>
+        <h2>Spikes</h2>
+        <p>Finish Setup first — choose your documentation folder.</p>
         <button type="button" className="btn primary" onClick={() => setPhase('connect')}>
-          Go to Connect
+          Go to Setup
         </button>
       </div>
     )
@@ -58,7 +58,7 @@ export function SpikePhase() {
     <div className="spike-phase">
       <aside className="spike-sidebar">
         <div className="spike-sidebar-head">
-          <h2>Process</h2>
+          <h2>Spikes</h2>
           <button
             type="button"
             className="btn primary"
@@ -68,6 +68,7 @@ export function SpikePhase() {
             {listKind === 'spikes' ? 'New spike' : 'New review'}
           </button>
         </div>
+        <p className="spike-lead">Ideen und offene Fragen ausarbeiten — nicht in den Dauer-Kapiteln.</p>
         <div className="panel-tabs" role="tablist">
           <button
             type="button"

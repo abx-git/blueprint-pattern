@@ -2,7 +2,10 @@ import { useStudioStore } from '../store/studio-store'
 
 export function WhatIsAgmPhase() {
   const setPhase = useStudioStore((s) => s.setPhase)
+  const goSetup = useStudioStore((s) => s.goSetup)
   const folderLabel = useStudioStore((s) => s.folderLabel)
+  const installStatus = useStudioStore((s) => s.installStatus)
+  const ready = Boolean(folderLabel) && installStatus === 'ready'
 
   return (
     <div className="starter-page about-page">
@@ -103,9 +106,9 @@ export function WhatIsAgmPhase() {
         <button
           type="button"
           className="btn primary"
-          onClick={() => setPhase(folderLabel ? 'run' : 'connect')}
+          onClick={() => (ready ? setPhase('run') : goSetup())}
         >
-          {folderLabel ? 'Continue journey' : 'Get started'}
+          {ready ? 'Weiter — Schreiben' : 'Setup starten'}
         </button>
       </div>
     </div>

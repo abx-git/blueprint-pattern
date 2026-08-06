@@ -39,10 +39,10 @@ export function ConnectPhase() {
 
   return (
     <div className="phase-panel connect-phase">
-      <h2>Connect your project</h2>
+      <h2>Setup — Ordner &amp; Projekt</h2>
       <p className="lead">
-        Choose a folder, optionally add a subfolder, then confirm the resulting documentation path.
-        That path is used for Install, Process, and every Run prompt.
+        Einmal: Ordner wählen, optional Unterpfad, Pfad bestätigen. Studio merkt sich den Ordner für
+        den nächsten Besuch. Danach: Schreiben · Spikes · Lesen.
       </p>
 
       <div className="form-grid">
@@ -180,7 +180,7 @@ export function ConnectPhase() {
                 placeholder="docs/architecture/"
               />
               <span className="hint">
-                Edit if needed. Install and Run will resolve files under this path.
+                Edit if needed. Setup and Schreiben use this path.
               </span>
             </label>
 
@@ -218,7 +218,7 @@ export function ConnectPhase() {
 
       <div className="phase-actions">
         <button type="button" className="btn primary" disabled={!confirmed} onClick={continueNext}>
-          Continue
+          {installStatus === 'ready' ? 'Weiter — Schreiben' : 'Weiter — Starter'}
         </button>
       </div>
     </div>

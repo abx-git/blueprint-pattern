@@ -3,33 +3,31 @@ import { supportsDirectoryPicker } from '../lib/fs-access'
 
 export function StarterPhase() {
   const setPhase = useStudioStore((s) => s.setPhase)
+  const goSetup = useStudioStore((s) => s.goSetup)
   const folderLabel = useStudioStore((s) => s.folderLabel)
+  const installStatus = useStudioStore((s) => s.installStatus)
+  const ready = Boolean(folderLabel) && installStatus === 'ready'
 
   return (
     <div className="starter-page">
       <div className="starter-hero">
         <p className="starter-brand">AGM Studio</p>
-        <h1>One URL. Your architecture folder. Your AI chat.</h1>
+        <h1>Your architecture companion</h1>
         <p className="starter-lead">
-          Open this page, bind a local folder, let Studio write the starter graph, run sessions by
-          pasting prompts into Cursor (or similar), then spike and review here — nothing to download.
+          One-time setup binds your docs folder. After that: write with AI sessions, explore spikes,
+          or browse the graph — Studio remembers the folder next time.
         </p>
         <div className="starter-cta">
           <button
             type="button"
             className="btn primary"
-            onClick={() => setPhase(folderLabel ? 'run' : 'connect')}
+            onClick={() => (ready ? setPhase('run') : goSetup())}
           >
-            {folderLabel ? 'Continue journey' : 'Get started'}
+            {ready ? 'Weiter — Schreiben' : folderLabel ? 'Setup fortsetzen' : 'Setup starten'}
           </button>
           <button type="button" className="btn" onClick={() => setPhase('about')}>
             What is AGM?
           </button>
-          {folderLabel && (
-            <button type="button" className="btn" onClick={() => setPhase('connect')}>
-              Project settings
-            </button>
-          )}
         </div>
       </div>
 
@@ -37,56 +35,51 @@ export function StarterPhase() {
         <h2 id="starter-before">What you need</h2>
         <ul className="starter-list">
           <li>
-            <strong>This page</strong> in Chrome, Edge, or Brave (write access to a folder).
+            <strong>This page</strong> in Chrome, Edge, or Brave (folder write access).
           </li>
           <li>
             <strong>A local folder</strong> — usually <code>docs/architecture</code> (empty is fine).
           </li>
           <li>
-            <strong>An AI chat on the same repo</strong> — Cursor, Claude, or Copilot — only to run
-            the prompts Studio copies for you.
+            <strong>An AI chat on the same repo</strong> — Cursor, Claude, or Copilot — to paste
+            prompts Studio prepares.
           </li>
         </ul>
         {!supportsDirectoryPicker() && (
           <p className="starter-note">
             This browser cannot grant folder write access. Use Chrome, Edge, or Brave for the full
-            Studio journey.
+            experience.
           </p>
         )}
       </section>
 
       <section className="starter-section" aria-labelledby="starter-flow">
-        <h2 id="starter-flow">The journey</h2>
+        <h2 id="starter-flow">How it works</h2>
         <ol className="starter-flow">
           <li>
-            <span className="starter-flow-step">Connect</span>
+            <span className="starter-flow-step">Setup</span>
             <span className="starter-flow-body">
-              Name the project and bind the architecture folder with edit permission.
+              Once: choose the folder, confirm the doc path, write the starter if needed. Studio
+              remembers it.
             </span>
           </li>
           <li>
-            <span className="starter-flow-step">Install</span>
+            <span className="starter-flow-step">Schreiben</span>
             <span className="starter-flow-body">
-              One click writes the AGM starter into that folder (browser only).
+              Copy a session prompt → paste into a new AI chat. Extend docs, sync after code changes,
+              or start Adopt for the first fill.
             </span>
           </li>
           <li>
-            <span className="starter-flow-step">Run</span>
+            <span className="starter-flow-step">Spikes</span>
             <span className="starter-flow-body">
-              Copy a session prompt → paste into a new AI chat on the repo. The agent writes docs;
-              Studio does not run the model.
+              Capture messy questions in dated spike folders; lean-edit boards here.
             </span>
           </li>
           <li>
-            <span className="starter-flow-step">Spike</span>
+            <span className="starter-flow-step">Lesen</span>
             <span className="starter-flow-body">
-              Create spikes, edit notes, lean-edit Event Storming boards in Studio.
-            </span>
-          </li>
-          <li>
-            <span className="starter-flow-step">Review</span>
-            <span className="starter-flow-body">
-              Browse the Markdown graph, Mermaid, and boards.
+              Browse the Markdown graph, Mermaid diagrams, and boards.
             </span>
           </li>
         </ol>
@@ -97,29 +90,29 @@ export function StarterPhase() {
         <div
           className="starter-loop"
           role="img"
-          aria-label="Studio binds folder; AI chat writes docs; Studio reviews"
+          aria-label="Studio holds folder; AI chat writes docs; Studio for spikes and browse"
         >
           <div className="starter-loop-node">
-            <strong>AGM Studio</strong>
-            <span>URL · install · spike · review</span>
+            <strong>Studio</strong>
+            <span>Folder + prompts</span>
           </div>
           <div className="starter-loop-arrow" aria-hidden="true">
-            ↔
-          </div>
-          <div className="starter-loop-node">
-            <strong>Local folder</strong>
-            <span>docs/architecture</span>
-          </div>
-          <div className="starter-loop-arrow" aria-hidden="true">
-            ↔
+            →
           </div>
           <div className="starter-loop-node">
             <strong>AI chat</strong>
-            <span>paste prompt from Run</span>
+            <span>Writes Markdown</span>
+          </div>
+          <div className="starter-loop-arrow" aria-hidden="true">
+            →
+          </div>
+          <div className="starter-loop-node">
+            <strong>Studio</strong>
+            <span>Spikes &amp; browse</span>
           </div>
         </div>
         <p className="starter-section-lead">
-          Docs never leave your machine for Studio. No AGM CLI install for this path.
+          Setup is rare. Daily work is Schreiben, Spikes, and Lesen.
         </p>
       </section>
 
@@ -130,9 +123,9 @@ export function StarterPhase() {
         <button
           type="button"
           className="btn primary"
-          onClick={() => setPhase(folderLabel ? 'run' : 'connect')}
+          onClick={() => (ready ? setPhase('run') : goSetup())}
         >
-          {folderLabel ? 'Continue journey' : 'Get started — Connect'}
+          {ready ? 'Weiter — Schreiben' : 'Setup starten'}
         </button>
       </div>
     </div>

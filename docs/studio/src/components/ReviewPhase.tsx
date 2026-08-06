@@ -11,14 +11,17 @@ export function ReviewPhase() {
   if (!index) {
     return (
       <div className="phase-panel">
-        <h2>Review</h2>
-        <p>No architecture index yet. Connect a folder and install (or refresh after the agent writes files).</p>
+        <h2>Lesen</h2>
+        <p>
+          Noch kein Index. Setup abschließen oder Ordner aktualisieren, nachdem der Agent Dateien
+          geschrieben hat.
+        </p>
         <div className="cmd-row">
           <button type="button" className="btn primary" onClick={() => setPhase('connect')}>
-            Go to Connect
+            Go to Setup
           </button>
           <button type="button" className="btn" onClick={() => setPhase('run')}>
-            Back to Run
+            Back to Schreiben
           </button>
         </div>
       </div>
@@ -29,14 +32,15 @@ export function ReviewPhase() {
     <div className="review-phase">
       <div className="review-toolbar">
         <p>
-          Reviewing <strong>{index.rootLabel}</strong> · {index.docs.size} files — same folder as Connect.
+          Lesen: <strong>{index.rootLabel}</strong> · {index.docs.size} files — Graph, Mermaid,
+          Boards.
         </p>
         <div className="cmd-row">
           <button type="button" className="btn" disabled={opening} onClick={() => refreshIndex()}>
             Refresh from folder
           </button>
           <button type="button" className="btn" onClick={() => setPhase('run')}>
-            Back to Run
+            Back to Schreiben
           </button>
         </div>
       </div>

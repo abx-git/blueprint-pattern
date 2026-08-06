@@ -14,6 +14,7 @@ export default function App() {
   const phase = useStudioStore((s) => s.phase)
   const error = useStudioStore((s) => s.error)
   const toast = useStudioStore((s) => s.toast)
+  const restoring = useStudioStore((s) => s.restoring)
   const tryRestoreFolder = useStudioStore((s) => s.tryRestoreFolder)
 
   useEffect(() => {
@@ -21,11 +22,12 @@ export default function App() {
   }, [tryRestoreFolder])
 
   const introPhase = phase === 'about' || phase === 'start'
+  const showRail = !introPhase
 
   return (
     <div className={`studio${introPhase ? ' studio--starter' : ''}`}>
       <ProjectBar />
-      {!introPhase && <JourneyRail />}
+      {showRail && <JourneyRail />}
       {error && (
         <div className="studio-error" role="alert">
           {error}
@@ -36,6 +38,11 @@ export default function App() {
           {toast}
         </div>
       )}
+      {restoring && introPhase === false && phase === 'connect' && !error ? (
+        <div className="studio-toast" role="status">
+          Restoring folder…
+        </div>
+      ) : null}
       <div
         className={`studio-body${phase === 'review' || phase === 'spike' ? ' studio-body--wide' : ''}${introPhase ? ' studio-body--starter' : ''}`}
       >

@@ -739,6 +739,17 @@ code {
   color: var(--accent);
 }
 
+.journey-chip--secondary {
+  margin-left: auto;
+  opacity: 0.9;
+  min-width: 5.5rem;
+  border-style: dashed;
+}
+
+.journey-chip--secondary.active {
+  border-style: solid;
+}
+
 .journey-chip.done:not(.active) {
   border-color: #86efac;
 }
@@ -1050,6 +1061,13 @@ code {
 .spike-sidebar-head h2 {
   margin: 0;
   font-size: 1.05rem;
+}
+
+.spike-lead {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.35;
 }
 
 .spike-list {
