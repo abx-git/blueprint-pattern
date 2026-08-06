@@ -3,9 +3,9 @@ import { supportsDirectoryPicker } from '../lib/fs-access'
 import type { JourneyPhase } from '../types'
 
 const DAILY: { id: JourneyPhase; label: string; hint: string }[] = [
-  { id: 'run', label: 'Schreiben', hint: 'Docs erweitern' },
-  { id: 'spike', label: 'Spikes', hint: 'Ideen ausarbeiten' },
-  { id: 'review', label: 'Lesen', hint: 'Graph browsen' },
+  { id: 'run', label: 'Write', hint: 'Extend docs' },
+  { id: 'spike', label: 'Spikes', hint: 'Explore ideas' },
+  { id: 'review', label: 'Browse', hint: 'Read the graph' },
 ]
 
 export function JourneyRail() {
@@ -19,10 +19,10 @@ export function JourneyRail() {
   const ready = Boolean(folderLabel) && installStatus === 'ready'
   const setupActive = phase === 'connect' || phase === 'install'
   const setupHint = !folderLabel
-    ? 'Ordner wählen'
+    ? 'Choose folder'
     : installStatus !== 'ready'
-      ? 'Starter schreiben'
-      : 'Projekt & Ordner'
+      ? 'Write starter'
+      : 'Project & folder'
 
   return (
     <nav className="journey-rail" aria-label="AGM Studio">
@@ -71,7 +71,7 @@ export function JourneyRail() {
               title="Finish Setup first"
             >
               <span className="journey-chip-label">{p.label}</span>
-              <span className="journey-chip-hint">nach Setup</span>
+              <span className="journey-chip-hint">after Setup</span>
             </button>
           ))}
         </>
@@ -109,7 +109,7 @@ export function ProjectBar() {
             : phase === 'start'
               ? 'how it works'
               : ready
-                ? 'Schreiben · Spikes · Lesen'
+                ? 'Write · Spikes · Browse'
                 : 'Setup'}
         </span>
       </button>

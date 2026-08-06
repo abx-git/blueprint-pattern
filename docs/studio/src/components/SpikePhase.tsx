@@ -68,7 +68,9 @@ export function SpikePhase() {
             {listKind === 'spikes' ? 'New spike' : 'New review'}
           </button>
         </div>
-        <p className="spike-lead">Ideen und offene Fragen ausarbeiten — nicht in den Dauer-Kapiteln.</p>
+        <p className="spike-lead">
+          Work through open questions here — not in the durable architecture chapters.
+        </p>
         <div className="panel-tabs" role="tablist">
           <button
             type="button"

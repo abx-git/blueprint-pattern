@@ -23,7 +23,7 @@ export function StarterPhase() {
             className="btn primary"
             onClick={() => (ready ? setPhase('run') : goSetup())}
           >
-            {ready ? 'Weiter — Schreiben' : folderLabel ? 'Setup fortsetzen' : 'Setup starten'}
+            {ready ? 'Continue — Write' : folderLabel ? 'Continue Setup' : 'Start Setup'}
           </button>
           <button type="button" className="btn" onClick={() => setPhase('about')}>
             What is AGM?
@@ -64,10 +64,10 @@ export function StarterPhase() {
             </span>
           </li>
           <li>
-            <span className="starter-flow-step">Schreiben</span>
+            <span className="starter-flow-step">Write</span>
             <span className="starter-flow-body">
               Copy a session prompt → paste into a new AI chat. Extend docs, sync after code changes,
-              or start Adopt for the first fill.
+              or run Adopt for the first fill.
             </span>
           </li>
           <li>
@@ -77,7 +77,7 @@ export function StarterPhase() {
             </span>
           </li>
           <li>
-            <span className="starter-flow-step">Lesen</span>
+            <span className="starter-flow-step">Browse</span>
             <span className="starter-flow-body">
               Browse the Markdown graph, Mermaid diagrams, and boards.
             </span>
@@ -112,7 +112,7 @@ export function StarterPhase() {
           </div>
         </div>
         <p className="starter-section-lead">
-          Setup is rare. Daily work is Schreiben, Spikes, and Lesen.
+          Setup is rare. Daily work is Write, Spikes, and Browse.
         </p>
       </section>
 
@@ -125,7 +125,7 @@ export function StarterPhase() {
           className="btn primary"
           onClick={() => (ready ? setPhase('run') : goSetup())}
         >
-          {ready ? 'Weiter — Schreiben' : 'Setup starten'}
+          {ready ? 'Continue — Write' : 'Start Setup'}
         </button>
       </div>
     </div>

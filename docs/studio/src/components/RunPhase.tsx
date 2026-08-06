@@ -114,7 +114,7 @@ export function RunPhase() {
   if (!folderLabel) {
     return (
       <div className="phase-panel">
-        <h2>Schreiben</h2>
+        <h2>Write</h2>
         <p>Finish Setup first — choose your documentation folder.</p>
         <button type="button" className="btn primary" onClick={() => goSetup()}>
           Go to Setup
@@ -126,7 +126,7 @@ export function RunPhase() {
   if (loadError) {
     return (
       <div className="phase-panel">
-        <h2>Schreiben</h2>
+        <h2>Write</h2>
         <p className="warn">{loadError}</p>
       </div>
     )
@@ -135,32 +135,31 @@ export function RunPhase() {
   const tabs: { id: RunStep; label: string }[] =
     installStatus === 'ready'
       ? [
-          { id: 'continue', label: 'Erweitern' },
+          { id: 'continue', label: 'Extend' },
           { id: 'evolve', label: 'Sync / Import' },
-          { id: 'verify', label: 'Prüfen' },
-          { id: 'adopt', label: 'Erneut starten' },
-          { id: 'advanced', label: 'Mehr' },
+          { id: 'verify', label: 'Verify' },
+          { id: 'adopt', label: 'Re-adopt' },
+          { id: 'advanced', label: 'More' },
         ]
       : [
-          { id: 'adopt', label: 'Starten' },
-          { id: 'continue', label: 'Erweitern' },
+          { id: 'adopt', label: 'Adopt' },
+          { id: 'continue', label: 'Extend' },
           { id: 'evolve', label: 'Sync / Import' },
-          { id: 'verify', label: 'Prüfen' },
-          { id: 'advanced', label: 'Mehr' },
+          { id: 'verify', label: 'Verify' },
+          { id: 'advanced', label: 'More' },
         ]
 
   return (
     <div className="phase-panel run-phase">
-      <h2>Schreiben — Dokumentation erweitern</h2>
+      <h2>Write — extend documentation</h2>
       <p className="lead">
-        Studio baut den Prompt für <strong>{project.docRoot || '(set in Setup)'}</strong>. Öffne{' '}
-        <strong>{tool}</strong> im gleichen Repo, starte einen <strong>neuen Chat</strong>, füge ein —
-        der Agent schreibt die Dateien. Danach zurück zu Spikes oder Lesen.
+        Studio prepares the prompt for <strong>{project.docRoot || '(set in Setup)'}</strong>. Open{' '}
+        <strong>{tool}</strong> on the same repo, start a <strong>new chat</strong>, paste — the
+        agent writes the files. Then return here for Spikes or Browse.
         {installStatus !== 'ready' && (
           <>
             {' '}
-            Starter fehlt noch (<strong>{installStatus}</strong>) — nutze Setup oder „Starten“
-            (Adopt).
+            Starter still missing (<strong>{installStatus}</strong>) — use Setup or Adopt.
           </>
         )}
       </p>
@@ -185,15 +184,15 @@ export function RunPhase() {
       {step === 'adopt' && (
         <div className="run-card">
           <p>
-            Erste Docs-Session: füllt entry-point (start here), blueprint (what&apos;s next) und das
-            erste Kapitel.
+            First docs session: fills entry-point (start here), blueprint (what&apos;s next), and the
+            first chapter.
           </p>
           <details open>
             <summary>Preview</summary>
             <pre className="preview-box">{adoptText.slice(0, 4000)}{adoptText.length > 4000 ? '\n…' : ''}</pre>
           </details>
           <button type="button" className="btn primary" onClick={() => copyOut(adoptText)}>
-            {copyBtn('Starten / Adopt')}
+            {copyBtn('Adopt')}
           </button>
         </div>
       )}
@@ -206,7 +205,7 @@ export function RunPhase() {
             <pre className="preview-box">{continueText.slice(0, 4000)}</pre>
           </details>
           <button type="button" className="btn primary" onClick={() => copyOut(continueText)}>
-            {copyBtn('Erweitern')}
+            {copyBtn('Extend')}
           </button>
         </div>
       )}
@@ -314,14 +313,14 @@ export function RunPhase() {
 
       <div className="run-cta">
         <p>
-          Nach der Session: <strong>Spikes</strong> für Ideen, oder <strong>Lesen</strong> für den
-          Graph.
+          After the session: <strong>Spikes</strong> for ideas, or <strong>Browse</strong> for the
+          graph.
         </p>
         <button type="button" className="btn" onClick={() => setPhase('spike')}>
           Spikes
         </button>
         <button type="button" className="btn primary" onClick={() => setPhase('review')}>
-          Lesen
+          Browse
         </button>
       </div>
     </div>

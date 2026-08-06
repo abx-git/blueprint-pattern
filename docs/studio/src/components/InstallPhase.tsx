@@ -12,7 +12,7 @@ export function InstallPhase() {
   if (!folderLabel) {
     return (
       <div className="phase-panel">
-        <h2>Setup — Starter</h2>
+        <h2>Setup — starter</h2>
         <p>Choose a folder in Setup first.</p>
         <button type="button" className="btn primary" onClick={() => setPhase('connect')}>
           Choose folder
@@ -23,11 +23,11 @@ export function InstallPhase() {
 
   return (
     <div className="phase-panel install-phase">
-      <h2>Setup — Starter schreiben</h2>
+      <h2>Setup — write starter</h2>
       <p className="lead">
         {installStatus === 'ready'
-          ? 'Starter ist vorhanden. Du kannst zu Schreiben weitergehen oder die Dateien neu schreiben.'
-          : 'Ein Klick schreibt entry-point, blueprint und Vorlagen in den Ordner. Kein CLI.'}
+          ? 'Starter is present. Continue to Write, or rewrite the starter files.'
+          : 'One click writes entry-point, blueprint, and templates into this folder. No CLI.'}
       </p>
 
       <div className="install-card">
@@ -66,7 +66,7 @@ export function InstallPhase() {
           onClick={() => setPhase('run')}
           disabled={installStatus === 'missing'}
         >
-          Continue to Schreiben
+          Continue to Write
         </button>
         {installStatus === 'missing' && (
           <span className="hint">Write the starter first (needs write access).</span>

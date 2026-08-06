@@ -108,7 +108,7 @@ export function WhatIsAgmPhase() {
           className="btn primary"
           onClick={() => (ready ? setPhase('run') : goSetup())}
         >
-          {ready ? 'Weiter — Schreiben' : 'Setup starten'}
+          {ready ? 'Continue — Write' : 'Start Setup'}
         </button>
       </div>
     </div>
