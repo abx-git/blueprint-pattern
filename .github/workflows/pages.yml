@@ -176,8 +176,24 @@ jobs:
           git add -A
           if git diff --cached --quiet; then
             echo "No content changes — nothing to push."
-            exit 0
+          else
+            git commit -m "Deploy AGM Review Studio from agm@${GITHUB_SHA:0:7}"
+            git push origin main
+            echo "Pushed to abx-git/agm.github.io main."
           fi
-          git commit -m "Deploy AGM Review Studio from agm@${GITHUB_SHA:0:7}"
-          git push origin main
-          echo "Deployed. https://abx-git.github.io/agm.github.io/"
+
+          echo "Expected live URL: https://abx-git.github.io/agm.github.io/"
+          echo "Pages must be: Deploy from a branch → main → / (root) on abx-git/agm.github.io."
+          echo "This workflow does not create entries under abx-git/agm/deployments — check Actions here and Pages on agm.github.io."
+
+          # Best-effort live check (Pages can lag a minute after push)
+          sleep 15
+          CODE=$(curl -s -o /tmp/pages-body.txt -w "%{http_code}" "https://abx-git.github.io/agm.github.io/" || true)
+          echo "HTTP $CODE from https://abx-git.github.io/agm.github.io/"
+          if [ "$CODE" = "200" ]; then
+            echo "Live site OK."
+          elif [ "$CODE" = "404" ] || [ "$CODE" = "403" ] || [ "$CODE" = "000" ]; then
+            echo "::warning::Site returned HTTP $CODE. Open https://github.com/abx-git/agm.github.io/settings/pages and set Source = Deploy from a branch, Branch = main, Folder = /. Org policy can also block Pages."
+          else
+            echo "::notice::Unexpected HTTP $CODE (Pages may still be building)."
+          fi
