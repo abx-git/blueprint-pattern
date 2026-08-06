@@ -33,6 +33,36 @@ export function substituteDocRoot(text: string, docRoot: string): string {
     .replace(/<doc-root>/g, noSlash)
 }
 
+function buildStudioPromptNote(): string {
+  return [
+    '## Prompts (AGM Studio)',
+    '',
+    'Session and role instructions are provided **in this prompt** from AGM Studio. Do **not** expect or create `prompts/role-*.md` under the documentation root unless the human already keeps them there from a CLI install.',
+    'Human-in-the-loop scribe: propose; do not invent architecture without evidence. Keep entry-point.md and blueprint.md current.',
+    '**Do not create empty stub files.** Create a file only when you have real content for that checklist item (or when the human explicitly asks). Prefer one evidence-based chapter per session.',
+    '',
+  ].join('\n')
+}
+
+/** Neutralize on-disk role-file instructions for Studio-copied prompts. */
+export function stripDocRootRolePaths(text: string, docRoot: string): string {
+  const r = normDocRoot(docRoot)
+  const noSlash = r.replace(/\/$/, '')
+  let out = text
+  const patterns = [
+    new RegExp(`${noSlash.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/prompts/role-[\\w-]+\\.md`, 'gi'),
+    new RegExp(`${r.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}prompts/role-[\\w-]+\\.md`, 'gi'),
+    /<doc-root>\/?prompts\/role-[\w-]+\.md/gi,
+    /\$\{docRoot\}\/?prompts\/role-[\w-]+\.md/gi,
+    /docs\/architecture\/prompts\/role-[\w-]+\.md/gi,
+    /prompts\/role-[\w-]+\.md/gi,
+  ]
+  for (const re of patterns) {
+    out = out.replace(re, '(role guidance is in this AGM Studio prompt — skip on-disk role files)')
+  }
+  return out
+}
+
 function buildCoreFilesBlock(docRoot: string): string {
   const r = normDocRoot(docRoot)
   return [
@@ -67,15 +97,6 @@ function buildParameterBlock(params: ProjectParams): string {
   )
   lines.push('')
   return lines.join('\n')
-}
-
-export function buildAdoptPrompt(base: string, params: ProjectParams): string {
-  let prompt = substituteTemplate(substituteDocRoot(base, params.docRoot), resolvedTemplate(params))
-  const blocks = [
-    buildParameterBlock(params),
-    buildCoreFilesBlock(params.docRoot),
-  ]
-  return `${blocks.join('\n')}\n---\n\n${prompt}`
 }
 
 function applyWorkflowInputs(
@@ -133,15 +154,31 @@ function workflowSessionTitle(workflow: WorkflowEntry): string {
   return `${track} · ${activity}`
 }
 
+export function buildAdoptPrompt(
+  base: string,
+  params: ProjectParams,
+  contextPackBlock = '',
+): string {
+  let prompt = substituteTemplate(substituteDocRoot(base, params.docRoot), resolvedTemplate(params))
+  prompt = stripDocRootRolePaths(prompt, params.docRoot)
+  const blocks = [
+    buildParameterBlock(params),
+    buildStudioPromptNote(),
+    contextPackBlock.trim() || buildCoreFilesBlock(params.docRoot),
+  ]
+  return `${blocks.join('\n')}\n---\n\n${prompt}`
+}
+
 export function personalizeWorkflowPrompt(
   workflow: WorkflowEntry,
   params: ProjectParams,
   inputValues: Record<string, string | boolean | undefined> = {},
+  contextPackBlock = '',
 ): string {
   let prompt = substituteDocRoot(workflow.prompt, params.docRoot)
   prompt = substituteTemplate(prompt, resolvedTemplate(params))
   prompt = applyWorkflowInputs(prompt, workflow.id, inputValues)
-  // Drop machine ids like "Workflow: bootstrap-continue" from the pasted body
+  prompt = stripDocRootRolePaths(prompt, params.docRoot)
   prompt = prompt
     .replace(/^Workflow:\s*\S+\s*$/gim, '')
     .replace(/\n{3,}/g, '\n\n')
@@ -149,7 +186,9 @@ export function personalizeWorkflowPrompt(
   const header = [
     buildParameterBlock(params).trimEnd(),
     '',
-    buildCoreFilesBlock(params.docRoot).trimEnd(),
+    buildStudioPromptNote().trimEnd(),
+    '',
+    contextPackBlock.trim() || buildCoreFilesBlock(params.docRoot).trimEnd(),
     '',
     `## Session: ${workflowSessionTitle(workflow)}`,
     '',
@@ -158,7 +197,10 @@ export function personalizeWorkflowPrompt(
 }
 
 export function personalizeWorkflowWhen(workflow: WorkflowEntry, params: ProjectParams): string {
-  return substituteTemplate(substituteDocRoot(workflow.when || '', params.docRoot), resolvedTemplate(params))
+  return substituteTemplate(
+    substituteDocRoot(workflow.when || '', params.docRoot),
+    resolvedTemplate(params),
+  )
 }
 
 export async function copyText(text: string): Promise<boolean> {

@@ -31,7 +31,7 @@ export function ConnectPhase() {
 
   const continueNext = () => {
     if (!folderLabel) return
-    setPhase(installStatus === 'ready' ? 'run' : 'install')
+    setPhase(installStatus === 'ready' ? 'architecture' : 'install')
   }
 
   const pending = Boolean(pendingBaseName)
@@ -41,8 +41,9 @@ export function ConnectPhase() {
     <div className="phase-panel connect-phase">
       <h2>Setup — folder &amp; project</h2>
       <p className="lead">
-        Once: choose a folder, optionally add a subfolder, then confirm the path. Studio remembers
-        the folder for next time. After that: Write · Spikes · Browse.
+        Step 1 of the process: choose a local folder (usually your repo or{' '}
+        <code>docs/architecture</code>). Studio remembers it. After Setup: browse Architecture, then
+        use <strong>Extend docs</strong> to grow chapters with AI.
       </p>
 
       <div className="form-grid">
@@ -180,7 +181,7 @@ export function ConnectPhase() {
                 placeholder="docs/architecture/"
               />
               <span className="hint">
-                Edit if needed. Setup and Write use this path.
+                Edit if needed. Setup and Session use this path.
               </span>
             </label>
 
@@ -218,7 +219,7 @@ export function ConnectPhase() {
 
       <div className="phase-actions">
         <button type="button" className="btn primary" disabled={!confirmed} onClick={continueNext}>
-          {installStatus === 'ready' ? 'Continue — Write' : 'Continue — starter'}
+          {installStatus === 'ready' ? 'Open cockpit' : 'Continue — starter'}
         </button>
       </div>
     </div>

@@ -26,14 +26,16 @@ export function InstallPhase() {
       <h2>Setup — write starter</h2>
       <p className="lead">
         {installStatus === 'ready'
-          ? 'Starter is present. Continue to Write, or rewrite the starter files.'
-          : 'One click writes entry-point, blueprint, and templates into this folder. No CLI.'}
+          ? 'Starter state files are present. Open the cockpit, or rewrite entry-point + blueprint.'
+          : 'Writes only two state files: entry-point.md and blueprint.md. No empty chapters or stubs.'}
       </p>
 
       <div className="install-card">
         <p>
-          Writes entry-point, blueprint, template stubs, roles, and process
-          templates into <code>{folderLabel}</code>. Run prompts will refer to{' '}
+          Into <code>{folderLabel}</code>: <strong>entry-point.md</strong> (facts + links) and{' '}
+          <strong>blueprint.md</strong> (what&apos;s next). Template chapters, domain/, spikes, and
+          reviews are created later by <strong>Adopt</strong>, <strong>Extend docs</strong>, or
+          Studio actions — not now. Prompts stay in AGM Studio. Doc paths in prompts use{' '}
           <code>{project.docRoot || './'}</code>.
         </p>
         {!canWrite && (
@@ -51,8 +53,8 @@ export function InstallPhase() {
           {installing
             ? 'Writing…'
             : installStatus === 'ready'
-              ? 'Rewrite starter files'
-              : 'Write starter into folder'}
+              ? 'Rewrite entry-point + blueprint'
+              : 'Write entry-point + blueprint'}
         </button>
       </div>
 
@@ -63,10 +65,10 @@ export function InstallPhase() {
         <button
           type="button"
           className="btn primary"
-          onClick={() => setPhase('run')}
+          onClick={() => setPhase('architecture')}
           disabled={installStatus === 'missing'}
         >
-          Continue to Write
+          Open cockpit
         </button>
         {installStatus === 'missing' && (
           <span className="hint">Write the starter first (needs write access).</span>

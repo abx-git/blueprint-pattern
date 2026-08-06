@@ -4,7 +4,7 @@ Operational reference. **Start with [quickstart.md](./quickstart.md)** (~10 min)
 
 Architecture documentation as a **Markdown link graph** in `docs/architecture/`, maintained with AI agents, versioned in Git.
 
-**Golden path:** Install → Adopt → Continue → Maintain → Review. Copy session prompts from the [Assistant UI](https://abx-git.github.io/agm.github.io/). MCP `agm_trigger_workflow` uses **LLMLingua-2 compressed** prompts from `@abx-hh/agm-cli` ([install](./reference/agm-mcp-install.md)) — golden path on npm; extended workflows need the private pack ([agm/README.md](../agm/README.md)).
+**Golden path:** Install → Adopt → Continue → Maintain → Review. Copy session prompts from [AGM Studio](https://abx-git.github.io/agm.github.io/) (Session workspace). MCP `agm_trigger_workflow` uses **LLMLingua-2 compressed** prompts from `@abx-hh/agm-cli` ([install](./reference/agm-mcp-install.md)) — golden path on npm; extended workflows need the private pack ([agm/README.md](../agm/README.md)).
 
 ---
 
@@ -26,8 +26,8 @@ Architect/Domain and other Advanced intents: [reference/extended-workflows.md](.
 
 ## Setup (once)
 
-1. **Install** — [Assistant → Build → Install](https://abx-git.github.io/agm.github.io/) → run `agm-install.sh` at app repo root (default = golden path). See [reference/install.md](./reference/install.md).
-2. **Adopt** — copy adoption prompt → new chat. Agent fills `entry-point.md` (start here) and `blueprint.md` (what's next), plus the first chapter.
+1. **Install** — [AGM Studio](https://abx-git.github.io/agm.github.io/) Setup (Connect → Install) or `agm-install.sh` at app repo root (default = golden path). See [reference/install.md](./reference/install.md). Studio then opens the cockpit: Architecture · Knowledge · Concepts · Analyses · Session — [studio-workspaces.md](./reference/studio-workspaces.md).
+2. **Adopt** — Session → copy adoption prompt → new chat. Agent fills `entry-point.md` (start here) and `blueprint.md` (what's next), plus the first chapter.
 3. **CI** — enable [agm-integrity](./reference/ci-integrity.md) on the app repo.
 
 **Templates at adopt:** `arc42` (multi-module, default) · `lean-service` (single service). Record choice in `entry-point.md`. Advanced: [reference/advanced-templates.md](./reference/advanced-templates.md).

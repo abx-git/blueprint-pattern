@@ -1,4 +1,15 @@
-export type JourneyPhase = 'about' | 'start' | 'connect' | 'install' | 'run' | 'spike' | 'review'
+export type SetupPhase = 'about' | 'start' | 'connect' | 'install'
+
+/** Durable cockpit workspaces after Setup. */
+export type WorkspaceId = 'architecture' | 'knowledge' | 'concepts' | 'analyses' | 'session'
+
+/** Which Session tab to open when navigating from a workspace CTA. */
+export type SessionIntent = 'adopt' | 'continue' | 'evolve' | 'verify' | 'advanced'
+
+export type JourneyPhase = SetupPhase | WorkspaceId
+
+/** DocNode classification from path conventions. */
+export type DocWorkspace = 'architecture' | 'knowledge' | 'concepts' | 'analyses' | 'meta'
 
 export type InstallStatus = 'unknown' | 'missing' | 'ready' | 'partial'
 
@@ -29,6 +40,7 @@ export interface DocNode {
   content: string
   meta: OkfMeta | null
   links: string[]
+  workspace: DocWorkspace
 }
 
 export interface GraphEdge {
@@ -76,3 +88,19 @@ export const DEFAULT_PROJECT: ProjectParams = {
 }
 
 export const STORAGE_KEY = 'agm-studio-project'
+
+export const WORKSPACE_PHASES: WorkspaceId[] = [
+  'architecture',
+  'knowledge',
+  'concepts',
+  'analyses',
+  'session',
+]
+
+export function isWorkspacePhase(phase: JourneyPhase): phase is WorkspaceId {
+  return (WORKSPACE_PHASES as string[]).includes(phase)
+}
+
+export function isSetupPhase(phase: JourneyPhase): phase is SetupPhase {
+  return phase === 'about' || phase === 'start' || phase === 'connect' || phase === 'install'
+}

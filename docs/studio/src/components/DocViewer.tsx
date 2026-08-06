@@ -11,6 +11,7 @@ interface Props {
   allDocs: Map<string, DocNode>
   onNavigate: (path: string) => void
   onOpenStorm: (path: string) => void
+  onPinPath?: (path: string) => void
 }
 
 let mermaidReady = false
@@ -19,10 +20,40 @@ function ensureMermaid() {
   if (mermaidReady) return
   mermaid.initialize({
     startOnLoad: false,
-    securityLevel: 'strict',
+    // antiscript: allow quoted labels / mild HTML in diagrams; still block scripts
+    securityLevel: 'antiscript',
     theme: 'neutral',
+    flowchart: { htmlLabels: true },
+    themeVariables: {
+      fontFamily: 'ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif',
+      fontSize: '14px',
+    },
   })
   mermaidReady = true
+}
+
+/**
+ * Mermaid already sanitizes SVG (antiscript). A second DOMPurify pass with the
+ * SVG profile strips foreignObject HTML labels → diagrams with no text.
+ * Keep foreignObject as an HTML integration point if we ever re-sanitize.
+ */
+function insertMermaidSvg(host: HTMLElement, svg: string) {
+  host.innerHTML = DOMPurify.sanitize(svg, {
+    USE_PROFILES: { svg: true, svgFilters: true },
+    ADD_TAGS: ['foreignobject'],
+    ADD_ATTR: ['dominant-baseline'],
+    // DOMPurify key is lowercase (see cure53/DOMPurify#1002 / Mermaid mermaidAPI)
+    HTML_INTEGRATION_POINTS: { foreignobject: true },
+  })
+}
+
+/** Prefer textContent; fall back if a sanitizer left entities in the fence. */
+function readMermaidSource(code: Element): string {
+  const raw = (code.textContent || '').trim()
+  if (!raw.includes('&lt;') && !raw.includes('&gt;') && !raw.includes('&amp;')) return raw
+  const ta = document.createElement('textarea')
+  ta.innerHTML = raw
+  return ta.value.trim()
 }
 
 function rewriteInternalLinks(html: string, fromPath: string, allDocs: Map<string, DocNode>): string {
@@ -47,7 +78,7 @@ function rewriteInternalLinks(html: string, fromPath: string, allDocs: Map<strin
   return container.innerHTML
 }
 
-export function DocViewer({ doc, allDocs, onNavigate, onOpenStorm }: Props) {
+export function DocViewer({ doc, allDocs, onNavigate, onOpenStorm, onPinPath }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const { meta, body } = useMemo(() => parseFrontmatter(doc.content), [doc.content])
 
@@ -70,18 +101,28 @@ export function DocViewer({ doc, allDocs, onNavigate, onOpenStorm }: Props) {
       let i = 0
       for (const code of blocks) {
         const pre = code.parentElement
-        const source = code.textContent || ''
+        const source = readMermaidSource(code)
         const host = document.createElement('div')
         host.className = 'mermaid-host'
-        const id = `mmd-${doc.path.replace(/[^a-z0-9]/gi, '-')}-${i++}`
+        // Mermaid requires a unique DOM id; avoid path-only ids colliding across remounts
+        const id = `mmd-${i++}-${Math.random().toString(36).slice(2, 10)}`
         try {
+          if (!source) throw new Error('Empty mermaid fence')
+          await mermaid.parse(source)
           const { svg } = await mermaid.render(id, source)
           if (cancelled) return
-          host.innerHTML = svg
+          insertMermaidSvg(host, svg)
           pre?.replaceWith(host)
         } catch (err) {
           host.className = 'mermaid-host mermaid-error'
-          host.textContent = `Mermaid error: ${err instanceof Error ? err.message : String(err)}`
+          const msg = err instanceof Error ? err.message : String(err)
+          const title = document.createElement('p')
+          title.textContent = `Mermaid error: ${msg}`
+          host.appendChild(title)
+          const details = document.createElement('pre')
+          details.className = 'mermaid-error-source'
+          details.textContent = source.slice(0, 2000)
+          host.appendChild(details)
           pre?.replaceWith(host)
         }
       }
@@ -126,6 +167,28 @@ export function DocViewer({ doc, allDocs, onNavigate, onOpenStorm }: Props) {
     return () => el.removeEventListener('click', onClick)
   }, [onNavigate, onOpenStorm, doc.path])
 
+  // Highlight likely source-code path hints in backticks (e.g. src/foo.ts)
+  useEffect(() => {
+    const el = ref.current
+    if (!el || !onPinPath) return
+    const codes = el.querySelectorAll('code')
+    for (const code of codes) {
+      const text = (code.textContent || '').trim()
+      if (!/^(src|lib|app|packages|services)\/[\w./-]+\.\w{1,8}$/.test(text) && !/^[\w.-]+\/[\w./-]+\.(ts|tsx|js|jsx|py|go|java|kt|rs)$/.test(text)) {
+        continue
+      }
+      if (code.classList.contains('agm-code-path')) continue
+      code.classList.add('agm-code-path')
+      code.title = 'Click to pin code path for Session'
+      code.style.cursor = 'pointer'
+      const handler = (ev: Event) => {
+        ev.preventDefault()
+        onPinPath(text)
+      }
+      code.addEventListener('click', handler)
+    }
+  }, [onPinPath, doc.path, body])
+
   return (
     <article className="doc-viewer">
       <header className="doc-header">
@@ -133,6 +196,7 @@ export function DocViewer({ doc, allDocs, onNavigate, onOpenStorm }: Props) {
         <p className="doc-meta">
           <code>{doc.path}</code>
           {meta?.type && <span className="badge">{meta.type}</span>}
+          {doc.workspace && <span className="badge badge-ws">{doc.workspace}</span>}
         </p>
       </header>
       {stormLinks.length > 0 && (

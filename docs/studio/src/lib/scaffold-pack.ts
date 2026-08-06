@@ -18,39 +18,37 @@ function okf(type: string, title: string, body: string): string {
   ].join('\n')
 }
 
-/** Day-1 scaffold written into the chosen architecture folder from AGM Studio (browser only). */
+/**
+ * Minimal Day-1 bootstrap from AGM Studio.
+ * Only state files needed to start — no empty chapters, domain stubs, or process templates.
+ * Those appear when Adopt / Extend docs / Concepts / Analyses create them.
+ */
 export function buildStarterScaffold(params: ProjectParams): Record<string, string> {
   const name = params.appName || 'My Application'
   const template = resolvedTemplate(params)
   const stack = params.stack || '<stack>'
   const purpose = params.purpose || '<one sentence domain>'
   const today = new Date().toISOString().slice(0, 10)
-
-  const alwaysOn = okf(
-    'architecture-context',
-    'Always-on (legacy)',
-    `# Always-on (legacy)
-
-Facts and session orientation now live in **[entry-point.md](../entry-point.md)**.
-
-Keep this file only for older repos. If anything unique remains here, merge it into entry-point and stop maintaining a third source of truth.
-`,
-  )
+  const source = params.sourceRoot || '—'
 
   const blueprint = okf(
     'architecture-blueprint',
-    'Blueprint — what\'s next',
+    "Blueprint — what's next",
     `# Blueprint — ${name}
 
 **What's next** for the docs. Tick items as you go: \`[ ]\` open · \`[~]\` in progress · \`[x]\` done.
 
+Files listed below are **planned** — create them only when Adopt / Extend docs / a Studio action produces them. Do not pre-create empty stubs.
+
 ## Checklist
 
-| Status | Chapter | File |
-|--------|---------|------|
+| Status | Chapter | File (create when working this row) |
+|--------|---------|-------------------------------------|
 | [ ] | Fill entry-point facts | entry-point.md |
 | [ ] | Introduction | ${template}/introduction.md |
 | [ ] | Context view | ${template}/context.md |
+| [ ] | Domain knowledge (optional) | domain/ |
+| [ ] | Index + log (OKF) | index.md, log.md |
 
 ## Spikes
 
@@ -68,7 +66,7 @@ Keep this file only for older repos. If anything unique remains here, merge it i
 
 | Date | Summary |
 |------|---------|
-| ${today} | Starter scaffold written from AGM Studio |
+| ${today} | Minimal starter from AGM Studio (entry-point + blueprint only) |
 `,
   )
 
@@ -77,7 +75,7 @@ Keep this file only for older repos. If anything unique remains here, merge it i
     'Entry point — start here',
     `# Entry point — ${name}
 
-**Start here.** Put this file in the AI context. Short facts + links to everything else.
+**Start here.** Put this file in the AI context. Short facts + links to what exists.
 
 ## About this system
 
@@ -90,204 +88,26 @@ Keep this file only for older repos. If anything unique remains here, merge it i
 
 | Module | Path |
 |--------|------|
-| — | ${params.sourceRoot || '—'} |
+| — | ${source} |
 
 ## Links
 
 | What | Where |
 |------|-------|
 | What's next (checklist) | [blueprint.md](blueprint.md) |
-| Template chapters | [${template}/](${template}/) |
-| Spikes | [process/spikes/](process/spikes/) |
-| Reviews | [process/reviews/](process/reviews/) |
-| Index | [index.md](index.md) |
-| Log | [log.md](log.md) |
+
+Further chapters, \`domain/\`, spikes, and reviews appear when you run **Adopt** / **Extend docs** or create them in Studio. Do not invent empty files ahead of time.
 
 ## Session habit
 
-1. Read this file → [blueprint.md](blueprint.md) → \`prompts/role-&lt;role&gt;.md\`.
-2. Follow links; update this map when chapters appear.
-3. Tick blueprint items when work moves forward.
-`,
-  )
-
-  const index = okf(
-    'architecture-index',
-    'Architecture index',
-    `# Architecture — ${name}
-
-- [Entry point (start here)](entry-point.md)
-- [Blueprint (what's next)](blueprint.md)
-- [Process](process/) — spikes & reviews
-- Template: [${template}](${template}/)
-`,
-  )
-
-  const log = okf(
-    'architecture-log',
-    'Change log',
-    `# Log
-
-| Date | Change |
-|------|--------|
-| ${today} | Starter scaffold installed from AGM Studio |
-`,
-  )
-
-  const roleBootstrap = okf(
-    'architecture-role',
-    'Role — bootstrap',
-    `# Role: bootstrap
-
-You are the bootstrap scribe for AGM. Follow the active workflow session prompt from AGM Studio.
-Keep entry-point.md (start here) and blueprint.md (what's next) current every session.
-Human-in-the-loop: propose; do not silently invent architecture.
-Write new explorations under process/spikes/YYYY-MM-DD-&lt;slug&gt;/ (SPK register), not flat work/ files.
-`,
-  )
-
-  const roleMaintenance = okf(
-    'architecture-role',
-    'Role — maintenance',
-    `# Role: maintenance
-
-Keep the architecture docs aligned with the codebase. Prefer evidence from diffs and source.
-Update entry-point links and blueprint checklist each session. Output [[ANCHOR:LINK_CHECK]].
-`,
-  )
-
-  const roleReview = okf(
-    'architecture-role',
-    'Role — review',
-    `# Role: review
-
-Review architecture docs for consistency, broken links, and untraceable claims.
-Write Verify output under process/reviews/YYYY-MM-DD-&lt;slug&gt;/ (index.md, report.md, findings.md; REV-NNN).
-`,
-  )
-
-  const intro = okf(
-    'architecture-section',
-    `${template} introduction`,
-    `# Introduction
-
-<!-- Fill during Adopt / Continue sessions -->
-
-## Goals
-
--
-
-## Stakeholders
-
--
-`,
-  )
-
-  const contextDoc = okf(
-    'architecture-section',
-    `${template} context`,
-    `# Context
-
-<!-- System context — fill with evidence from code and interviews -->
-`,
-  )
-
-  const spikeIndexTpl = okf(
-    'architecture-spike',
-    'SPK-NNN: [Title]',
-    `# SPK-NNN: <Title>
-
-| Field | Value |
-|-------|-------|
-| **ID** | SPK-NNN |
-| **Track** | architecture \\| domain |
-| **Type** | question \\| analysis \\| design |
-| **Status** | draft |
-| **Date** | YYYY-MM-DD |
-
-## Goal
-
-<What should be answered or designed?>
-
-## Artifacts
-
-| Kind | Path |
-|------|------|
-| Notes | [notes.md](./notes.md) |
-| Boards | [boards/](./boards/) |
-`,
-  )
-
-  const spikeNotesTpl = okf(
-    'architecture-spike-notes',
-    'Spike notes',
-    `# Notes
-
-## Working notes
-
--
-
-## Diagrams
-
-\`\`\`mermaid
-flowchart LR
-  A[Start] --> B[Explore]
-\`\`\`
+1. Read this file → [blueprint.md](blueprint.md). Session prompts come from **AGM Studio**.
+2. Create or fill the next checklist file only when that work starts.
+3. Update this link map when new durable files appear. Tick blueprint when work moves forward.
 `,
   )
 
   return {
-    'context/always-on.md': alwaysOn,
-    'blueprint.md': blueprint,
     'entry-point.md': entry,
-    'index.md': index,
-    'log.md': log,
-    'prompts/role-bootstrap.md': roleBootstrap,
-    'prompts/role-maintenance.md': roleMaintenance,
-    'prompts/role-review.md': roleReview,
-    [`${template}/introduction.md`]: intro,
-    [`${template}/context.md`]: contextDoc,
-    [`${template}/README.md`]: okf(
-      'architecture-index',
-      `${template} template`,
-      `# ${template}\n\nTemplate sections for ${name}. Expand via Continue sessions.\n`,
-    ),
-    'process/README.md': okf(
-      'architecture-index',
-      'Process',
-      `# Process\n\nLifecycle artifacts: [spikes/](./spikes/) (SPK) and [reviews/](./reviews/) (REV). Not durable chapters.\n`,
-    ),
-    'process/spikes/README.md': okf(
-      'architecture-index',
-      'Spikes',
-      `# Spikes\n\nTimeboxed explorations (SPK register). Create via AGM Studio → Spike, or copy \`_template/\`.\n`,
-    ),
-    'process/spikes/_template/index.md': spikeIndexTpl,
-    'process/spikes/_template/notes.md': spikeNotesTpl,
-    'process/spikes/_template/boards/README.md': okf(
-      'architecture-index',
-      'Spike boards',
-      `# Boards\n\nPlace \`.storm.json\` Event Storming boards here. Edit in AGM Studio or export to E2.\n`,
-    ),
-    'process/reviews/README.md': okf(
-      'architecture-index',
-      'Reviews',
-      `# Reviews\n\nVerify sessions (REV). Each folder has index.md, report.md, findings.md.\n`,
-    ),
-    'process/reviews/_template/index.md': okf(
-      'architecture-review',
-      'REV-NNN: [Title]',
-      `# REV-NNN: <Title>\n\n| Field | Value |\n|-------|-------|\n| **ID** | REV-NNN |\n| **Verdict** | |\n\n## Artifacts\n\n| Kind | Path |\n|------|------|\n| Report | [report.md](./report.md) |\n| Findings | [findings.md](./findings.md) |\n`,
-    ),
-    'process/reviews/_template/report.md': okf(
-      'architecture-review-report',
-      'Review report',
-      `# Report\n\n## Verdict\n\n\`PASS\` | \`PASS WITH NOTES\` | \`FAIL\`\n`,
-    ),
-    'process/reviews/_template/findings.md': okf(
-      'architecture-review-findings',
-      'Review findings',
-      `# Findings\n\n| ID | Severity | Finding | Evidence | Recommendation |\n|----|----------|---------|----------|----------------|\n| | | | | |\n`,
-    ),
+    'blueprint.md': blueprint,
   }
 }

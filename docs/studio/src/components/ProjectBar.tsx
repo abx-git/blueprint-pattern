@@ -1,16 +1,20 @@
 import { useStudioStore } from '../store/studio-store'
 import { supportsDirectoryPicker } from '../lib/fs-access'
-import type { JourneyPhase } from '../types'
+import type { JourneyPhase, WorkspaceId } from '../types'
+import { workspaceLabel } from '../lib/session-persist'
 
-const DAILY: { id: JourneyPhase; label: string; hint: string }[] = [
-  { id: 'run', label: 'Write', hint: 'Extend docs' },
-  { id: 'spike', label: 'Spikes', hint: 'Explore ideas' },
-  { id: 'review', label: 'Browse', hint: 'Read the graph' },
+const COCKPIT: { id: WorkspaceId; hint: string }[] = [
+  { id: 'architecture', hint: 'Browse docs' },
+  { id: 'knowledge', hint: 'Domain' },
+  { id: 'concepts', hint: 'Drafts' },
+  { id: 'analyses', hint: 'Code look' },
+  { id: 'session', hint: 'Copy for AI' },
 ]
 
 export function JourneyRail() {
   const phase = useStudioStore((s) => s.phase)
   const setPhase = useStudioStore((s) => s.setPhase)
+  const openSession = useStudioStore((s) => s.openSession)
   const goSetup = useStudioStore((s) => s.goSetup)
   const installStatus = useStudioStore((s) => s.installStatus)
   const index = useStudioStore((s) => s.index)
@@ -28,29 +32,26 @@ export function JourneyRail() {
     <nav className="journey-rail" aria-label="AGM Studio">
       {ready ? (
         <>
-          {DAILY.map((p) => {
-            const locked = p.id === 'review' && !index
+          {COCKPIT.map((p) => {
+            const locked =
+              (p.id === 'architecture' || p.id === 'knowledge') && !index && p.id !== phase
             return (
               <button
                 key={p.id}
                 type="button"
                 className={`journey-chip${phase === p.id ? ' active' : ''}`}
-                disabled={locked && p.id !== phase}
-                onClick={() => setPhase(p.id)}
+                disabled={locked}
+                onClick={() => {
+                  if (p.id === 'session') {
+                    openSession(installStatus === 'ready' ? 'continue' : 'adopt')
+                  } else setPhase(p.id)
+                }}
               >
-                <span className="journey-chip-label">{p.label}</span>
+                <span className="journey-chip-label">{workspaceLabel(p.id)}</span>
                 <span className="journey-chip-hint">{p.hint}</span>
               </button>
             )
           })}
-          <button
-            type="button"
-            className={`journey-chip journey-chip--secondary${setupActive ? ' active' : ''}`}
-            onClick={() => goSetup()}
-          >
-            <span className="journey-chip-label">Setup</span>
-            <span className="journey-chip-hint">{setupHint}</span>
-          </button>
         </>
       ) : (
         <>
@@ -62,7 +63,7 @@ export function JourneyRail() {
             <span className="journey-chip-label">Setup</span>
             <span className="journey-chip-hint">{setupHint}</span>
           </button>
-          {DAILY.map((p) => (
+          {COCKPIT.map((p) => (
             <button
               key={p.id}
               type="button"
@@ -70,7 +71,7 @@ export function JourneyRail() {
               disabled
               title="Finish Setup first"
             >
-              <span className="journey-chip-label">{p.label}</span>
+              <span className="journey-chip-label">{workspaceLabel(p.id)}</span>
               <span className="journey-chip-hint">after Setup</span>
             </button>
           ))}
@@ -84,6 +85,7 @@ export function ProjectBar() {
   const phase = useStudioStore((s) => s.phase)
   const setPhase = useStudioStore((s) => s.setPhase)
   const goSetup = useStudioStore((s) => s.goSetup)
+  const setHelpOpen = useStudioStore((s) => s.setHelpOpen)
   const project = useStudioStore((s) => s.project)
   const folderLabel = useStudioStore((s) => s.folderLabel)
   const folderHint = useStudioStore((s) => s.folderHint)
@@ -99,19 +101,22 @@ export function ProjectBar() {
   const ready = Boolean(folderLabel) && installStatus === 'ready'
   const introPhase = phase === 'about' || phase === 'start'
 
+  const tagForPhase = (p: JourneyPhase): string => {
+    if (p === 'about') return 'what is AGM'
+    if (p === 'start') return 'how it works'
+    if (!ready) return 'Setup'
+    if (p === 'architecture' || p === 'knowledge' || p === 'concepts' || p === 'analyses') {
+      return workspaceLabel(p)
+    }
+    if (p === 'session') return 'Prompt'
+    return 'Setup'
+  }
+
   return (
     <header className="project-bar">
       <button type="button" className="studio-brand studio-brand-btn" onClick={() => setPhase('about')}>
         <strong>AGM Studio</strong>
-        <span className="studio-tag">
-          {phase === 'about'
-            ? 'what is AGM'
-            : phase === 'start'
-              ? 'how it works'
-              : ready
-                ? 'Write · Spikes · Browse'
-                : 'Setup'}
-        </span>
+        <span className="studio-tag">{tagForPhase(phase)}</span>
       </button>
       <div className="project-meta">
         <span className="meta-pill">{project.appName || 'Unnamed project'}</span>
@@ -127,6 +132,14 @@ export function ProjectBar() {
         )}
       </div>
       <div className="studio-actions">
+        <button
+          type="button"
+          className="btn help-open-btn"
+          onClick={() => setHelpOpen(true)}
+          title="Explain the process and workspaces"
+        >
+          Help
+        </button>
         {!introPhase && (
           <button
             type="button"

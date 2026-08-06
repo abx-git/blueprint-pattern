@@ -4,8 +4,9 @@ import type {
   InstallStatus,
   JourneyPhase,
   ProjectParams,
+  SessionIntent,
 } from '../types'
-import { DEFAULT_PROJECT } from '../types'
+import { DEFAULT_PROJECT, isWorkspacePhase } from '../types'
 import { buildArchitectureIndex } from '../lib/build-index'
 import { detectInstallStatus } from '../lib/detect-install'
 import {
@@ -24,16 +25,23 @@ import {
 } from '../lib/fs-access'
 import { loadProjectParams, saveProjectParams } from '../lib/project-params'
 import {
-  isDailyPhase,
+  isCockpitPhase,
   loadBootDone,
+  loadContextPins,
+  loadDocFocus,
   loadFolderHint,
   loadLastDailyPhase,
   saveBootDone,
+  saveContextPins,
+  saveDocFocus,
   saveFolderHint,
   saveLastDailyPhase,
 } from '../lib/session-persist'
 import { buildStarterScaffold } from '../lib/scaffold-pack'
 import { createDocSearch, type SearchHit } from '../lib/search'
+import { isAnalysisSpikeType } from '../lib/workspace'
+import { togglePin } from '../lib/context-pack'
+import { parseBoardJson } from '../lib/e2/storm'
 import {
   appendReviewRegisterRow,
   appendSpikeRegisterRow,
@@ -72,10 +80,8 @@ interface StudioState {
   project: ProjectParams
   folderHandle: FileSystemDirectoryHandle | null
   folderLabel: string | null
-  /** Last known folder name when permission not yet granted */
   folderHint: string | null
   restoring: boolean
-  /** Step 1 of connect: folder chosen, not yet confirmed */
   pendingBaseHandle: FileSystemDirectoryHandle | null
   pendingBaseName: string | null
   pendingCanWrite: boolean
@@ -91,12 +97,22 @@ interface StudioState {
   searchQuery: string
   searchHits: SearchHit[]
   browsePanel: 'doc' | 'graph' | 'board'
+  contextPins: string[]
+  docFocus: string[]
+  includeOnDemand: boolean
+  /** Preferred Session tab when opening Session from a CTA (consumed once). */
+  sessionIntent: SessionIntent | null
+  helpOpen: boolean
   error: string | null
   opening: boolean
   installing: boolean
   toast: string | null
 
   setPhase: (phase: JourneyPhase) => void
+  /** Open Session workspace on a specific tab (Adopt / Extend / …). */
+  openSession: (intent?: SessionIntent) => void
+  clearSessionIntent: () => void
+  setHelpOpen: (open: boolean) => void
   goSetup: () => void
   setProject: (patch: Partial<ProjectParams>) => void
   setActivePath: (path: string | null) => void
@@ -104,10 +120,12 @@ interface StudioState {
   setTypeFilter: (type: string) => void
   setSearchQuery: (q: string) => void
   setBrowsePanel: (panel: 'doc' | 'graph' | 'board') => void
+  toggleContextPin: (path: string) => void
+  setDocFocus: (ids: string[]) => void
+  setIncludeOnDemand: (v: boolean) => void
   showToast: (msg: string) => void
   clearToast: () => void
 
-  /** @deprecated use pickBaseFolder + confirmConnect */
   connectFolder: () => Promise<void>
   pickBaseFolder: () => Promise<void>
   confirmConnect: (subpath: string, docRoot: string) => Promise<void>
@@ -128,6 +146,12 @@ interface StudioState {
   createReview: (input: { title: string; slug?: string; scope?: string }) => Promise<string | null>
   saveSpikeFile: (relativePath: string, content: string) => Promise<boolean>
   createStormBoard: (spikePath: string, name: string, modelingMode?: string) => Promise<string | null>
+  /** Import an E2 Board Snapshot v2 (.storm.json) into spikePath/boards/. */
+  importStormBoard: (
+    spikePath: string,
+    jsonText: string,
+    preferredName?: string,
+  ) => Promise<string | null>
 }
 
 function afterOpen(
@@ -146,7 +170,7 @@ function afterOpen(
   if (opts?.keepPhase) {
     phase = prevPhase
   } else if (installStatus === 'ready') {
-    phase = opts?.preferDaily ? loadLastDailyPhase() : 'run'
+    phase = opts?.preferDaily ? loadLastDailyPhase() : 'architecture'
   } else if (get().folderLabel || label) {
     phase = 'install'
   } else {
@@ -172,7 +196,7 @@ function afterOpen(
     phase,
     error: null,
   })
-  if (isDailyPhase(phase)) saveLastDailyPhase(phase)
+  if (isCockpitPhase(phase)) saveLastDailyPhase(phase)
 }
 
 export const useStudioStore = create<StudioState>((set, get) => ({
@@ -197,15 +221,29 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   searchQuery: '',
   searchHits: [],
   browsePanel: 'doc',
+  contextPins: loadContextPins(),
+  docFocus: loadDocFocus(),
+  includeOnDemand: false,
+  sessionIntent: null,
+  helpOpen: false,
   error: null,
   opening: false,
   installing: false,
   toast: null,
 
   setPhase: (phase) => {
-    if (isDailyPhase(phase)) saveLastDailyPhase(phase)
+    if (isCockpitPhase(phase)) saveLastDailyPhase(phase)
     set({ phase })
   },
+
+  openSession: (intent = 'continue') => {
+    saveLastDailyPhase('session')
+    set({ phase: 'session', sessionIntent: intent })
+  },
+
+  clearSessionIntent: () => set({ sessionIntent: null }),
+
+  setHelpOpen: (helpOpen) => set({ helpOpen }),
 
   goSetup: () => {
     const { folderLabel, installStatus } = get()
@@ -237,6 +275,19 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   },
 
   setBrowsePanel: (browsePanel) => set({ browsePanel }),
+
+  toggleContextPin: (path) => {
+    const contextPins = togglePin(get().contextPins, path)
+    saveContextPins(contextPins)
+    set({ contextPins })
+  },
+
+  setDocFocus: (docFocus) => {
+    saveDocFocus(docFocus)
+    set({ docFocus })
+  },
+
+  setIncludeOnDemand: (includeOnDemand) => set({ includeOnDemand }),
 
   showToast: (toast) => {
     set({ toast })
@@ -419,8 +470,8 @@ export const useStudioStore = create<StudioState>((set, get) => ({
       const files = buildStarterScaffold(get().project)
       await writeFileMap(handle, files)
       await get().refreshIndex({ keepPhase: true })
-      set({ installing: false, phase: 'run', installStatus: 'ready' })
-      saveLastDailyPhase('run')
+      set({ installing: false, phase: 'architecture', installStatus: 'ready' })
+      saveLastDailyPhase('architecture')
       get().showToast(`Wrote ${Object.keys(files).length} starter files`)
     } catch (err) {
       set({
@@ -499,7 +550,8 @@ export const useStudioStore = create<StudioState>((set, get) => ({
       }
       const folder = Object.keys(spikeFiles)[0]!.replace(/\/index\.md$/, '')
       await get().refreshIndex({ keepPhase: true })
-      set({ activeSpikePath: folder, phase: 'spike' })
+      const targetPhase = isAnalysisSpikeType(type) ? 'analyses' : 'concepts'
+      set({ activeSpikePath: folder, phase: targetPhase })
       get().showToast(`Created ${id}`)
       return folder
     } catch (err) {
@@ -544,7 +596,7 @@ export const useStudioStore = create<StudioState>((set, get) => ({
         await writeTextFile(handle, bpPath, updated)
       }
       await get().refreshIndex({ keepPhase: true })
-      set({ activeSpikePath: folder, activePath: `${folder}/report.md`, phase: 'spike' })
+      set({ activeSpikePath: folder, activePath: `${folder}/report.md`, phase: 'architecture' })
       get().showToast(`Created ${id}`)
       return folder
     } catch (err) {
@@ -590,6 +642,48 @@ export const useStudioStore = create<StudioState>((set, get) => ({
       return null
     }
   },
+
+  importStormBoard: async (spikePath, jsonText, preferredName) => {
+    const handle = get().folderHandle
+    if (!handle || !get().canWrite) {
+      set({ error: 'Write access required to import a board.' })
+      return null
+    }
+    const parsed = parseBoardJson(jsonText)
+    if (!parsed) {
+      set({
+        error:
+          'Not a valid E2 board snapshot (need format event-storming-tool, version 1 or 2).',
+      })
+      return null
+    }
+    try {
+      const fromName = preferredName?.replace(/\.storm\.json$/i, '').replace(/\.json$/i, '')
+      let safe = slugify(fromName || parsed.title || 'imported-board') || 'imported-board'
+      let path = `${spikePath}/boards/${safe}.storm.json`
+      // Avoid overwrite: append short suffix if path already indexed
+      const existing = get().index?.docs.has(path)
+      if (existing) {
+        safe = `${safe}-${Date.now().toString(36).slice(-4)}`
+        path = `${spikePath}/boards/${safe}.storm.json`
+      }
+      // Keep original JSON text (preserves provenance fields); normalize whitespace lightly
+      let out = jsonText.trim()
+      try {
+        out = JSON.stringify(JSON.parse(jsonText), null, 2)
+      } catch {
+        /* keep raw */
+      }
+      await writeTextFile(handle, path, out.endsWith('\n') ? out : `${out}\n`)
+      await get().refreshIndex({ keepPhase: true })
+      set({ activePath: path, browsePanel: 'board' })
+      get().showToast(`Imported “${parsed.title}”`)
+      return path
+    } catch (err) {
+      set({ error: err instanceof Error ? err.message : 'Board import failed' })
+      return null
+    }
+  },
 }))
 
-export { DEFAULT_PROJECT }
+export { DEFAULT_PROJECT, isWorkspacePhase }

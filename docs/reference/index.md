@@ -14,7 +14,8 @@ Installed application repos receive copies of procedure files under `prompts/ref
 | [agm-mcp-install.md](./agm-mcp-install.md) | Public MCP server (`npx @abx-hh/agm-cli`) |
 | [adopt-procedure.md](./adopt-procedure.md) | Adoption phases A–C (agent) |
 | [base-context-setup.md](./base-context-setup.md) | IDE rules and install layout |
-| [doc-extensions.md](./doc-extensions.md) | Documentation area checkboxes (Assistant UI) |
+| [doc-extensions.md](./doc-extensions.md) | Documentation area checkboxes + extensions (Studio Session) |
+| [studio-workspaces.md](./studio-workspaces.md) | Studio cockpit workspaces, state files, context packs |
 | [content-ingest.md](./content-ingest.md) | Paste imports (Confluence, specs, use cases, E2 boards) |
 | [upgrade.md](./upgrade.md) | Refresh workflows/prompts without touching docs |
 | [external-work.md](./external-work.md) | Keep `work/` outside Git (per-developer drafts) |

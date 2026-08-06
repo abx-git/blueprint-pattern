@@ -14,14 +14,16 @@ One onboarding path — everything else is advanced.
 
 | Step | What you do | Workflow |
 |------|-------------|----------|
-| **Install** | Connect folder in Studio (or run install script) | [AGM Studio](https://abx-git.github.io/agm.github.io/) |
-| **Adopt** | New chat — fill entry-point + first chapter | `bootstrap-adopt` |
-| **Continue** | New chat — next checklist item | `bootstrap-continue` |
-| **Maintain** | New chat — sync docs with code | `maintenance-diff-range` |
-| **Import** | New chat — paste Confluence, specs, use cases | `content-ingest` |
+| **Install** | Connect folder in Studio Setup, write starter (includes `domain/`) | [AGM Studio](https://abx-git.github.io/agm.github.io/) |
+| **Adopt** | Session → copy prompt → new chat — fill entry-point + first chapter | `bootstrap-adopt` |
+| **Continue** | Session → Extend — next checklist item | `bootstrap-continue` |
+| **Maintain** | Session → Sync — sync docs with code | `maintenance-diff-range` |
+| **Import** | Session → Import — paste Confluence, specs, use cases | `content-ingest` |
 | **Review** | **Fresh chat** — report only, never same chat as write | `review-maintenance` |
 
-Copy the session prompt from Studio (or `prompts/workflows/<id>.md`) into a new chat. **Default:** copy-paste. **Optional:** MCP `agm_trigger_workflow` — golden path works with the public starter pack ([agm/README.md](../agm/README.md)).
+After Setup, Studio is a **cockpit**: Architecture · Knowledge (`domain/`) · Concepts · Analyses · Session (context pack + copy-paste). Details: [reference/studio-workspaces.md](./reference/studio-workspaces.md).
+
+Copy the session prompt from Studio Session (or `prompts/workflows/<id>.md`) into a new chat. **Default:** copy-paste. **Optional:** MCP `agm_trigger_workflow` — golden path works with the public starter pack ([agm/README.md](../agm/README.md)).
 
 **Install vs `agm init`:** use Studio Install or `agm-install.sh` for the full scaffold; `agm init` creates only the core files — [reference/install.md](./reference/install.md).
 
@@ -43,12 +45,15 @@ docs/architecture/
 ├── entry-point.md         ← start here: short facts + links (put in AI context)
 ├── blueprint.md           ← what's next: checklist + short session notes
 ├── context/always-on.md   ← legacy stub (prefer entry-point)
+├── domain/                ← Knowledge workspace (DDD)
+├── process/spikes/        ← Concepts & Analyses (by spike type)
+├── extensions/            ← optional custom areas
 └── index.md + log.md      ← OKF: per-folder disclosure + change log
 ```
 
 **Rule:** `entry-point.md` = start here. `blueprint.md` = what's next. `index.md` = OKF folder index — don't conflate with entry-point.
 
-Spikes live under `process/spikes/` (see [guide.md](./guide.md)). Also traverse `interfaces/exports.md` and `interfaces/imports.md` when relevant.
+Concepts and analyses live under `process/spikes/` (Studio filters by type; see [guide.md](./guide.md)). Also traverse `interfaces/exports.md` and `interfaces/imports.md` when relevant.
 
 ---
 

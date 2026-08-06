@@ -5,9 +5,11 @@ import { WhatIsAgmPhase } from './components/WhatIsAgmPhase'
 import { StarterPhase } from './components/StarterPhase'
 import { ConnectPhase } from './components/ConnectPhase'
 import { InstallPhase } from './components/InstallPhase'
-import { RunPhase } from './components/RunPhase'
+import { SessionPhase } from './components/SessionPhase'
 import { SpikePhase } from './components/SpikePhase'
-import { ReviewPhase } from './components/ReviewPhase'
+import { WorkspaceShell } from './components/WorkspaceShell'
+import { NextStepBanner } from './components/NextStepBanner'
+import { HelpDrawer } from './components/HelpDrawer'
 import './App.css'
 
 function formatReleaseTime(iso: string): string {
@@ -47,11 +49,18 @@ export default function App() {
 
   const introPhase = phase === 'about' || phase === 'start'
   const showRail = !introPhase
+  const wide =
+    phase === 'architecture' ||
+    phase === 'knowledge' ||
+    phase === 'concepts' ||
+    phase === 'analyses'
 
   return (
     <div className={`studio${introPhase ? ' studio--starter' : ''}`}>
       <ProjectBar />
       {showRail && <JourneyRail />}
+      {showRail && <NextStepBanner />}
+      <HelpDrawer />
       {error && (
         <div className="studio-error" role="alert">
           {error}
@@ -68,15 +77,24 @@ export default function App() {
         </div>
       ) : null}
       <div
-        className={`studio-body${phase === 'review' || phase === 'spike' ? ' studio-body--wide' : ''}${introPhase ? ' studio-body--starter' : ''}`}
+        className={`studio-body${wide ? ' studio-body--wide' : ''}${introPhase ? ' studio-body--starter' : ''}`}
       >
         {phase === 'about' && <WhatIsAgmPhase />}
         {phase === 'start' && <StarterPhase />}
         {phase === 'connect' && <ConnectPhase />}
         {phase === 'install' && <InstallPhase />}
-        {phase === 'run' && <RunPhase />}
-        {phase === 'spike' && <SpikePhase />}
-        {phase === 'review' && <ReviewPhase />}
+        {phase === 'architecture' && (
+          <WorkspaceShell
+            workspace="architecture"
+            lead="durable chapters you keep in Git"
+          />
+        )}
+        {phase === 'knowledge' && (
+          <WorkspaceShell workspace="knowledge" lead="domain language & model (domain/)" />
+        )}
+        {phase === 'concepts' && <SpikePhase mode="concepts" />}
+        {phase === 'analyses' && <SpikePhase mode="analyses" />}
+        {phase === 'session' && <SessionPhase />}
       </div>
       <SiteFooter />
     </div>

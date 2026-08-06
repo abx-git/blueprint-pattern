@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import { useStudioStore } from '../store/studio-store'
-import { uniqueTypes } from '../lib/build-index'
+import { filterDocsByWorkspace, uniqueTypes } from '../lib/build-index'
 import { supportsDirectoryPicker } from '../lib/fs-access'
+import type { WorkspaceId } from '../types'
 import { DocTree } from './DocTree'
 import { DocViewer } from './DocViewer'
 import { LinkGraph } from './LinkGraph'
@@ -10,9 +11,11 @@ import { E2Canvas } from './E2Canvas'
 interface Props {
   /** When true, skip the empty-state “open folder” panel (parent handles CTA). */
   embedded?: boolean
+  /** Filter tree to a cockpit workspace (Architecture / Knowledge). */
+  workspaceFilter?: Exclude<WorkspaceId, 'session'>
 }
 
-export function BrowseMode({ embedded = false }: Props) {
+export function BrowseMode({ embedded = false, workspaceFilter }: Props) {
   const index = useStudioStore((s) => s.index)
   const activePath = useStudioStore((s) => s.activePath)
   const setActivePath = useStudioStore((s) => s.setActivePath)
@@ -27,18 +30,31 @@ export function BrowseMode({ embedded = false }: Props) {
   const connectFolderFallback = useStudioStore((s) => s.connectFolderFallback)
   const setPhase = useStudioStore((s) => s.setPhase)
   const opening = useStudioStore((s) => s.opening)
+  const contextPins = useStudioStore((s) => s.contextPins)
+  const toggleContextPin = useStudioStore((s) => s.toggleContextPin)
+  const showToast = useStudioStore((s) => s.showToast)
 
-  const types = useMemo(() => (index ? uniqueTypes(index.docs) : []), [index])
+  const filteredDocs = useMemo(() => {
+    if (!index) return new Map()
+    if (!workspaceFilter) return index.docs
+    return filterDocsByWorkspace(index.docs, workspaceFilter)
+  }, [index, workspaceFilter])
+
+  const types = useMemo(() => uniqueTypes(filteredDocs), [filteredDocs])
   const activeDoc = index && activePath ? index.docs.get(activePath) : null
+  const brokenCount = useMemo(
+    () => (index ? index.edges.filter((e) => e.broken).length : 0),
+    [index],
+  )
 
   if (!index) {
     if (embedded) return null
     return (
       <div className="browse-empty">
-        <h2>Review architecture</h2>
-        <p>Connect a folder in the Connect step first.</p>
+        <h2>Browse architecture</h2>
+        <p>Connect a folder in Setup first.</p>
         <button type="button" className="btn primary" onClick={() => setPhase('connect')}>
-          Go to Connect
+          Go to Setup
         </button>
         <button
           type="button"
@@ -55,6 +71,11 @@ export function BrowseMode({ embedded = false }: Props) {
   return (
     <div className="browse-layout">
       <aside className="browse-sidebar">
+        {brokenCount > 0 && (
+          <p className="hint warn-inline" title="Broken relative links in the graph">
+            {brokenCount} broken link{brokenCount === 1 ? '' : 's'}
+          </p>
+        )}
         <label className="search-label">
           Search
           <input
@@ -66,14 +87,16 @@ export function BrowseMode({ embedded = false }: Props) {
         </label>
         {searchHits.length > 0 && (
           <ul className="search-hits">
-            {searchHits.map((h) => (
-              <li key={h.path}>
-                <button type="button" onClick={() => setActivePath(h.path)}>
-                  <span className="hit-title">{h.title}</span>
-                  <span className="hit-path">{h.path}</span>
-                </button>
-              </li>
-            ))}
+            {searchHits
+              .filter((h) => !workspaceFilter || filteredDocs.has(h.path))
+              .map((h) => (
+                <li key={h.path}>
+                  <button type="button" onClick={() => setActivePath(h.path)}>
+                    <span className="hit-title">{h.title}</span>
+                    <span className="hit-path">{h.path}</span>
+                  </button>
+                </li>
+              ))}
           </ul>
         )}
         <label className="filter-label">
@@ -88,7 +111,7 @@ export function BrowseMode({ embedded = false }: Props) {
           </select>
         </label>
         <DocTree
-          docs={index.docs}
+          docs={filteredDocs}
           activePath={activePath}
           typeFilter={typeFilter}
           onSelect={setActivePath}
@@ -127,10 +150,49 @@ export function BrowseMode({ embedded = false }: Props) {
           </button>
         </div>
 
+        {activePath && browsePanel === 'doc' && (
+          <div className="cmd-row browse-pin-row">
+            <button
+              type="button"
+              className="btn"
+              onClick={() => {
+                toggleContextPin(activePath)
+                showToast(
+                  contextPins.includes(activePath)
+                    ? 'Unpinned from context pack'
+                    : 'Pinned for Session context pack',
+                )
+              }}
+            >
+              {contextPins.includes(activePath) ? 'Unpin from Session' : 'Pin for Session'}
+            </button>
+            <button
+              type="button"
+              className="btn"
+              onClick={async () => {
+                try {
+                  await navigator.clipboard?.writeText(activePath)
+                  showToast('Path copied')
+                } catch {
+                  showToast('Copy failed')
+                }
+              }}
+            >
+              Copy path
+            </button>
+          </div>
+        )}
+
         <div className="panel-body">
           {browsePanel === 'graph' && (
             <LinkGraph
-              index={index}
+              index={{
+                ...index,
+                docs: filteredDocs,
+                edges: index.edges.filter(
+                  (e) => filteredDocs.has(e.from) || filteredDocs.has(e.to),
+                ),
+              }}
               activePath={activePath}
               onSelect={(path) => {
                 setActivePath(path)
@@ -149,6 +211,10 @@ export function BrowseMode({ embedded = false }: Props) {
               onOpenStorm={(path) => {
                 setActivePath(path)
                 setBrowsePanel('board')
+              }}
+              onPinPath={(path) => {
+                toggleContextPin(path)
+                showToast('Pinned for Session')
               }}
             />
           )}

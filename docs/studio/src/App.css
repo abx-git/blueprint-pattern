@@ -435,10 +435,39 @@ code {
   overflow: auto;
 }
 
+/* Mermaid htmlLabels use foreignObject + XHTML; keep text readable after sanitize. */
+.mermaid-host svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-host foreignObject,
+.mermaid-host foreignObject > *,
+.mermaid-host .nodeLabel,
+.mermaid-host .edgeLabel,
+.mermaid-host .label {
+  color: #141414;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
 .mermaid-error {
   color: #991b1b;
   font-size: 0.88rem;
   white-space: pre-wrap;
+}
+
+.mermaid-error-source {
+  margin: 0.5rem 0 0;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: #7f1d1d;
+  background: #fef2f2;
+  border-radius: 6px;
+  overflow: auto;
+  max-height: 12rem;
 }
 
 .link-graph {
@@ -1024,9 +1053,9 @@ code {
 .review-toolbar {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 0.75rem 1rem;
   padding: 0.65rem 1rem;
   border-bottom: 1px solid var(--line);
   background: #fff;
@@ -1036,6 +1065,20 @@ code {
   margin: 0;
   font-size: 0.9rem;
   color: var(--muted);
+}
+
+.review-toolbar-text {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+.review-build-hint {
+  margin-top: 0.35rem !important;
+}
+
+.review-toolbar-actions {
+  margin-top: 0;
+  flex-shrink: 0;
 }
 
 .review-phase .browse-layout {
@@ -1467,4 +1510,308 @@ code {
   .starter-hero h1 {
     max-width: none;
   }
+}
+
+/* Cockpit / Session context pack */
+.badge-ws {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.warn-inline {
+  color: #991b1b;
+  font-size: 0.8rem;
+  margin: 0 0 0.5rem;
+}
+
+.browse-pin-row {
+  margin: 0.5rem 0 0;
+  padding: 0 0.25rem;
+}
+
+.context-pack-card h3,
+.context-pack-card h4 {
+  margin: 0.5rem 0 0.35rem;
+  font-size: 0.95rem;
+}
+
+.context-pack-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.context-pack-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  margin: 0.35rem 0;
+  font-size: 0.88rem;
+}
+
+.pin-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.5rem 0;
+}
+
+.pin-chip {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.45rem;
+}
+
+.focus-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+  margin: 0.5rem 0;
+}
+
+.focus-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+}
+
+.bridge-note {
+  margin-top: 1rem;
+  font-style: italic;
+}
+
+.agm-code-path {
+  background: #fef3c7;
+  border-radius: 3px;
+  padding: 0 0.2rem;
+}
+
+.journey-rail {
+  flex-wrap: wrap;
+}
+
+.journey-chip {
+  min-width: 5.5rem;
+}
+
+
+/* —— Help & next-step —— */
+.help-open-btn {
+  font-weight: 600;
+}
+
+.next-step-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem 1rem;
+  padding: 0.55rem 1rem;
+  border-bottom: 1px solid var(--line, #e2e8f0);
+  background: #f8fafc;
+}
+
+.next-step-text {
+  margin: 0;
+  flex: 1;
+  min-width: 12rem;
+  font-size: 0.88rem;
+  color: var(--text, #0f172a);
+  line-height: 1.4;
+}
+
+.next-step-label {
+  display: inline-block;
+  margin-right: 0.5rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  background: #e2e8f0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #475569;
+  vertical-align: middle;
+}
+
+.prompt-kind-field {
+  margin: 0.75rem 0 1rem;
+  max-width: 28rem;
+}
+
+.focus-details {
+  margin-top: 0.75rem;
+}
+
+.focus-details summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--muted, #64748b);
+}
+
+.linkish {
+  border: none;
+  background: none;
+  color: var(--accent, #2563eb);
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+  padding: 0 0 0 0.35rem;
+}
+
+.help-tip {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+  margin-left: 0.25rem;
+}
+
+.help-tip-btn {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--line, #cbd5e1);
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.help-tip-btn:hover,
+.help-tip-btn[aria-expanded='true'] {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.help-tip-panel {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  min-width: 16rem;
+  max-width: 22rem;
+  padding: 0.65rem 0.75rem;
+  background: #fff;
+  border: 1px solid var(--line, #cbd5e1);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  font-size: 0.82rem;
+  color: var(--text, #0f172a);
+  font-weight: 400;
+}
+
+.help-tip-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.help-tip-close {
+  border: none;
+  background: none;
+  color: var(--muted, #64748b);
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.help-tip-panel-body p {
+  margin: 0 0 0.4rem;
+}
+
+.help-tip-panel-body ul {
+  margin: 0.25rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.help-drawer-root {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.help-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(15, 23, 42, 0.35);
+  cursor: pointer;
+}
+
+.help-drawer {
+  position: relative;
+  width: min(26rem, 100%);
+  height: 100%;
+  background: #fff;
+  box-shadow: -8px 0 32px rgba(15, 23, 42, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.help-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid var(--line, #e2e8f0);
+}
+
+.help-drawer-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.help-drawer-body {
+  overflow: auto;
+  padding: 0.75rem 1.1rem 1.5rem;
+}
+
+.help-block {
+  margin-bottom: 1.15rem;
+}
+
+.help-block h3 {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+}
+
+.help-block p {
+  margin: 0 0 0.45rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #334155;
+}
+
+.help-block ul {
+  margin: 0.25rem 0 0.5rem;
+  padding-left: 1.15rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.help-block--here {
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+}
+
+.review-toolbar-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.15rem 0.25rem;
+}
+
+.review-toolbar-meta {
+  color: var(--muted, #64748b);
+  font-weight: 400;
 }

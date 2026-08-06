@@ -1,29 +1,50 @@
-import type { JourneyPhase } from '../types'
+import type { DocWorkspace, JourneyPhase, WorkspaceId } from '../types'
 
-const DAILY_PHASE_KEY = 'agm-studio-last-daily-phase'
+const COCKPIT_PHASE_KEY = 'agm-studio-last-daily-phase'
 const FOLDER_HINT_KEY = 'agm-studio-folder-hint'
 const BOOT_DONE_KEY = 'agm-studio-boot-done'
+const CONTEXT_PINS_KEY = 'agm-studio-context-pins'
+const DOC_FOCUS_KEY = 'agm-studio-doc-focus'
 
-export type DailyPhase = 'run' | 'spike' | 'review'
+export type CockpitPhase = WorkspaceId
 
-export function isDailyPhase(phase: JourneyPhase): phase is DailyPhase {
-  return phase === 'run' || phase === 'spike' || phase === 'review'
+const LEGACY_MAP: Record<string, CockpitPhase> = {
+  run: 'session',
+  spike: 'concepts',
+  review: 'architecture',
 }
 
-export function loadLastDailyPhase(): DailyPhase {
+export function isCockpitPhase(phase: JourneyPhase): phase is CockpitPhase {
+  return (
+    phase === 'architecture' ||
+    phase === 'knowledge' ||
+    phase === 'concepts' ||
+    phase === 'analyses' ||
+    phase === 'session'
+  )
+}
+
+/** @deprecated use isCockpitPhase */
+export function isDailyPhase(phase: JourneyPhase): phase is CockpitPhase {
+  return isCockpitPhase(phase)
+}
+
+export function loadLastDailyPhase(): CockpitPhase {
   try {
-    const raw = localStorage.getItem(DAILY_PHASE_KEY)
-    if (raw === 'run' || raw === 'spike' || raw === 'review') return raw
+    const raw = localStorage.getItem(COCKPIT_PHASE_KEY)
+    if (!raw) return 'architecture'
+    if (LEGACY_MAP[raw]) return LEGACY_MAP[raw]!
+    if (isCockpitPhase(raw as JourneyPhase)) return raw as CockpitPhase
   } catch {
     /* ignore */
   }
-  return 'run'
+  return 'architecture'
 }
 
 export function saveLastDailyPhase(phase: JourneyPhase): void {
-  if (!isDailyPhase(phase)) return
+  if (!isCockpitPhase(phase)) return
   try {
-    localStorage.setItem(DAILY_PHASE_KEY, phase)
+    localStorage.setItem(COCKPIT_PHASE_KEY, phase)
   } catch {
     /* ignore */
   }
@@ -61,5 +82,64 @@ export function saveBootDone(done: boolean): void {
     else localStorage.removeItem(BOOT_DONE_KEY)
   } catch {
     /* ignore */
+  }
+}
+
+export function loadContextPins(): string[] {
+  try {
+    const raw = localStorage.getItem(CONTEXT_PINS_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw) as unknown
+    if (!Array.isArray(parsed)) return []
+    return parsed.filter((p): p is string => typeof p === 'string').slice(0, 24)
+  } catch {
+    return []
+  }
+}
+
+export function saveContextPins(pins: string[]): void {
+  try {
+    localStorage.setItem(CONTEXT_PINS_KEY, JSON.stringify(pins.slice(0, 24)))
+  } catch {
+    /* ignore */
+  }
+}
+
+export function loadDocFocus(): string[] {
+  try {
+    const raw = localStorage.getItem(DOC_FOCUS_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw) as unknown
+    if (!Array.isArray(parsed)) return []
+    return parsed.filter((p): p is string => typeof p === 'string')
+  } catch {
+    return []
+  }
+}
+
+export function saveDocFocus(ids: string[]): void {
+  try {
+    localStorage.setItem(DOC_FOCUS_KEY, JSON.stringify(ids))
+  } catch {
+    /* ignore */
+  }
+}
+
+export function workspaceLabel(ws: DocWorkspace | WorkspaceId): string {
+  switch (ws) {
+    case 'architecture':
+      return 'Architecture'
+    case 'knowledge':
+      return 'Knowledge'
+    case 'concepts':
+      return 'Concepts'
+    case 'analyses':
+      return 'Analyses'
+    case 'session':
+      return 'Prompt'
+    case 'meta':
+      return 'State'
+    default:
+      return ws
   }
 }

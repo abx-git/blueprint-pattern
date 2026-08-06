@@ -1,10 +1,17 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useStudioStore } from '../store/studio-store'
 import { DocViewer } from './DocViewer'
 import { E2Canvas } from './E2Canvas'
 import type { SpikeTrack, SpikeType } from '../lib/spikes'
+import { isAnalysisSpikeType, isConceptSpikeType } from '../lib/workspace'
+import { HelpTip } from './HelpTip'
+import { WORKSPACE_HELP } from '../lib/help-content'
 
-export function SpikePhase() {
+interface Props {
+  mode: 'concepts' | 'analyses'
+}
+
+export function SpikePhase({ mode }: Props) {
   const folderLabel = useStudioStore((s) => s.folderLabel)
   const canWrite = useStudioStore((s) => s.canWrite)
   const spikes = useStudioStore((s) => s.spikes)
@@ -18,18 +25,35 @@ export function SpikePhase() {
   const createReview = useStudioStore((s) => s.createReview)
   const saveSpikeFile = useStudioStore((s) => s.saveSpikeFile)
   const createStormBoard = useStudioStore((s) => s.createStormBoard)
+  const importStormBoard = useStudioStore((s) => s.importStormBoard)
   const setPhase = useStudioStore((s) => s.setPhase)
+  const toggleContextPin = useStudioStore((s) => s.toggleContextPin)
+  const showToast = useStudioStore((s) => s.showToast)
+  const importInputRef = useRef<HTMLInputElement>(null)
+  const [importing, setImporting] = useState(false)
+
+  const isAnalyses = mode === 'analyses'
+  const title = isAnalyses ? 'Analyses' : 'Concepts'
+  const help = WORKSPACE_HELP[isAnalyses ? 'analyses' : 'concepts']
+  const defaultType: SpikeType = isAnalyses ? 'analysis' : 'design'
+  const defaultTrack: SpikeTrack = 'architecture'
 
   const [listKind, setListKind] = useState<'spikes' | 'reviews'>('spikes')
   const [showCreate, setShowCreate] = useState(false)
-  const [title, setTitle] = useState('')
+  const [spikeTitle, setSpikeTitle] = useState('')
   const [slug, setSlug] = useState('')
-  const [track, setTrack] = useState<SpikeTrack>('architecture')
-  const [type, setType] = useState<SpikeType>('analysis')
+  const [track, setTrack] = useState<SpikeTrack>(defaultTrack)
+  const [type, setType] = useState<SpikeType>(defaultType)
   const [editMode, setEditMode] = useState(false)
   const [draftText, setDraftText] = useState('')
   const [boardName, setBoardName] = useState('event-storming')
   const [modelingMode, setModelingMode] = useState('eventStorming')
+
+  const filteredSpikes = useMemo(() => {
+    return spikes.filter((s) =>
+      isAnalyses ? isAnalysisSpikeType(s.type) : isConceptSpikeType(s.type),
+    )
+  }, [spikes, isAnalyses])
 
   const isReviewFolder = Boolean(activeSpikePath?.includes('/reviews/'))
 
@@ -45,7 +69,7 @@ export function SpikePhase() {
   if (!folderLabel) {
     return (
       <div className="phase-panel">
-        <h2>Spikes</h2>
+        <h2>{title}</h2>
         <p>Finish Setup first — choose your documentation folder.</p>
         <button type="button" className="btn primary" onClick={() => setPhase('connect')}>
           Go to Setup
@@ -58,43 +82,58 @@ export function SpikePhase() {
     <div className="spike-phase">
       <aside className="spike-sidebar">
         <div className="spike-sidebar-head">
-          <h2>Spikes</h2>
+          <h2>
+            {title}{' '}
+            <HelpTip label={help.title}>
+              <p>{help.summary}</p>
+              <ul>
+                {help.tips.map((t) => (
+                  <li key={t}>{t}</li>
+                ))}
+              </ul>
+            </HelpTip>
+          </h2>
           <button
             type="button"
             className="btn primary"
             disabled={!canWrite}
-            onClick={() => setShowCreate(true)}
+            onClick={() => {
+              setType(defaultType)
+              setShowCreate(true)
+            }}
           >
-            {listKind === 'spikes' ? 'New spike' : 'New review'}
+            {listKind === 'spikes' ? (isAnalyses ? 'New analysis' : 'New concept') : 'New review'}
           </button>
         </div>
-        <p className="spike-lead">
-          Work through open questions here — not in the durable architecture chapters.
-        </p>
-        <div className="panel-tabs" role="tablist">
-          <button
-            type="button"
-            className={listKind === 'spikes' ? 'active' : ''}
-            onClick={() => setListKind('spikes')}
-          >
-            Spikes
-          </button>
-          <button
-            type="button"
-            className={listKind === 'reviews' ? 'active' : ''}
-            onClick={() => setListKind('reviews')}
-          >
-            Reviews
-          </button>
-        </div>
+        <p className="spike-lead">{help.summary}</p>
+        {!isAnalyses && (
+          <div className="panel-tabs" role="tablist">
+            <button
+              type="button"
+              className={listKind === 'spikes' ? 'active' : ''}
+              onClick={() => setListKind('spikes')}
+            >
+              Concepts
+            </button>
+            <button
+              type="button"
+              className={listKind === 'reviews' ? 'active' : ''}
+              onClick={() => setListKind('reviews')}
+            >
+              Reviews
+            </button>
+          </div>
+        )}
         {!canWrite && <p className="hint">Write access needed to create items.</p>}
         <ul className="spike-list">
-          {listKind === 'spikes' && spikes.length === 0 && <li className="muted">No spikes yet.</li>}
+          {listKind === 'spikes' && filteredSpikes.length === 0 && (
+            <li className="muted">No {isAnalyses ? 'analyses' : 'concepts'} yet.</li>
+          )}
           {listKind === 'reviews' && reviews.length === 0 && (
             <li className="muted">No reviews yet.</li>
           )}
           {listKind === 'spikes' &&
-            spikes.map((s) => (
+            filteredSpikes.map((s) => (
               <li key={s.path}>
                 <button
                   type="button"
@@ -107,6 +146,7 @@ export function SpikePhase() {
                 >
                   <span className="spike-id">{s.id}</span>
                   <span className="spike-title">{s.title}</span>
+                  <span className="tree-type">{s.type}</span>
                 </button>
               </li>
             ))}
@@ -133,15 +173,19 @@ export function SpikePhase() {
       <section className="spike-main">
         {showCreate && listKind === 'spikes' && (
           <div className="spike-create-dialog">
-            <h3>Create spike</h3>
+            <h3>{isAnalyses ? 'Create analysis' : 'Create concept spike'}</h3>
             <p className="hint">Writes under process/spikes/</p>
             <label className="field">
               <span>Title</span>
-              <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Payment resilience" />
+              <input
+                value={spikeTitle}
+                onChange={(e) => setSpikeTitle(e.target.value)}
+                placeholder={isAnalyses ? 'Payment flow analysis' : 'Payment resilience design'}
+              />
             </label>
             <label className="field">
               <span>Slug (optional)</span>
-              <input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="payment-resilience" />
+              <input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="short-name" />
             </label>
             <label className="field">
               <span>Track</span>
@@ -153,25 +197,37 @@ export function SpikePhase() {
             <label className="field">
               <span>Type</span>
               <select value={type} onChange={(e) => setType(e.target.value as SpikeType)}>
-                <option value="question">question</option>
-                <option value="analysis">analysis</option>
-                <option value="design">design</option>
-                <option value="domain-question">domain-question</option>
-                <option value="domain-discovery">domain-discovery</option>
-                <option value="domain-analysis">domain-analysis</option>
-                <option value="domain-design">domain-design</option>
+                {isAnalyses ? (
+                  <>
+                    <option value="analysis">analysis</option>
+                    <option value="domain-analysis">domain-analysis</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="question">question</option>
+                    <option value="design">design</option>
+                    <option value="domain-question">domain-question</option>
+                    <option value="domain-discovery">domain-discovery</option>
+                    <option value="domain-design">domain-design</option>
+                  </>
+                )}
               </select>
             </label>
             <div className="cmd-row">
               <button
                 type="button"
                 className="btn primary"
-                disabled={!title.trim()}
+                disabled={!spikeTitle.trim()}
                 onClick={async () => {
-                  const folder = await createSpike({ title: title.trim(), slug, track, type })
+                  const folder = await createSpike({
+                    title: spikeTitle.trim(),
+                    slug,
+                    track,
+                    type,
+                  })
                   if (folder) {
                     setShowCreate(false)
-                    setTitle('')
+                    setSpikeTitle('')
                     setSlug('')
                     setActivePath(`${folder}/notes.md`)
                   }
@@ -192,7 +248,11 @@ export function SpikePhase() {
             <p className="hint">Writes under process/reviews/ (report + findings)</p>
             <label className="field">
               <span>Title</span>
-              <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Phase context check" />
+              <input
+                value={spikeTitle}
+                onChange={(e) => setSpikeTitle(e.target.value)}
+                placeholder="Phase context check"
+              />
             </label>
             <label className="field">
               <span>Slug (optional)</span>
@@ -202,12 +262,12 @@ export function SpikePhase() {
               <button
                 type="button"
                 className="btn primary"
-                disabled={!title.trim()}
+                disabled={!spikeTitle.trim()}
                 onClick={async () => {
-                  const folder = await createReview({ title: title.trim(), slug })
+                  const folder = await createReview({ title: spikeTitle.trim(), slug })
                   if (folder) {
                     setShowCreate(false)
-                    setTitle('')
+                    setSpikeTitle('')
                     setSlug('')
                     setListKind('reviews')
                     setActivePath(`${folder}/report.md`)
@@ -225,19 +285,17 @@ export function SpikePhase() {
 
         {!activeSpikePath && !showCreate && (
           <div className="phase-panel">
-            <h2>Process workspace</h2>
+            <h2>{title}</h2>
             <p className="lead">
-              Lifecycle artifacts live under <code>process/</code>: spikes (SPK) for explorations,
-              reviews (REV) for Verify reports — separate from durable architecture chapters.
+              {isAnalyses
+                ? 'Structured investigations of implementation and flows. Outputs stay under process/spikes/ until you promote facts into durable chapters.'
+                : 'Lifecycle drafts under process/ — concepts need not land in durable architecture chapters.'}
             </p>
-            <button
-              type="button"
-              className="btn primary"
-              disabled={!canWrite}
-              onClick={() => setShowCreate(true)}
-            >
-              {listKind === 'spikes' ? 'Create your first spike' : 'Create your first review'}
-            </button>
+            <p className="hint">
+              {canWrite
+                ? `Use “New ${isAnalyses ? 'analysis' : listKind === 'reviews' ? 'review' : 'concept'}” in the sidebar to start.`
+                : 'Write access is needed to create items (reconnect the folder with write permission).'}
+            </p>
           </div>
         )}
 
@@ -272,13 +330,46 @@ export function SpikePhase() {
                     <option value="bdd">BDD</option>
                     <option value="dataModel">Data</option>
                   </select>
-                  <button
-                    type="button"
-                    className="btn"
-                    onClick={() => void createStormBoard(activeSpikePath, boardName, modelingMode)}
-                  >
-                    Add board
-                  </button>
+                  <div className="cmd-row">
+                    <button
+                      type="button"
+                      className="btn"
+                      onClick={() => void createStormBoard(activeSpikePath, boardName, modelingMode)}
+                    >
+                      Add board
+                    </button>
+                    <button
+                      type="button"
+                      className="btn primary"
+                      disabled={importing}
+                      onClick={() => importInputRef.current?.click()}
+                    >
+                      {importing ? 'Importing…' : 'Import E2…'}
+                    </button>
+                    <input
+                      ref={importInputRef}
+                      type="file"
+                      accept=".storm.json,application/json,.json"
+                      hidden
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0]
+                        e.target.value = ''
+                        if (!file || !activeSpikePath) return
+                        setImporting(true)
+                        try {
+                          const text = await file.text()
+                          const path = await importStormBoard(activeSpikePath, text, file.name)
+                          if (path) showToast(`Board at ${path}`)
+                        } finally {
+                          setImporting(false)
+                        }
+                      }}
+                    />
+                  </div>
+                  <p className="hint">
+                    Import an E2 Board Snapshot v2 (<code>.storm.json</code>) into this spike&apos;s{' '}
+                    <code>boards/</code>.
+                  </p>
                 </div>
               )}
             </div>
@@ -287,6 +378,16 @@ export function SpikePhase() {
               {activeDoc?.kind === 'markdown' && (
                 <>
                   <div className="cmd-row">
+                    <button
+                      type="button"
+                      className="btn"
+                      onClick={() => {
+                        toggleContextPin(activeDoc.path)
+                        showToast('Pinned for Session')
+                      }}
+                    >
+                      Pin for Session
+                    </button>
                     {canWrite && (
                       <button
                         type="button"
@@ -329,6 +430,10 @@ export function SpikePhase() {
                       allDocs={index!.docs}
                       onNavigate={(path) => setActivePath(path)}
                       onOpenStorm={(path) => setActivePath(path)}
+                      onPinPath={(path) => {
+                        toggleContextPin(path)
+                        showToast('Pinned for Session')
+                      }}
                     />
                   )}
                 </>

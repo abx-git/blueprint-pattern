@@ -12,18 +12,18 @@ export function StarterPhase() {
     <div className="starter-page">
       <div className="starter-hero">
         <p className="starter-brand">AGM Studio</p>
-        <h1>Your architecture companion</h1>
+        <h1>Your architecture cockpit</h1>
         <p className="starter-lead">
-          One-time setup binds your docs folder. After that: write with AI sessions, explore spikes,
-          or browse the graph — Studio remembers the folder next time.
+          One-time setup binds your docs folder. After that: work in Architecture, Knowledge,
+          Concepts, and Analyses — Session builds a small context pack and a copy-paste prompt.
         </p>
         <div className="starter-cta">
           <button
             type="button"
             className="btn primary"
-            onClick={() => (ready ? setPhase('run') : goSetup())}
+            onClick={() => (ready ? setPhase('architecture') : goSetup())}
           >
-            {ready ? 'Continue — Write' : folderLabel ? 'Continue Setup' : 'Start Setup'}
+            {ready ? 'Open cockpit' : folderLabel ? 'Continue Setup' : 'Start Setup'}
           </button>
           <button type="button" className="btn" onClick={() => setPhase('about')}>
             What is AGM?
@@ -59,27 +59,28 @@ export function StarterPhase() {
           <li>
             <span className="starter-flow-step">Setup</span>
             <span className="starter-flow-body">
-              Once: choose the folder, confirm the doc path, write the starter if needed. Studio
-              remembers it.
+              Once: choose the folder, confirm the doc path, write entry-point + blueprint only.
+              Studio remembers the folder. Empty chapters appear later when Adopt / Extend creates
+              them.
             </span>
           </li>
           <li>
-            <span className="starter-flow-step">Write</span>
+            <span className="starter-flow-step">Cockpit</span>
             <span className="starter-flow-body">
-              Copy a session prompt → paste into a new AI chat. Extend docs, sync after code changes,
-              or run Adopt for the first fill.
+              Browse Architecture, Knowledge (<code>domain/</code>), Concepts, and Analyses in
+              parallel workspaces with a shared navigator.
             </span>
           </li>
           <li>
-            <span className="starter-flow-step">Spikes</span>
+            <span className="starter-flow-step">Session</span>
             <span className="starter-flow-body">
-              Capture messy questions in dated spike folders; lean-edit boards here.
+              Pin a small context pack, pick a workflow, copy the prompt → paste into a new AI chat.
             </span>
           </li>
           <li>
-            <span className="starter-flow-step">Browse</span>
+            <span className="starter-flow-step">Iterate</span>
             <span className="starter-flow-body">
-              Browse the Markdown graph, Mermaid diagrams, and boards.
+              Agent edits Markdown on disk; refresh the graph in Studio. Concepts need not ship.
             </span>
           </li>
         </ol>
@@ -90,11 +91,11 @@ export function StarterPhase() {
         <div
           className="starter-loop"
           role="img"
-          aria-label="Studio holds folder; AI chat writes docs; Studio for spikes and browse"
+          aria-label="Studio cockpit; AI chat writes docs; Studio refreshes graph"
         >
           <div className="starter-loop-node">
             <strong>Studio</strong>
-            <span>Folder + prompts</span>
+            <span>Cockpit + pack</span>
           </div>
           <div className="starter-loop-arrow" aria-hidden="true">
             →
@@ -108,11 +109,11 @@ export function StarterPhase() {
           </div>
           <div className="starter-loop-node">
             <strong>Studio</strong>
-            <span>Spikes &amp; browse</span>
+            <span>Refresh graph</span>
           </div>
         </div>
         <p className="starter-section-lead">
-          Setup is rare. Daily work is Write, Spikes, and Browse.
+          Setup is rare. Daily work is the cockpit workspaces plus Session.
         </p>
       </section>
 
@@ -123,9 +124,9 @@ export function StarterPhase() {
         <button
           type="button"
           className="btn primary"
-          onClick={() => (ready ? setPhase('run') : goSetup())}
+          onClick={() => (ready ? setPhase('architecture') : goSetup())}
         >
-          {ready ? 'Continue — Write' : 'Start Setup'}
+          {ready ? 'Open cockpit' : 'Start Setup'}
         </button>
       </div>
     </div>

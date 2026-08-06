@@ -1,31 +1,55 @@
 # AGM Studio
 
-Unified static app for the Architecture Graph Method.
+Unified static app for the Architecture Graph Method — iterative cockpit for architecture docs, domain knowledge, concepts, and analyses.
 
 Live: https://abx-git.github.io/agm.github.io/
 
-## Journey
+## Hybrid journey
 
-| Step | What you do |
-|------|-------------|
-| **About** | What AGM is (method, not the Studio UI alone) |
-| **Start** | What you need + URL-only cockpit loop |
-| **1. Connect** | Project name, template, bind local architecture folder (write) |
-| **2. Install** | Write Day-1 starter into the bound folder (browser only) |
-| **3. Run** | Copy session prompt → paste into Cursor / AI chat on the same repo |
-| **4. Process** | Spikes (`process/spikes/`, SPK) and reviews (`process/reviews/`, REV) |
-| **5. Review** | Browse full graph: tree, search, Markdown, Mermaid, link graph, boards |
+| Stage | What you do |
+|-------|-------------|
+| **About** | What AGM is (method + Studio as front door) |
+| **Start** | What you need + how the cockpit works |
+| **Setup → Connect** | Project name, template, bind local architecture folder (write) |
+| **Setup → Install** | Write Day-1 state only: `entry-point.md` + `blueprint.md` (no empty stubs) |
+| **Cockpit** | Work in parallel workspaces (see below) |
 
-Click the **AGM Studio** brand anytime to return to **What is AGM**. From there, open **How Studio works**.
+After Setup is ready, Studio opens the **workspace cockpit** (not a single “Write” step). Click the **AGM Studio** brand anytime to return to **What is AGM**.
+
+Chapters under the template folder, `domain/`, spikes, and reviews are **created when the process needs them** (Adopt / Extend docs / Concepts / Analyses) — not at Install.
+
+## Workspace cockpit
+
+| Workspace | Purpose | On disk (typical) |
+|-----------|---------|-------------------|
+| **Architecture** | Durable chapters, blueprint, extensions | Template folders, `extensions/`, state files |
+| **Knowledge** | Domain / fachliche KB | `domain/` |
+| **Concepts** | Designs & spikes that need not ship | `process/spikes/` (non-analysis types) |
+| **Analyses** | Implementation & flow investigations | `process/spikes/` with type `analysis` |
+| **Session** | Compose a context pack + copy a prompt for AI chat | Prompts stay in the Studio app (not written into the docs folder) |
+| **Setup** | Revisit folder binding / install | — |
+
+Each workspace shares a navigator (tree, search, Markdown/Mermaid viewer, link graph, boards). State files (`entry-point.md`, `blueprint.md`, `context/`) keep LLM context small; Session composes an explicit **context pack** before copy-paste.
+
+Details: [studio-workspaces.md](../reference/studio-workspaces.md).
 
 ## Spikes & reviews
 
 Lifecycle artifacts live under `process/` (not durable chapters):
 
 - Spike: `process/spikes/YYYY-MM-DD-<slug>/` with `index.md`, `notes.md`, `boards/*.storm.json`
+  - Create lean boards in Studio, or **Import E2…** (Board Snapshot v2 `.storm.json`) into the spike
 - Review: `process/reviews/YYYY-MM-DD-<slug>/` with `index.md`, `report.md`, `findings.md`
 
+Concepts and Analyses both use spikes; Analyses filter on spike type `analysis`.
+
 Legacy top-level `spikes/` + `work/` + `WRK-*` remain readable.
+
+## LLM handoff (today)
+
+Studio **does not call an LLM**. It personalizes a session prompt and you **copy → paste** into Cursor / Claude / Copilot on the same repo.
+
+Coming later (P1): hand off the same prompt to an optional local bridge script (API call). Copy-paste remains the fallback.
 
 ## Run locally
 

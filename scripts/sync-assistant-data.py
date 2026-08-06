@@ -14,6 +14,7 @@ WF_DIR = ROOT / "prompts" / "workflows"
 OUT = ROOT / "docs" / "assistant" / "workflows.json"
 STUDIO_PUBLIC = ROOT / "docs" / "studio" / "public"
 STUDIO_ASSISTANT = STUDIO_PUBLIC / "assistant"
+STUDIO_CATALOG = ROOT / "docs" / "studio" / "src" / "catalog"
 ADOPT_SRC = ROOT / "prompts" / "adopt-standalone.md"
 ADOPT_PROC = ROOT / "docs" / "reference" / "adopt-procedure.md"
 ADOPT_OUT = ROOT / "docs" / "assistant" / "adopt-prompt.txt"
@@ -129,20 +130,25 @@ def main() -> int:
         ADOPT_OUT.write_text(prompt + "\n", encoding="utf-8")
         print(f"Wrote adoption prompt to {ADOPT_OUT}")
 
-    # Mirror assistant data into Review Studio (Vite public/ + embedded iframe copy)
+    # Mirror assistant data into Review Studio (Vite public/ + SPA catalog + iframe copy)
     if STUDIO_PUBLIC.is_dir():
         STUDIO_PUBLIC.mkdir(parents=True, exist_ok=True)
         STUDIO_ASSISTANT.mkdir(parents=True, exist_ok=True)
+        STUDIO_CATALOG.mkdir(parents=True, exist_ok=True)
         for name in ("workflows.json", "anchors.json", "adopt-prompt.txt"):
             src = OUT.parent / name
             if src.is_file():
-                (STUDIO_PUBLIC / name).write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
-                (STUDIO_ASSISTANT / name).write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
+                text = src.read_text(encoding="utf-8")
+                (STUDIO_PUBLIC / name).write_text(text, encoding="utf-8")
+                (STUDIO_ASSISTANT / name).write_text(text, encoding="utf-8")
+                # Bundle into SPA so Session/Adopt does not depend on runtime fetch
+                if name in ("workflows.json", "adopt-prompt.txt"):
+                    (STUDIO_CATALOG / name).write_text(text, encoding="utf-8")
         for name in ("index.html", "app.js", "app.css"):
             src = OUT.parent / name
             if src.is_file():
                 (STUDIO_ASSISTANT / name).write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
-        print(f"Synced assistant assets into {STUDIO_PUBLIC}")
+        print(f"Synced assistant assets into {STUDIO_PUBLIC} and {STUDIO_CATALOG}")
 
     return 0
 

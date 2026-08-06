@@ -6,7 +6,7 @@ Bundled into the standalone adoption prompt. **Preparation:** human installs the
 
 Install the scaffold **before** the first adoption chat. Use the **same documentation root** you will pass in Project parameters / `--doc-root` (default path if you leave Project parameters empty).
 
-**AGM Studio (preferred):** open the Studio URL → Connect → bind the architecture folder with write access → Install → Write starter into folder. Then open the app repo in your AI tool and paste the Adopt prompt.
+**AGM Studio (preferred):** open the Studio URL → Connect → bind the architecture folder with write access → Install → write **entry-point.md** + **blueprint.md** only. Then open the app repo in your AI tool and paste the Adopt prompt.
 
 **CLI alternatives:**
 
@@ -18,21 +18,25 @@ npx @abx-hh/agm-cli scaffold --project "Order Service" --template arc42 --ai-too
 ./agm-install.sh --project "Order Service" --doc-root <doc-root>/ --template arc42 --ai-tool cursor
 ```
 
-Install should provide:
+**Studio Install provides:** `<doc-root>/entry-point.md` and `<doc-root>/blueprint.md` only. Prompts stay in AGM Studio. Chapters, domain/, and process artifacts are created when Adopt / Extend / Studio actions produce them.
 
-- `prompts/core/system-prompt.md`, `prompts/reference/` (when using full CLI install)
-- `<doc-root>/` scaffold: context, role prompts, template stubs, `process/spikes/` and `process/reviews/` (+ optional legacy `work/` templates)
-- AI tool rules when using CLI install (Cursor `.cursor/rules/`, etc.) — Studio browser starter may omit IDE rules; remind the human if missing
+**CLI install may additionally provide:**
+
+- `prompts/core/system-prompt.md`, `prompts/reference/`, `<doc-root>/prompts/role-*.md`
+- template stubs and process templates
+- AI tool rules (Cursor `.cursor/rules/`, etc.)
 
 Optional `--work-dir`: symlink `<doc-root>/process/spikes` (preferred) or legacy `<doc-root>/work` outside Git — [external-work.md](./external-work.md).
 
 Do **not** invent a second documentation root. Always write under the configured `<doc-root>/`.
 
-`blueprint.md` / `entry-point.md` may already exist as stubs from Studio; the adoption session owns filling them.
+`blueprint.md` / `entry-point.md` from Studio are expected stubs; the adoption session **fills** them and creates the first real chapter.
 
 ## Phase A — Verify scaffold (agent)
 
-Confirm `<doc-root>/prompts/role-bootstrap.md` exists. Prefer `prompts/core/system-prompt.md` at repo root when present. If role-bootstrap is missing, stop and ask the human to finish Install with the same documentation root.
+**Studio path** (Project parameters / Studio prompt notes present): require only that `<doc-root>/entry-point.md` and `<doc-root>/blueprint.md` exist (or can be created). Do **not** stop for missing `prompts/role-bootstrap.md` or `prompts/core/system-prompt.md`.
+
+**CLI path:** if those prompt files exist, use them; if the human used a full CLI install and role-bootstrap is missing, ask them to finish install.
 
 Do not re-download, clone, or duplicate files already installed.
 
@@ -52,13 +56,13 @@ Remind the human only if IDE rules are missing.
 
 ## Phase C — Bootstrap
 
-Follow `<doc-root>/prompts/role-bootstrap.md`:
+Follow on-disk `prompts/role-bootstrap.md` when present; otherwise follow the Adopt session prompt (Studio):
 
 - Record template and facts in `entry-point.md`.
 - Populate `blueprint.md` checklist; mark first in-progress item.
-- Populate interfaces/ and the first high-value section from evidence only.
+- Create and populate the first high-value section from evidence only (no empty stubs).
 - Keep entry-point (map) and blueprint (checklist) in sync.
-- Ensure `<doc-root>/process/spikes/` and `<doc-root>/process/reviews/` are ready for later SPK/REV items.
+- Create `process/spikes/` / `process/reviews/` only when a spike/review starts — not by default in Adopt.
 - Short session note + required anchors at end.
 
 ## Lifecycle after Build (phase 1)

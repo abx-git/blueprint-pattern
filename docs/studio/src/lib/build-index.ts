@@ -1,9 +1,23 @@
-import type { ArchitectureIndex, DocNode, GraphEdge } from '../types'
+import type { ArchitectureIndex, DocNode, GraphEdge, WorkspaceId } from '../types'
 import type { FileMap } from './fs-access'
 import { extractMarkdownLinks, fileName, parseFrontmatter } from './okf-parse'
+import { classifyDocPath, docMatchesWorkspace } from './workspace'
 
 function isStormPath(path: string): boolean {
   return path.toLowerCase().endsWith('.storm.json')
+}
+
+function spikeTypeFromIndex(files: FileMap, path: string): string | undefined {
+  // If under a spike folder, read that folder's index.md type
+  const m = path.match(/^(.*(?:process\/)?spikes\/[^/]+)(?:\/|$)/i)
+  if (!m?.[1]) return undefined
+  const indexContent = files.get(`${m[1]}/index.md`)
+  if (!indexContent) return undefined
+  const { meta, body } = parseFrontmatter(indexContent)
+  const ty = body.match(/\*\*Type\*\*\s*\|\s*([^|\n]+)/i)
+  if (ty) return ty[1]!.trim()
+  if (meta?.type) return String(meta.type)
+  return undefined
 }
 
 export function buildArchitectureIndex(rootLabel: string, files: FileMap): ArchitectureIndex {
@@ -11,6 +25,7 @@ export function buildArchitectureIndex(rootLabel: string, files: FileMap): Archi
 
   for (const [path, content] of files) {
     if (isStormPath(path)) {
+      const spikeType = spikeTypeFromIndex(files, path)
       docs.set(path, {
         path,
         name: fileName(path),
@@ -18,6 +33,7 @@ export function buildArchitectureIndex(rootLabel: string, files: FileMap): Archi
         content,
         meta: { type: 'e2-board-snapshot', title: fileName(path) },
         links: [],
+        workspace: classifyDocPath(path, spikeType),
       })
       continue
     }
@@ -25,6 +41,10 @@ export function buildArchitectureIndex(rootLabel: string, files: FileMap): Archi
 
     const { meta, body } = parseFrontmatter(content)
     const links = extractMarkdownLinks(path, body)
+    const spikeType =
+      spikeTypeFromIndex(files, path) ||
+      (meta?.type && String(meta.type)) ||
+      undefined
     docs.set(path, {
       path,
       name: fileName(path),
@@ -32,6 +52,7 @@ export function buildArchitectureIndex(rootLabel: string, files: FileMap): Archi
       content,
       meta,
       links,
+      workspace: classifyDocPath(path, spikeType),
     })
   }
 
@@ -77,4 +98,15 @@ export function uniqueTypes(docs: Map<string, DocNode>): string[] {
     if (d.meta?.type) set.add(String(d.meta.type))
   }
   return [...set].sort()
+}
+
+export function filterDocsByWorkspace(
+  docs: Map<string, DocNode>,
+  workspace: WorkspaceId,
+): Map<string, DocNode> {
+  const out = new Map<string, DocNode>()
+  for (const [path, doc] of docs) {
+    if (docMatchesWorkspace(doc.workspace, workspace)) out.set(path, doc)
+  }
+  return out
 }

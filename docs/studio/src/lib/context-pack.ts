@@ -1,0 +1,119 @@
+import type { ArchitectureIndex, ProjectParams } from '../types'
+import { normDocRoot } from './project-params'
+
+export interface ContextPackSlot {
+  id: 'always' | 'plan' | 'focus' | 'ondemand' | 'refs'
+  label: string
+  path: string
+  included: boolean
+  required?: boolean
+}
+
+export interface ContextPack {
+  slots: ContextPackSlot[]
+  pins: string[]
+  docFocus: string[]
+}
+
+function findEnding(index: ArchitectureIndex | null, suffix: string): string | null {
+  if (!index) return null
+  return [...index.docs.keys()].find((p) => p.endsWith(suffix)) ?? null
+}
+
+/** Build default context pack from index + active path + pinned refs. */
+export function buildContextPack(opts: {
+  index: ArchitectureIndex | null
+  activePath: string | null
+  pins: string[]
+  docFocus: string[]
+  includeOnDemand?: boolean
+}): ContextPack {
+  const entry = findEnding(opts.index, 'entry-point.md') || 'entry-point.md'
+  const blueprint = findEnding(opts.index, 'blueprint.md') || 'blueprint.md'
+  const onDemand = findEnding(opts.index, 'context/on-demand.md')
+
+  const slots: ContextPackSlot[] = [
+    {
+      id: 'always',
+      label: 'Always (entry-point)',
+      path: entry,
+      included: true,
+      required: true,
+    },
+    {
+      id: 'plan',
+      label: 'Plan (blueprint)',
+      path: blueprint,
+      included: true,
+      required: true,
+    },
+    {
+      id: 'focus',
+      label: 'Focus (active doc)',
+      path: opts.activePath || '',
+      included: Boolean(opts.activePath),
+    },
+    {
+      id: 'ondemand',
+      label: 'On-demand',
+      path: onDemand || 'context/on-demand.md',
+      included: Boolean(opts.includeOnDemand && onDemand),
+    },
+    {
+      id: 'refs',
+      label: 'Pinned refs',
+      path: opts.pins.join(', '),
+      included: opts.pins.length > 0,
+    },
+  ]
+
+  return {
+    slots,
+    pins: opts.pins,
+    docFocus: opts.docFocus,
+  }
+}
+
+/** Markdown block listing pack paths for the agent. */
+export function formatContextPackBlock(
+  pack: ContextPack,
+  params: ProjectParams,
+): string {
+  const root = normDocRoot(params.docRoot)
+  const lines: string[] = [
+    '## Context pack (read these first — keep context small)',
+    '',
+    'Open only the paths below unless a link from them is required. Do not invent claims without a source. Prefer relative links.',
+    '',
+  ]
+
+  for (const slot of pack.slots) {
+    if (!slot.included) continue
+    if (slot.id === 'refs') {
+      if (pack.pins.length === 0) continue
+      lines.push(`### Pinned refs`)
+      for (const pin of pack.pins) {
+        const abs = pin.includes('/') || pin.endsWith('.md') ? `${root}${pin}` : pin
+        lines.push(`- ${abs}`)
+      }
+      lines.push('')
+      continue
+    }
+    if (!slot.path) continue
+    lines.push(`- **${slot.label}:** ${root}${slot.path}`)
+  }
+
+  if (pack.docFocus.length > 0) {
+    lines.push('')
+    lines.push(`**DOC_FOCUS / Scope:** ${pack.docFocus.join(',')}`)
+  }
+
+  lines.push('')
+  return lines.join('\n')
+}
+
+export function togglePin(pins: string[], path: string): string[] {
+  const i = pins.indexOf(path)
+  if (i >= 0) return pins.filter((_, idx) => idx !== i)
+  return [...pins, path].slice(0, 24)
+}

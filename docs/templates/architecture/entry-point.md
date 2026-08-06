@@ -30,14 +30,16 @@ timestamp: ""
 |------|-------|
 | What's next (checklist) | [blueprint.md](./blueprint.md) |
 | Template chapters | See template folder |
-| Spikes | [process/spikes/](./process/spikes/) |
+| Knowledge (domain) | [domain/](./domain/) |
+| Spikes / concepts & analyses | [process/spikes/](./process/spikes/) |
 | Reviews | [process/reviews/](./process/reviews/) |
+| Extensions | [extensions/](./extensions/) |
 | Index | [index.md](./index.md) |
 | Log | [log.md](./log.md) |
 
 ## Session habit
 
-1. Read this file → [blueprint.md](./blueprint.md) → `prompts/role-<role>.md`.
+1. Read this file → [blueprint.md](./blueprint.md). Prefer session prompts from **AGM Studio** (prompts are not installed into this folder by default).
 2. Follow links; update this map when chapters appear.
 3. Tick blueprint items when work moves forward.
 
