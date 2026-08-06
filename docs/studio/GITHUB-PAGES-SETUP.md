@@ -54,14 +54,33 @@ git remote add pages https://github.com/abx-git/agm.github.io.git
 ./scripts/push-studio-to-pages.sh
 ```
 
-## 5. Troubleshooting
+## 5. Two-step publish (important)
+
+A green **agm** Actions run only **pushes files** into `agm.github.io`. GitHub then runs a separate workflow on that repo:
+
+**[agm.github.io → Actions → pages build and deployment](https://github.com/abx-git/agm.github.io/actions/workflows/pages-build-deployment.yml)**
+
+Only when **that** run is green does https://abx-git.github.io/agm.github.io/ update. If it fails, the live site keeps the last successful publish (often days old).
+
+## 6. Troubleshooting
 
 | Symptom | Check |
 |---------|--------|
-| `agm/deployments` empty | Expected — use Actions workflow above |
+| `agm` Actions green, site still old | Open [pages-build-deployment](https://github.com/abx-git/agm.github.io/actions/workflows/pages-build-deployment.yml) — look for a **red** run (“Timeout reached, aborting!”). Click **Re-run all jobs**. |
+| `agm/deployments` empty | Expected — use Actions on **agm** + Pages builds on **agm.github.io** |
 | Actions green, site 404/403 | Pages source on **agm.github.io** must be branch `main` / `/` |
+| Deploy job waits then times out (~10 min) | Environment **github-pages** on agm.github.io: allow branch `main`; remove required reviewers / wait timers if any: [Environments](https://github.com/abx-git/agm.github.io/settings/environments) |
 | Actions fails in first ~15s | `ACTIONS_DEPLOY_KEY` missing/wrong, or deploy key not write-enabled on agm.github.io |
 | Manual script pushes wrong place | `git remote -v` — `pages` must be `agm.github.io`, not `blueprint-pattern.github.io` |
+| Wrong URL | Live site is **https://abx-git.github.io/agm.github.io/** (project Pages). `https://abx-git.github.io/` is 404 unless you use a repo named `abx-git.github.io`. |
+
+### Verify freshness
+
+```bash
+# Must match (same index-*.js hash). If raw is newer than live → Pages deploy failed.
+curl -sS https://raw.githubusercontent.com/abx-git/agm.github.io/main/index.html | grep -o 'index-[^"]*\.js'
+curl -sS https://abx-git.github.io/agm.github.io/ | grep -o 'index-[^"]*\.js'
+```
 
 ## Local
 

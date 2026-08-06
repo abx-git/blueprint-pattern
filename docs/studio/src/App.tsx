@@ -10,6 +10,30 @@ import { SpikePhase } from './components/SpikePhase'
 import { ReviewPhase } from './components/ReviewPhase'
 import './App.css'
 
+function formatReleaseTime(iso: string): string {
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return iso
+  return new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short',
+  }).format(d)
+}
+
+function SiteFooter() {
+  const released = formatReleaseTime(__AGM_BUILD_TIME__)
+  return (
+    <footer className="studio-site-footer">
+      <span>Released {released}</span>
+      <span aria-hidden="true"> · </span>
+      <span>© Andreas Bergmann, Hamburg, Germany</span>
+    </footer>
+  )
+}
+
 export default function App() {
   const phase = useStudioStore((s) => s.phase)
   const error = useStudioStore((s) => s.error)
@@ -54,6 +78,7 @@ export default function App() {
         {phase === 'spike' && <SpikePhase />}
         {phase === 'review' && <ReviewPhase />}
       </div>
+      <SiteFooter />
     </div>
   )
 }

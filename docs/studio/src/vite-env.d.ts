@@ -1,5 +1,8 @@
 /// <reference types="vite/client" />
 
+/** ISO-8601 timestamp injected at Vite build time (see vite.config.ts). */
+declare const __AGM_BUILD_TIME__: string
+
 interface FileSystemHandlePermissionDescriptor {
   mode?: 'read' | 'readwrite'
 }
