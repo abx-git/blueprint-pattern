@@ -4,12 +4,12 @@ import type { JourneyPhase, WorkspaceId } from '../types'
 import { workspaceLabel } from '../lib/session-persist'
 
 const COCKPIT: { id: WorkspaceId; hint: string }[] = [
-  { id: 'architecture', hint: 'Browse docs' },
-  { id: 'knowledge', hint: 'Domain' },
-  { id: 'inbox', hint: 'Incoming' },
-  { id: 'concepts', hint: 'Drafts' },
-  { id: 'analyses', hint: 'Code look' },
-  { id: 'session', hint: 'Copy for AI' },
+  { id: 'architecture', hint: 'Your docs' },
+  { id: 'knowledge', hint: 'Domain language' },
+  { id: 'inbox', hint: 'New information' },
+  { id: 'concepts', hint: 'Ideas & drafts' },
+  { id: 'analyses', hint: 'How code works' },
+  { id: 'session', hint: 'Ask the AI' },
 ]
 
 export function JourneyRail() {
@@ -109,7 +109,8 @@ export function ProjectBar() {
     if (p === 'architecture' || p === 'knowledge' || p === 'concepts' || p === 'analyses') {
       return workspaceLabel(p)
     }
-    if (p === 'session') return 'Prompt'
+    if (p === 'session') return 'Ask AI'
+    if (p === 'inbox') return 'Inbox'
     return 'Setup'
   }
 
@@ -164,8 +165,14 @@ export function ProjectBar() {
           </button>
         )}
         {folderLabel && !introPhase && (
-          <button type="button" className="btn" disabled={opening} onClick={() => refreshIndex()}>
-            Refresh
+          <button
+            type="button"
+            className="btn"
+            disabled={opening}
+            onClick={() => refreshIndex()}
+            title="Reload files from disk after the AI wrote something"
+          >
+            Reload folder
           </button>
         )}
       </div>

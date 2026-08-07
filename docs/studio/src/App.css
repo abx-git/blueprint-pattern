@@ -1876,6 +1876,80 @@ code {
   flex-wrap: wrap;
 }
 
+.inbox-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.inbox-step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.inbox-step:hover {
+  border-color: #94a3b8;
+}
+
+.inbox-step.active {
+  border-color: #0f172a;
+  background: #f1f5f9;
+  box-shadow: inset 3px 0 0 #0f172a;
+}
+
+.inbox-step-num {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.inbox-step.active .inbox-step-num {
+  color: #0f172a;
+}
+
+.inbox-step-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.inbox-primary {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.inbox-primary .hint {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.inbox-advanced {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.inbox-advanced summary {
+  cursor: pointer;
+  color: #475569;
+}
+
 .inbox-main {
   overflow: auto;
   padding: 0.75rem 1rem;

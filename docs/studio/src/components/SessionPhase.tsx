@@ -35,8 +35,8 @@ const GOLDEN_EVOLVE = [
 ]
 
 const GOLDEN_REVIEW = [
-  { id: 'review-maintenance', label: 'Review after sync' },
-  { id: 'review-phase', label: 'Review a phase' },
+  { id: 'review-maintenance', label: 'Check docs after code sync' },
+  { id: 'review-phase', label: 'Check a documentation phase' },
 ]
 
 const ADVANCED_WORK = [
@@ -158,7 +158,7 @@ export function SessionPhase() {
   if (!folderLabel) {
     return (
       <div className="phase-panel">
-        <h2>Session</h2>
+        <h2>Ask AI</h2>
         <p>Finish Setup first — choose your documentation folder.</p>
         <button type="button" className="btn primary" onClick={() => goSetup()}>
           Go to Setup
@@ -169,34 +169,46 @@ export function SessionPhase() {
 
   const primaryStep: RunStep = installStatus === 'ready' ? 'continue' : 'adopt'
   const stepOptions: { id: RunStep; label: string }[] = [
-    { id: 'continue', label: 'Extend — next blueprint item' },
-    { id: 'adopt', label: installStatus === 'ready' ? 'Re-adopt — first fill again' : 'Adopt — first fill' },
-    { id: 'inbox-analyze', label: 'Inbox — analyze raw → proposal' },
-    { id: 'inbox-refine', label: 'Inbox — refine proposal' },
-    { id: 'inbox-merge', label: 'Inbox — merge ready proposals' },
-    { id: 'evolve', label: 'Sync / Import from code or paste' },
-    { id: 'verify', label: 'Verify / review' },
+    { id: 'continue', label: 'Continue docs — next checklist item' },
+    {
+      id: 'adopt',
+      label: installStatus === 'ready' ? 'First fill again (Adopt)' : 'First fill (Adopt)',
+    },
+    { id: 'inbox-analyze', label: 'Inbox — structure new information' },
+    { id: 'inbox-refine', label: 'Inbox — improve a plan' },
+    { id: 'inbox-merge', label: 'Inbox — apply approved plans' },
+    { id: 'evolve', label: 'Sync with code / import paste (legacy)' },
+    { id: 'verify', label: 'Check documentation quality' },
     { id: 'advanced', label: 'More (design, domain, analysis)' },
   ]
+
+  const inboxCopyLabel =
+    step === 'inbox-analyze'
+      ? 'structure Inbox'
+      : step === 'inbox-refine'
+        ? 'improve plan'
+        : step === 'inbox-merge'
+          ? 'apply approved plans'
+          : step
 
   return (
     <div className="phase-panel run-phase">
       <h2>
-        Prompt{' '}
-        <HelpTip label="Prompt">
+        Ask AI{' '}
+        <HelpTip label="Ask AI">
           <p>
-            Studio does not write docs or call an LLM. You copy a prompt into {tool} on this repo; the
-            AI edits Markdown; then use Refresh in the header.
+            Studio does not write docs or call an AI itself. You copy a prompt into {tool} on this
+            project; the AI edits Markdown; then use <strong>Reload folder</strong> in the header.
           </p>
         </HelpTip>
       </h2>
       <p className="lead">
-        1) Adjust the context pack if needed · 2) Choose what to prepare · 3) Copy → paste into a{' '}
-        <strong>new chat</strong> · 4) Refresh the folder.
+        1) Adjust the reading list if needed · 2) Choose what you want help with · 3) Copy → paste
+        into a <strong>new chat</strong> · 4) Reload folder.
       </p>
 
       <div className="run-card context-pack-card">
-        <h3>Context pack</h3>
+        <h3>Reading list for the AI</h3>
         <ul className="context-pack-list">
           {pack.slots.map((slot) => {
             const onDemandMissing =
@@ -213,9 +225,9 @@ export function SessionPhase() {
                   className={`context-pack-item${locked ? ' is-locked' : ''}`}
                   title={
                     onDemandMissing
-                      ? 'File context/on-demand.md is not in the folder yet — Create it via Adopt / Extend, then Refresh'
+                      ? 'Optional extra file is not in the folder yet — create it via Ask AI (first fill / continue), then Reload folder'
                       : slot.id === 'refs'
-                        ? 'Add pins while browsing docs'
+                        ? 'Remember files while browsing docs'
                         : slot.id === 'focus'
                           ? 'Follows the doc you last opened'
                           : undefined
@@ -243,7 +255,7 @@ export function SessionPhase() {
                       <span className="muted"> — not in folder yet</span>
                     ) : null}
                     {slot.id === 'refs' && contextPins.length === 0 ? (
-                      <span className="muted"> — pin docs while browsing</span>
+                      <span className="muted"> — remember docs while browsing</span>
                     ) : null}
                   </span>
                 </label>
@@ -267,13 +279,13 @@ export function SessionPhase() {
           </div>
         )}
         <p className="hint">
-          <strong>On-demand</strong> = optional extra tables (domain terms, pitfalls, environments) in{' '}
-          <code>context/on-demand.md</code>. Include it only when that file exists and you want the AI to
-          read it. Pins: mark paths while browsing Architecture / Knowledge / Inbox / Concepts / Analyses.
+          <strong>Extra tables</strong> (optional) live in <code>context/on-demand.md</code> — include
+          them only when that file exists and you want the AI to read them. Use{' '}
+          <strong>Remember for AI prompt</strong> while browsing to add specific files here.
         </p>
 
         <details className="focus-details">
-          <summary>DOC_FOCUS / extensions (optional)</summary>
+          <summary>Optional focus topics</summary>
           <div className="focus-grid">
             {DOC_FOCUS_OPTIONS.map((opt) => (
               <label key={opt.id} className="focus-chip">
@@ -290,10 +302,10 @@ export function SessionPhase() {
             <input
               value={extensionSlug}
               onChange={(e) => setExtensionSlug(e.target.value)}
-              placeholder="extension slug (e.g. billing-notes)"
+              placeholder="custom topic (e.g. billing-notes)"
             />
             <button type="button" className="btn" onClick={addExtension}>
-              Add extension:&lt;slug&gt;
+              Add topic
             </button>
           </div>
           {docFocus.filter((d) => d.startsWith('extension:')).length > 0 && (
@@ -305,7 +317,7 @@ export function SessionPhase() {
       </div>
 
       <label className="field prompt-kind-field">
-        <span>What to prepare</span>
+        <span>What do you want help with?</span>
         <select
           value={step}
           onChange={(e) => {
@@ -362,20 +374,20 @@ export function SessionPhase() {
           <p>
             {step === 'inbox-analyze' && (
               <>
-                Structure <code>inbox/raw/</code> into a reviewable proposal under{' '}
-                <code>inbox/proposals/</code> — no merge yet.
+                Ask the AI to turn received Inbox text into a clear <strong>plan</strong> you can
+                approve. Nothing is written into Architecture yet.
               </>
             )}
             {step === 'inbox-refine' && (
               <>
-                Dialog to improve a proposal. Set path below if needed; do not merge until status is{' '}
-                <code>ready</code>.
+                Ask the AI to improve a plan after your feedback. Do not apply it until you mark the
+                plan <strong>Approved</strong> in Inbox.
               </>
             )}
             {step === 'inbox-merge' && (
               <>
-                Apply proposals with <code>status: ready</code> into the graph + <code>sources/</code>,
-                then archive under <code>inbox/done/</code>.
+                Ask the AI to write <strong>Approved</strong> plans into your real documentation, then
+                move them to Done.
               </>
             )}{' '}
             {personalizeWorkflowWhen(inboxWf, project)}
@@ -383,7 +395,7 @@ export function SessionPhase() {
           {(step === 'inbox-refine' || step === 'inbox-merge') && (
             <div className="workflow-inputs">
               <label className="field">
-                <span>Proposal path(s)</span>
+                <span>Plan file (optional — leave empty to use Approved plans)</span>
                 <input
                   value={inputs.proposalPath || inputs.proposalPaths || ''}
                   onChange={(e) =>
@@ -393,15 +405,16 @@ export function SessionPhase() {
                       proposalPaths: e.target.value,
                     })
                   }
-                  placeholder="inbox/proposals/YYYY-MM-DD-slug.md"
+                  placeholder="Usually leave empty"
                 />
               </label>
               {step === 'inbox-refine' && (
                 <label className="field">
-                  <span>Human notes</span>
+                  <span>Your notes for the AI</span>
                   <input
                     value={inputs.notes || ''}
                     onChange={(e) => setInputs({ ...inputs, notes: e.target.value })}
+                    placeholder="What should change?"
                   />
                 </label>
               )}
@@ -412,7 +425,7 @@ export function SessionPhase() {
             <pre className="preview-box">{inboxText.slice(0, 4000)}</pre>
           </details>
           <button type="button" className="btn primary" onClick={() => copyOut(inboxText)}>
-            {copyBtn(step)}
+            {copyBtn(inboxCopyLabel)}
           </button>
           <button type="button" className="btn" onClick={() => setPhase('inbox')}>
             Back to Inbox
@@ -424,10 +437,9 @@ export function SessionPhase() {
         <div className="run-card">
           {step === 'verify' && (
             <p>
-              <strong>Verify</strong> = quality check of architecture docs in a{' '}
-              <em>fresh</em> AI chat. Report-only (PASS / notes / FAIL) →{' '}
-              <code>process/reviews/</code>. Does not fix chapters in that session. Browse results
-              under Architecture → Verify reports.
+              <strong>Check docs</strong> = quality check of architecture documentation in a{' '}
+              <em>fresh</em> AI chat. Report only (PASS / notes / FAIL). The AI does not fix chapters
+              in that chat. Browse results under Architecture → Check docs.
             </p>
           )}
           <div className="mode-grid">
@@ -537,8 +549,8 @@ export function SessionPhase() {
 
       <div className="run-cta">
         <p className="hint">
-          After the AI writes files: header → <strong>Refresh</strong>, then check{' '}
-          <code>blueprint.md</code>.
+          After the AI writes files: header → <strong>Reload folder</strong>, then check the
+          checklist in Architecture.
         </p>
         <button type="button" className="btn" onClick={() => setPhase('architecture')}>
           Back to Architecture

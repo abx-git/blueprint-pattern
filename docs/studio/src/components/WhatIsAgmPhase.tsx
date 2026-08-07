@@ -42,8 +42,8 @@ export function WhatIsAgmPhase() {
           </li>
           <li>
             Studio workspaces: <strong>Architecture</strong>, <strong>Knowledge</strong>,{' '}
-            <strong>Concepts</strong>, <strong>Analyses</strong> — plus <strong>Session</strong> to
-            compose a small context pack and copy a prompt.
+            <strong>Inbox</strong>, <strong>Concepts</strong>, <strong>Analyses</strong> — plus{' '}
+            <strong>Ask AI</strong> to build a short reading list and copy a prompt.
           </li>
           <li>
             Habit for the agent: open the entry point first, follow links, don&apos;t invent claims
@@ -55,8 +55,8 @@ export function WhatIsAgmPhase() {
       <section className="starter-section">
         <h2>How work usually goes</h2>
         <p className="about-prose">
-          One-time Setup binds your docs folder. Then you work in the cockpit: browse and pin
-          pages, open Session, copy a prompt into Cursor or another AI chat on the same repo. The
+          One-time Setup binds your docs folder. Then you work in the cockpit: browse and remember
+          pages, open Ask AI, copy a prompt into Cursor or another AI chat on the same repo. The
           agent edits Markdown. You stay in the loop — scribe, not autonomous architect.
         </p>
         <p className="about-prose">

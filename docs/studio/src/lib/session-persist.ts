@@ -139,7 +139,7 @@ export function workspaceLabel(ws: DocWorkspace | WorkspaceId): string {
     case 'analyses':
       return 'Analyses'
     case 'session':
-      return 'Prompt'
+      return 'Ask AI'
     case 'meta':
       return 'State'
     default:

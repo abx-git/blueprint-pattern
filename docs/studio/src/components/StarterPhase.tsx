@@ -15,7 +15,7 @@ export function StarterPhase() {
         <h1>Your architecture cockpit</h1>
         <p className="starter-lead">
           One-time setup binds your docs folder. After that: work in Architecture, Knowledge,
-          Concepts, and Analyses — Session builds a small context pack and a copy-paste prompt.
+          Inbox, Concepts, and Analyses — Ask AI builds a short reading list and a copy-paste prompt.
         </p>
         <div className="starter-cta">
           <button
@@ -72,15 +72,16 @@ export function StarterPhase() {
             </span>
           </li>
           <li>
-            <span className="starter-flow-step">Session</span>
+            <span className="starter-flow-step">Ask AI</span>
             <span className="starter-flow-body">
-              Pin a small context pack, pick a workflow, copy the prompt → paste into a new AI chat.
+              Remember a few files, choose what you want help with, copy the prompt → paste into a
+              new AI chat.
             </span>
           </li>
           <li>
             <span className="starter-flow-step">Iterate</span>
             <span className="starter-flow-body">
-              Agent edits Markdown on disk; refresh the graph in Studio. Concepts need not ship.
+              The AI edits Markdown on disk; click Reload folder in Studio. Concepts need not ship.
             </span>
           </li>
         </ol>
@@ -109,11 +110,11 @@ export function StarterPhase() {
           </div>
           <div className="starter-loop-node">
             <strong>Studio</strong>
-            <span>Refresh graph</span>
+            <span>Reload folder</span>
           </div>
         </div>
         <p className="starter-section-lead">
-          Setup is rare. Daily work is the cockpit workspaces plus Session.
+          Setup is rare. Daily work is the cockpit workspaces plus Ask AI.
         </p>
       </section>
 

@@ -13,7 +13,7 @@ interface Props {
   lead?: string
 }
 
-/** Shared navigator/viewer — browse + pin only; AI prompts live under Prompt. */
+/** Shared navigator/viewer — browse + remember files; AI prompts live under Ask AI. */
 export function WorkspaceShell({ workspace, title, lead }: Props) {
   const index = useStudioStore((s) => s.index)
   const setPhase = useStudioStore((s) => s.setPhase)
@@ -27,8 +27,8 @@ export function WorkspaceShell({ workspace, title, lead }: Props) {
       <div className="phase-panel">
         <h2>{label}</h2>
         <p>
-          No index yet. Finish Setup, or refresh the folder after the agent has written files (header
-          → Refresh).
+          No files loaded yet. Finish Setup, or click <strong>Reload folder</strong> in the header
+          after the AI has written files.
         </p>
         <div className="cmd-row">
           <button type="button" className="btn primary" onClick={() => setPhase('connect')}>
@@ -88,9 +88,9 @@ export function WorkspaceShell({ workspace, title, lead }: Props) {
                 type="button"
                 className={archTab === 'verify' ? 'active' : ''}
                 onClick={() => setArchTab('verify')}
-                title="Quality checks of architecture docs (AI report-only)"
+                title="Ask the AI to check documentation quality (report only)"
               >
-                Verify reports
+                Check docs
               </button>
             </div>
           )}
@@ -101,18 +101,18 @@ export function WorkspaceShell({ workspace, title, lead }: Props) {
               type="button"
               className="btn primary"
               onClick={() => openSession('verify')}
-              title="Opens Prompt — Verify workflows"
+              title="Opens Ask AI — copy a prompt for a documentation quality check"
             >
-              Prepare Verify prompt
+              Ask AI to check docs
             </button>
           ) : (
             <button
               type="button"
               className="btn primary"
               onClick={() => openSession(promptIntent)}
-              title="Opens Prompt — copy for your AI chat"
+              title="Opens Ask AI — copy a prompt for your chat"
             >
-              Prepare AI prompt
+              Ask AI
             </button>
           )}
         </div>

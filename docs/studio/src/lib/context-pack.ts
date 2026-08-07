@@ -35,33 +35,33 @@ export function buildContextPack(opts: {
   const slots: ContextPackSlot[] = [
     {
       id: 'always',
-      label: 'Always (entry-point)',
+      label: 'Start here (entry-point)',
       path: entry,
       included: true,
       required: true,
     },
     {
       id: 'plan',
-      label: 'Plan (blueprint)',
+      label: 'Checklist (blueprint)',
       path: blueprint,
       included: true,
       required: true,
     },
     {
       id: 'focus',
-      label: 'Focus (active doc)',
+      label: 'Open document',
       path: opts.activePath || '',
       included: Boolean(opts.activePath),
     },
     {
       id: 'ondemand',
-      label: 'On-demand',
+      label: 'Extra tables (optional)',
       path: onDemand || 'context/on-demand.md',
       included: Boolean(opts.includeOnDemand && onDemand),
     },
     {
       id: 'refs',
-      label: 'Pinned refs',
+      label: 'Remembered files',
       path: opts.pins.join(', '),
       included: opts.pins.length > 0,
     },

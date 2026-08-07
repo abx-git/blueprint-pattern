@@ -181,7 +181,7 @@ export function ConnectPhase() {
                 placeholder="docs/architecture/"
               />
               <span className="hint">
-                Edit if needed. Setup and Session use this path.
+                Edit if needed. Setup and Ask AI use this path.
               </span>
             </label>
 

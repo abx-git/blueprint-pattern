@@ -106,7 +106,7 @@ export function SpikePhase({ mode }: Props) {
           {!isAnalyses && (
             <>
               {' '}
-              Doc quality checks live under Architecture → <strong>Verify reports</strong>, not here.
+              Doc quality checks live under Architecture → <strong>Check docs</strong>, not here.
             </>
           )}
         </p>
@@ -213,7 +213,7 @@ export function SpikePhase({ mode }: Props) {
             <p className="lead">
               {isAnalyses
                 ? 'Structured investigations of implementation and flows. Outputs stay under process/spikes/ until you promote facts into durable chapters.'
-                : 'Lifecycle drafts under process/ — concepts need not land in durable architecture chapters. Verify reports (doc quality) are under Architecture → Verify reports.'}
+                : 'Lifecycle drafts under process/ — concepts need not land in durable architecture chapters. Doc quality checks are under Architecture → Check docs.'}
             </p>
             <p className="hint">
               {canWrite
@@ -307,10 +307,10 @@ export function SpikePhase({ mode }: Props) {
                       className="btn"
                       onClick={() => {
                         toggleContextPin(activeDoc.path)
-                        showToast('Pinned for Session')
+                        showToast('Remembered for the next AI prompt')
                       }}
                     >
-                      Pin for Session
+                      Remember for AI prompt
                     </button>
                     {canWrite && (
                       <button
@@ -356,7 +356,7 @@ export function SpikePhase({ mode }: Props) {
                       onOpenStorm={(path) => setActivePath(path)}
                       onPinPath={(path) => {
                         toggleContextPin(path)
-                        showToast('Pinned for Session')
+                        showToast('Remembered for the next AI prompt')
                       }}
                     />
                   )}

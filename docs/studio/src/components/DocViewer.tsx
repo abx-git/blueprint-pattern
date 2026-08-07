@@ -179,7 +179,7 @@ export function DocViewer({ doc, allDocs, onNavigate, onOpenStorm, onPinPath }: 
       }
       if (code.classList.contains('agm-code-path')) continue
       code.classList.add('agm-code-path')
-      code.title = 'Click to pin code path for Session'
+      code.title = 'Click to remember this path for the next AI prompt'
       code.style.cursor = 'pointer'
       const handler = (ev: Event) => {
         ev.preventDefault()

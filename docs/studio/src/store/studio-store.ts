@@ -463,7 +463,7 @@ export const useStudioStore = create<StudioState>((set, get) => ({
     } catch (err) {
       set({
         opening: false,
-        error: err instanceof Error ? err.message : 'Refresh failed',
+        error: err instanceof Error ? err.message : 'Reload failed',
       })
     }
   },
@@ -609,7 +609,7 @@ export const useStudioStore = create<StudioState>((set, get) => ({
       }
       await get().refreshIndex({ keepPhase: true })
       set({ activeSpikePath: folder, activePath: `${folder}/report.md`, phase: 'architecture' })
-      get().showToast(`Created ${id} — open Architecture → Verify reports`)
+      get().showToast(`Created ${id} — open Architecture → Check docs`)
       return folder
     } catch (err) {
       set({ error: err instanceof Error ? err.message : 'Create review failed' })

@@ -1,8 +1,7 @@
 import { useStudioStore } from '../store/studio-store'
 
 /**
- * One-line orientation under the rail. Avoids duplicating CTAs that already
- * exist in the page (Prepare / Refresh / New concept).
+ * One-line orientation under the rail — plain language, no jargon.
  */
 export function NextStepBanner() {
   const phase = useStudioStore((s) => s.phase)
@@ -18,23 +17,22 @@ export function NextStepBanner() {
   let onAction: (() => void) | null = null
 
   if (!setupDone) {
-    text = 'Bind the docs folder and write the starter (entry-point + blueprint).'
+    text = 'Connect your documentation folder and create the two starter files.'
     actionLabel = 'Continue Setup'
     onAction = () => goSetup()
   } else if (phase === 'session') {
     text =
-      'Copy the prompt below → paste into a new AI chat on this repo → then use Refresh in the header.'
+      'Copy the prompt → paste into a new AI chat on this project → then Reload folder in the header.'
   } else if (phase === 'connect' || phase === 'install') {
-    text = 'Finish Setup, then browse Architecture or open Prompt from the rail.'
+    text = 'When Setup is done, open Architecture to browse your docs or Inbox to add new information.'
   } else if (phase === 'concepts') {
-    text = 'Optional drafts under process/ — create a concept here; lasting facts go to Architecture later.'
+    text = 'Optional scratch space for ideas. Promote lasting facts into Architecture when ready.'
   } else if (phase === 'inbox') {
-    text =
-      'Paste or drop into inbox/raw/ → Analyze → review proposal (set ready) → Merge ready.'
+    text = 'Add information → ask AI to structure it → approve the plan → apply it to your docs.'
   } else if (phase === 'analyses') {
-    text = 'Optional code investigations — create an analysis here when you need one.'
+    text = 'Optional deep-dives into how the code works. Create an analysis when you need one.'
   } else if (phase === 'knowledge') {
-    text = 'Browse domain docs, pin what matters, then Prepare AI prompt in the toolbar.'
+    text = 'Browse domain language and model. When you want the AI to help, use Ask AI.'
   } else {
     const hasChapter = Boolean(
       index &&
@@ -44,12 +42,13 @@ export function NextStepBanner() {
             !p.endsWith('entry-point.md') &&
             !p.endsWith('blueprint.md') &&
             !p.includes('/process/') &&
-            !p.includes('/context/'),
+            !p.includes('/context/') &&
+            !p.includes('/inbox/'),
         ),
     )
     text = hasChapter
-      ? 'Browse and pin docs, then Prepare AI prompt in the toolbar (next blueprint item).'
-      : 'Starter is ready — Prepare AI prompt in the toolbar for Adopt (first fill).'
+      ? 'Browse your docs. Ask AI when you want the next chapter filled from the checklist.'
+      : 'Starter is ready. Ask AI for the first documentation fill (Adopt).'
   }
 
   return (

@@ -4,8 +4,8 @@ import { DocViewer } from './DocViewer'
 import { HelpTip } from './HelpTip'
 
 /**
- * Verify reports (REV): AI checks architecture docs in a fresh chat — report only.
- * Lives under Architecture, not Concepts.
+ * Doc checks: AI reviews architecture docs in a fresh chat — report only.
+ * Lives under Architecture → Check docs, not Concepts.
  */
 export function ReviewsPanel() {
   const canWrite = useStudioStore((s) => s.canWrite)
@@ -38,20 +38,18 @@ export function ReviewsPanel() {
       <aside className="spike-sidebar">
         <div className="spike-sidebar-head">
           <h2>
-            Verify reports{' '}
-            <HelpTip label="Verify reports">
+            Check docs{' '}
+            <HelpTip label="Check docs">
               <p>
-                A <strong>review</strong> is a quality check of the architecture documentation (or a
-                phase / post-sync slice) — not a review of Concepts.
+                A <strong>doc check</strong> asks the AI whether your lasting documentation is sound
+                (for a phase or after a sync) — not whether a Concept draft is good.
               </p>
               <p>
-                <strong>Who:</strong> an AI chat on this repo (Prompt → Verify), in a{' '}
-                <em>fresh</em> chat with no write context.
+                <strong>Who:</strong> you copy a prompt into a <em>new</em> AI chat on this project.
               </p>
               <p>
-                <strong>Result:</strong> report + findings under <code>process/reviews/</code>,
-                registered in <code>blueprint.md</code>. Report-only — the agent does not fix docs
-                in that session.
+                <strong>Result:</strong> a written report with PASS / notes / FAIL. The AI does not
+                fix the docs in that same chat — you fix later with Ask AI.
               </p>
             </HelpTip>
           </h2>
@@ -61,25 +59,25 @@ export function ReviewsPanel() {
             disabled={!canWrite}
             onClick={() => setShowCreate(true)}
           >
-            New review folder
+            Start a check
           </button>
         </div>
 
         <ol className="reviews-howto">
           <li>
-            <strong>What</strong> — Check that durable docs match reality / blueprint quality.
+            <strong>What</strong> — Check that durable docs match reality and the checklist quality.
           </li>
           <li>
-            <strong>Who</strong> — You copy a Verify prompt; the AI writes the report (fresh chat).
+            <strong>Who</strong> — You copy a prompt; the AI writes the report in a fresh chat.
           </li>
           <li>
-            <strong>Then</strong> — Read the verdict here; fix issues later via Extend / separate
-            work — not in the same Verify chat.
+            <strong>Then</strong> — Read the verdict here; fix issues later via Ask AI — not in the
+            same check chat.
           </li>
         </ol>
 
         <ul className="spike-list">
-          {reviews.length === 0 && <li className="muted">No verify reports yet.</li>}
+          {reviews.length === 0 && <li className="muted">No doc checks yet.</li>}
           {reviews.map((r) => (
             <li key={r.path}>
               <button
@@ -102,9 +100,9 @@ export function ReviewsPanel() {
             type="button"
             className="btn primary"
             onClick={() => openSession('verify')}
-            title="Opens Prompt on Verify workflows"
+            title="Opens Ask AI with a documentation quality check"
           >
-            Prepare Verify prompt
+            Ask AI to check docs
           </button>
         </div>
       </aside>
@@ -112,22 +110,21 @@ export function ReviewsPanel() {
       <section className="spike-main">
         {showCreate && (
           <div className="spike-create-dialog">
-            <h3>New verify report folder</h3>
+            <h3>Start a documentation check</h3>
             <p className="hint">
-              Creates empty <code>report.md</code> + <code>findings.md</code> under{' '}
-              <code>process/reviews/</code> and a REV row in <code>blueprint.md</code>. The AI fills
-              them when you run Verify (fresh chat).
+              Creates an empty report the AI will fill when you run the check in a fresh chat. You
+              choose a short name so you can find it later.
             </p>
             <label className="field">
-              <span>Title (what is being checked?)</span>
+              <span>What is being checked?</span>
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Phase context after Extend"
+                placeholder="e.g. Context chapter after first fill"
               />
             </label>
             <label className="field">
-              <span>Slug (optional)</span>
+              <span>Short id (optional)</span>
               <input
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
@@ -150,7 +147,7 @@ export function ReviewsPanel() {
                   }
                 }}
               >
-                Create folder
+                Create
               </button>
               <button type="button" className="btn" onClick={() => setShowCreate(false)}>
                 Cancel
@@ -161,22 +158,24 @@ export function ReviewsPanel() {
 
         {!showCreate && !isReviewFolder && (
           <div className="phase-panel">
-            <h2>Verify reports</h2>
+            <h2>Check documentation quality</h2>
             <p className="lead">
               These reports check <strong>architecture documentation quality</strong> (links,
-              evidence, phase readiness) — they do <strong>not</strong> review Concept spikes.
+              evidence, readiness) — they do <strong>not</strong> review Concept drafts.
             </p>
             <ol className="reviews-howto reviews-howto--main">
-              <li>Optional: create a review folder (stub report + findings).</li>
+              <li>Optional: start a check (empty report ready for the AI).</li>
               <li>
-                Click <strong>Prepare Verify prompt</strong> → copy into a <em>new</em> AI chat.
+                Click <strong>Ask AI to check docs</strong> → copy into a <em>new</em> AI chat.
               </li>
-              <li>AI writes the report only (PASS / PASS WITH NOTES / FAIL + findings).</li>
-              <li>Refresh here, read the verdict, then fix gaps with Extend or other work.</li>
+              <li>The AI writes the report only (PASS / notes / FAIL + findings).</li>
+              <li>
+                Click <strong>Reload folder</strong>, read the verdict, then fix gaps with Ask AI.
+              </li>
             </ol>
             <div className="cmd-row">
               <button type="button" className="btn primary" onClick={() => openSession('verify')}>
-                Prepare Verify prompt
+                Ask AI to check docs
               </button>
               <button
                 type="button"
@@ -184,7 +183,7 @@ export function ReviewsPanel() {
                 disabled={!canWrite}
                 onClick={() => setShowCreate(true)}
               >
-                New review folder
+                Start a check
               </button>
             </div>
           </div>
@@ -195,7 +194,7 @@ export function ReviewsPanel() {
             <div className="spike-files">
               <h3>{activeSpikePath.split('/').pop()}</h3>
               <p className="hint">
-                Report-only artifacts. Fill via Verify prompt; do not expect the same chat to edit
+                Report only. Fill via Ask AI → check docs. Do not expect the same chat to edit
                 chapters.
               </p>
               <ul>
@@ -216,7 +215,7 @@ export function ReviewsPanel() {
                 className="btn primary"
                 onClick={() => openSession('verify')}
               >
-                Prepare Verify prompt
+                Ask AI to check docs
               </button>
             </div>
             <div className="spike-doc">
@@ -229,7 +228,7 @@ export function ReviewsPanel() {
                   onPinPath={(p) => toggleContextPin(p)}
                 />
               ) : (
-                <p className="muted">Select report.md or findings.md.</p>
+                <p className="muted">Select the report or findings file.</p>
               )}
             </div>
           </div>

@@ -159,12 +159,14 @@ export function BrowseMode({ embedded = false, workspaceFilter }: Props) {
                 toggleContextPin(activePath)
                 showToast(
                   contextPins.includes(activePath)
-                    ? 'Unpinned from context pack'
-                    : 'Pinned for Session context pack',
+                    ? 'Removed from AI reading list'
+                    : 'Remembered for the next AI prompt',
                 )
               }}
             >
-              {contextPins.includes(activePath) ? 'Unpin from Session' : 'Pin for Session'}
+              {contextPins.includes(activePath)
+                ? 'Forget for AI prompt'
+                : 'Remember for AI prompt'}
             </button>
             <button
               type="button"
@@ -214,7 +216,7 @@ export function BrowseMode({ embedded = false, workspaceFilter }: Props) {
               }}
               onPinPath={(path) => {
                 toggleContextPin(path)
-                showToast('Pinned for Session')
+                showToast('Remembered for the next AI prompt')
               }}
             />
           )}
