@@ -10,6 +10,7 @@ export function NextStepBanner() {
   const goSetup = useStudioStore((s) => s.goSetup)
   const setPhase = useStudioStore((s) => s.setPhase)
   const openSession = useStudioStore((s) => s.openSession)
+  const openHelp = useStudioStore((s) => s.openHelp)
   const refreshIndex = useStudioStore((s) => s.refreshIndex)
   const index = useStudioStore((s) => s.index)
   const opening = useStudioStore((s) => s.opening)
@@ -76,7 +77,10 @@ export function NextStepBanner() {
     <div className="next-step-banner" role="status">
       <p className="next-step-text">
         <span className="next-step-label">Next</span>
-        {text}
+        {text}{' '}
+        <button type="button" className="linkish" onClick={() => openHelp()}>
+          Map
+        </button>
       </p>
       {actionLabel && onAction ? (
         <button

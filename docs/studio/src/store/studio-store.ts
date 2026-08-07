@@ -111,6 +111,8 @@ interface StudioState {
   /** Workspace to return to from Ask AI (Back). */
   sessionReturnPhase: Exclude<WorkspaceId, 'session'> | null
   helpOpen: boolean
+  /** When opening Help, scroll to this element id (e.g. help-flow-map). */
+  helpFocusId: string | null
   error: string | null
   opening: boolean
   installing: boolean
@@ -123,6 +125,8 @@ interface StudioState {
   /** Leave Ask AI → remembered workspace (or Architecture). */
   leaveSession: () => void
   setHelpOpen: (open: boolean) => void
+  /** Open Help, optionally focusing the flow map. */
+  openHelp: (focusId?: string) => void
   /** Brand / Home: Architecture when ready, else Setup or Start. */
   goHome: () => void
   goSetup: () => void
@@ -246,6 +250,7 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   sessionIntent: null,
   sessionReturnPhase: null,
   helpOpen: false,
+  helpFocusId: null,
   error: null,
   opening: false,
   installing: false,
@@ -274,7 +279,9 @@ export const useStudioStore = create<StudioState>((set, get) => ({
     set({ phase: back, sessionReturnPhase: null })
   },
 
-  setHelpOpen: (helpOpen) => set({ helpOpen }),
+  setHelpOpen: (helpOpen) => set({ helpOpen, helpFocusId: null }),
+
+  openHelp: (focusId = 'help-flow-map') => set({ helpOpen: true, helpFocusId: focusId }),
 
   goHome: () => {
     const { folderLabel, installStatus, phase } = get()

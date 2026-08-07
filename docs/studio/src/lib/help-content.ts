@@ -45,7 +45,7 @@ export const HELP_OVERVIEW: HelpSection[] = [
       'Concepts — optional ideas that need not become official docs.',
       'Analyses — optional looks at how the code works.',
       'Ask AI — copy a prompt for Cursor / Claude / Copilot (Studio does not call an AI).',
-      'Folder, Reload folder, and Help live only in the top bar.',
+      'Folder, Reload folder, Help, and Map live in the top bar. Map shows when files and terms appear.',
     ],
   },
   {

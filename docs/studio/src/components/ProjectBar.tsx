@@ -87,6 +87,7 @@ export function ProjectBar() {
   const goHome = useStudioStore((s) => s.goHome)
   const goSetup = useStudioStore((s) => s.goSetup)
   const setHelpOpen = useStudioStore((s) => s.setHelpOpen)
+  const openHelp = useStudioStore((s) => s.openHelp)
   const project = useStudioStore((s) => s.project)
   const folderLabel = useStudioStore((s) => s.folderLabel)
   const folderHint = useStudioStore((s) => s.folderHint)
@@ -147,8 +148,16 @@ export function ProjectBar() {
         <button
           type="button"
           className="btn help-open-btn"
+          onClick={() => openHelp('help-flow-map')}
+          title="When concepts, terms, and files appear"
+        >
+          Map
+        </button>
+        <button
+          type="button"
+          className="btn"
           onClick={() => setHelpOpen(true)}
-          title="Explain the process and workspaces"
+          title="Process, workspaces, glossary"
         >
           Help
         </button>
