@@ -39,6 +39,11 @@ import {
 } from '../lib/session-persist'
 import { buildStarterScaffold } from '../lib/scaffold-pack'
 import { createDocSearch, type SearchHit } from '../lib/search'
+import {
+  buildInboxScaffoldFiles,
+  buildRawPasteFile,
+  setProposalStatus,
+} from '../lib/inbox'
 import { isAnalysisSpikeType } from '../lib/workspace'
 import { togglePin } from '../lib/context-pack'
 import { parseBoardJson } from '../lib/e2/storm'
@@ -152,6 +157,13 @@ interface StudioState {
     jsonText: string,
     preferredName?: string,
   ) => Promise<string | null>
+  /** Paste text into inbox/raw/ (creates inbox scaffold if missing). */
+  pasteInboxRaw: (opts: { label: string; body: string; slug?: string }) => Promise<string | null>
+  /** Update status: on an inbox proposal file. */
+  setInboxProposalStatus: (
+    relativePath: string,
+    status: 'draft' | 'ready' | 'blocked',
+  ) => Promise<boolean>
 }
 
 function afterOpen(
@@ -682,6 +694,72 @@ export const useStudioStore = create<StudioState>((set, get) => ({
     } catch (err) {
       set({ error: err instanceof Error ? err.message : 'Board import failed' })
       return null
+    }
+  },
+
+  pasteInboxRaw: async ({ label, body, slug }) => {
+    const handle = get().folderHandle
+    if (!handle || !get().canWrite) {
+      set({ error: 'Write access required to paste into Inbox.' })
+      return null
+    }
+    if (!body.trim()) {
+      set({ error: 'Paste some content first.' })
+      return null
+    }
+    try {
+      const filesNow: FileMap = new Map()
+      await walkDirectoryHandle(handle, '', filesNow)
+      const hasInbox = [...filesNow.keys()].some((p) => p.replace(/\\/g, '/').startsWith('inbox/'))
+      if (!hasInbox) {
+        await writeFileMap(handle, buildInboxScaffoldFiles())
+      }
+      const { path, content } = buildRawPasteFile({ label, body, slug })
+      await writeTextFile(handle, path, content)
+
+      const after: FileMap = new Map()
+      await walkDirectoryHandle(handle, '', after)
+      const logPath =
+        [...after.keys()].find((p) => p.replace(/\\/g, '/').endsWith('inbox/log.md')) ||
+        'inbox/log.md'
+      const log = after.get(logPath) || buildInboxScaffoldFiles()['inbox/log.md'] || ''
+      const stamp = new Date().toISOString().slice(0, 10)
+      const line = `| ${stamp} | paste | ${path} |`
+      if (!log.includes(`| ${path} |`)) {
+        await writeTextFile(handle, logPath, `${log.trimEnd()}\n${line}\n`)
+      }
+
+      await get().refreshIndex({ keepPhase: true })
+      set({ phase: 'inbox', activePath: path })
+      get().showToast(`Saved ${path}`)
+      return path
+    } catch (err) {
+      set({ error: err instanceof Error ? err.message : 'Inbox paste failed' })
+      return null
+    }
+  },
+
+  setInboxProposalStatus: async (relativePath, status) => {
+    const handle = get().folderHandle
+    if (!handle || !get().canWrite) {
+      set({ error: 'Write access required to update proposal status.' })
+      return false
+    }
+    const doc = get().index?.docs.get(relativePath)
+    if (!doc) {
+      set({ error: `Proposal not found: ${relativePath}` })
+      return false
+    }
+    try {
+      const next = setProposalStatus(doc.content, status)
+      await writeTextFile(handle, relativePath, next)
+      await get().refreshIndex({ keepPhase: true })
+      set({ activePath: relativePath })
+      get().showToast(`Status → ${status}`)
+      return true
+    } catch (err) {
+      set({ error: err instanceof Error ? err.message : 'Status update failed' })
+      return false
     }
   },
 }))

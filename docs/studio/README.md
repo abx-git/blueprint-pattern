@@ -16,7 +16,7 @@ Live: https://abx-git.github.io/agm.github.io/
 
 After Setup is ready, Studio opens the **workspace cockpit** (not a single “Write” step). Click the **AGM Studio** brand anytime to return to **What is AGM**.
 
-Chapters under the template folder, `domain/`, spikes, and reviews are **created when the process needs them** (Adopt / Extend docs / Concepts / Analyses) — not at Install.
+Chapters under the template folder, `domain/`, spikes, reviews, and `inbox/` are **created when the process needs them** (Adopt / Extend docs / Inbox / Concepts / Analyses) — not at Install.
 
 ## Workspace cockpit
 
@@ -24,9 +24,10 @@ Chapters under the template folder, `domain/`, spikes, and reviews are **created
 |-----------|---------|-------------------|
 | **Architecture** | Durable chapters, blueprint, extensions | Template folders, `extensions/`, state files |
 | **Knowledge** | Domain / fachliche KB | `domain/` |
+| **Inbox** | Incoming paste/files → proposal → merge | `inbox/raw/`, `proposals/`, `done/` |
 | **Concepts** | Designs & spikes that need not ship | `process/spikes/` (non-analysis types) |
 | **Analyses** | Implementation & flow investigations | `process/spikes/` with type `analysis` |
-| **Session** | Compose a context pack + copy a prompt for AI chat | Prompts stay in the Studio app (not written into the docs folder) |
+| **Prompt** | Compose a context pack + copy a prompt for AI chat | Prompts stay in the Studio app (not written into the docs folder) |
 | **Setup** | Revisit folder binding / install | — |
 
 Each workspace shares a navigator (tree, search, Markdown/Mermaid viewer, link graph, boards). State files (`entry-point.md`, `blueprint.md`, `context/`) keep LLM context small; Session composes an explicit **context pack** before copy-paste.

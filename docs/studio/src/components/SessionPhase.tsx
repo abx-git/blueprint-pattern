@@ -126,6 +126,15 @@ export function SessionPhase() {
     return personalizeWorkflowPrompt(selected, project, inputs, packBlock)
   }, [selected, project, inputs, packBlock])
 
+  const inboxWf =
+    step === 'inbox-analyze' || step === 'inbox-refine' || step === 'inbox-merge'
+      ? byId(step)
+      : null
+  const inboxText = useMemo(() => {
+    if (!inboxWf) return ''
+    return personalizeWorkflowPrompt(inboxWf, project, inputs, packBlock)
+  }, [inboxWf, project, inputs, packBlock])
+
   const copyOut = async (text: string) => {
     const ok = await copyText(text)
     showToast(ok ? `Copied — open ${tool}, start a new chat, paste` : 'Copy failed')
@@ -162,6 +171,9 @@ export function SessionPhase() {
   const stepOptions: { id: RunStep; label: string }[] = [
     { id: 'continue', label: 'Extend — next blueprint item' },
     { id: 'adopt', label: installStatus === 'ready' ? 'Re-adopt — first fill again' : 'Adopt — first fill' },
+    { id: 'inbox-analyze', label: 'Inbox — analyze raw → proposal' },
+    { id: 'inbox-refine', label: 'Inbox — refine proposal' },
+    { id: 'inbox-merge', label: 'Inbox — merge ready proposals' },
     { id: 'evolve', label: 'Sync / Import from code or paste' },
     { id: 'verify', label: 'Verify / review' },
     { id: 'advanced', label: 'More (design, domain, analysis)' },
@@ -257,7 +269,7 @@ export function SessionPhase() {
         <p className="hint">
           <strong>On-demand</strong> = optional extra tables (domain terms, pitfalls, environments) in{' '}
           <code>context/on-demand.md</code>. Include it only when that file exists and you want the AI to
-          read it. Pins: mark paths while browsing Architecture / Knowledge / Concepts / Analyses.
+          read it. Pins: mark paths while browsing Architecture / Knowledge / Inbox / Concepts / Analyses.
         </p>
 
         <details className="focus-details">
@@ -341,6 +353,69 @@ export function SessionPhase() {
           </details>
           <button type="button" className="btn primary" onClick={() => copyOut(continueText)}>
             {copyBtn('Extend docs')}
+          </button>
+        </div>
+      )}
+
+      {inboxWf && (
+        <div className="run-card">
+          <p>
+            {step === 'inbox-analyze' && (
+              <>
+                Structure <code>inbox/raw/</code> into a reviewable proposal under{' '}
+                <code>inbox/proposals/</code> — no merge yet.
+              </>
+            )}
+            {step === 'inbox-refine' && (
+              <>
+                Dialog to improve a proposal. Set path below if needed; do not merge until status is{' '}
+                <code>ready</code>.
+              </>
+            )}
+            {step === 'inbox-merge' && (
+              <>
+                Apply proposals with <code>status: ready</code> into the graph + <code>sources/</code>,
+                then archive under <code>inbox/done/</code>.
+              </>
+            )}{' '}
+            {personalizeWorkflowWhen(inboxWf, project)}
+          </p>
+          {(step === 'inbox-refine' || step === 'inbox-merge') && (
+            <div className="workflow-inputs">
+              <label className="field">
+                <span>Proposal path(s)</span>
+                <input
+                  value={inputs.proposalPath || inputs.proposalPaths || ''}
+                  onChange={(e) =>
+                    setInputs({
+                      ...inputs,
+                      proposalPath: e.target.value,
+                      proposalPaths: e.target.value,
+                    })
+                  }
+                  placeholder="inbox/proposals/YYYY-MM-DD-slug.md"
+                />
+              </label>
+              {step === 'inbox-refine' && (
+                <label className="field">
+                  <span>Human notes</span>
+                  <input
+                    value={inputs.notes || ''}
+                    onChange={(e) => setInputs({ ...inputs, notes: e.target.value })}
+                  />
+                </label>
+              )}
+            </div>
+          )}
+          <details open>
+            <summary>Preview</summary>
+            <pre className="preview-box">{inboxText.slice(0, 4000)}</pre>
+          </details>
+          <button type="button" className="btn primary" onClick={() => copyOut(inboxText)}>
+            {copyBtn(step)}
+          </button>
+          <button type="button" className="btn" onClick={() => setPhase('inbox')}>
+            Back to Inbox
           </button>
         </div>
       )}

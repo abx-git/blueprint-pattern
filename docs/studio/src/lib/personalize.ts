@@ -121,6 +121,10 @@ function applyWorkflowInputs(
     slug: values.slug,
     'diff-from': values.diffFrom,
     'diff-to': (values.diffTo as string) || 'HEAD',
+    'proposal-path': values.proposalPath,
+    'proposal-paths': values.proposalPaths || values.proposalPath,
+    notes: values.notes,
+    'raw-paths': values.rawPaths,
   }
   for (const [placeholder, val] of Object.entries(map)) {
     if (val == null || val === '') continue

@@ -18,6 +18,7 @@ export function isCockpitPhase(phase: JourneyPhase): phase is CockpitPhase {
   return (
     phase === 'architecture' ||
     phase === 'knowledge' ||
+    phase === 'inbox' ||
     phase === 'concepts' ||
     phase === 'analyses' ||
     phase === 'session'
@@ -131,6 +132,8 @@ export function workspaceLabel(ws: DocWorkspace | WorkspaceId): string {
       return 'Architecture'
     case 'knowledge':
       return 'Knowledge'
+    case 'inbox':
+      return 'Inbox'
     case 'concepts':
       return 'Concepts'
     case 'analyses':

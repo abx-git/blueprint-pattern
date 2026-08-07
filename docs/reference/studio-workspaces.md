@@ -8,11 +8,23 @@ Studio uses a **hybrid** model: one-time Setup (Connect → Install), then a dur
 |----|-------|-----------------|-------------------|
 | `architecture` | Architecture | Template chapters (`arc42/`, `lean-service/`, …), `interfaces/`, `ops/`, `use-cases/`, `sources/`, `extensions/` | Adopt, Continue/Extend, Evolve, content-ingest |
 | `knowledge` | Knowledge | `domain/` (+ optional KB under `extensions/` tagged for knowledge) | domain-work-*, domain-board-ingest |
+| `inbox` | Inbox | `inbox/raw/`, `inbox/proposals/`, `inbox/done/` | inbox-analyze, inbox-refine, inbox-merge |
 | `concepts` | Concepts | `process/spikes/` with types `question`, `design`, `domain-*` | architecture-work-design; spike create/edit |
 | `analyses` | Analyses | `process/spikes/` with type `analysis` | architecture-work-analysis; interrogate/query |
 | `meta` | (shared state) | `entry-point.md`, `blueprint.md`, `context/`, `index.md`, `log.md` | Always included in context packs |
 
 Reviews under `process/reviews/` remain reachable from Session / Architecture navigation; they are not a top-level workspace chip.
+
+## Inbox (multi-step ingest)
+
+Incoming material that may touch Architecture, Knowledge, Concepts, Analyses, or periphery:
+
+1. **Raw** — paste in Studio or drop files into `inbox/raw/`
+2. **Analyze** — AI writes `inbox/proposals/*.md` (`type: inbox-proposal`, `status: draft`) with structured content + integration/link instructions — **no merge**
+3. **Review** — human edits / Refine dialog; set `status: ready`
+4. **Merge** — AI applies ready proposals into the graph, writes `sources/` provenance, moves proposal to `inbox/done/`
+
+Procedure: [inbox-pipeline.md](./inbox-pipeline.md). Prefer Inbox over one-shot `content-ingest` when using Studio.
 
 ## State files (keep LLM context small)
 

@@ -26,7 +26,7 @@ Architect/Domain and other Advanced intents: [reference/extended-workflows.md](.
 
 ## Setup (once)
 
-1. **Install** — [AGM Studio](https://abx-git.github.io/agm.github.io/) Setup (Connect → Install) or `agm-install.sh` at app repo root (default = golden path). See [reference/install.md](./reference/install.md). Studio then opens the cockpit: Architecture · Knowledge · Concepts · Analyses · Session — [studio-workspaces.md](./reference/studio-workspaces.md).
+1. **Install** — [AGM Studio](https://abx-git.github.io/agm.github.io/) Setup (Connect → Install) or `agm-install.sh` at app repo root (default = golden path). See [reference/install.md](./reference/install.md). Studio then opens the cockpit: Architecture · Knowledge · Inbox · Concepts · Analyses · Prompt — [studio-workspaces.md](./reference/studio-workspaces.md).
 2. **Adopt** — Session → copy adoption prompt → new chat. Agent fills `entry-point.md` (start here) and `blueprint.md` (what's next), plus the first chapter.
 3. **CI** — enable [agm-integrity](./reference/ci-integrity.md) on the app repo.
 

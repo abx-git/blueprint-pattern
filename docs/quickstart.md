@@ -18,10 +18,11 @@ One onboarding path — everything else is advanced.
 | **Adopt** | Session → copy prompt → new chat — fill entry-point + first chapter | `bootstrap-adopt` |
 | **Continue** | Session → Extend — next checklist item | `bootstrap-continue` |
 | **Maintain** | Session → Sync — sync docs with code | `maintenance-diff-range` |
-| **Import** | Session → Import — paste Confluence, specs, use cases | `content-ingest` |
+| **Import** | Inbox — paste/drop → Analyze → review → Merge | `inbox-analyze` → `inbox-merge` |
+| **Import (legacy)** | Prompt → Sync/Import — one-shot paste | `content-ingest` |
 | **Review** | **Fresh chat** — report only, never same chat as write | `review-maintenance` |
 
-After Setup, Studio is a **cockpit**: Architecture · Knowledge (`domain/`) · Concepts · Analyses · Session (context pack + copy-paste). Details: [reference/studio-workspaces.md](./reference/studio-workspaces.md).
+After Setup, Studio is a **cockpit**: Architecture · Knowledge (`domain/`) · Inbox · Concepts · Analyses · Prompt (context pack + copy-paste). Details: [reference/studio-workspaces.md](./reference/studio-workspaces.md).
 
 Copy the session prompt from Studio Session (or `prompts/workflows/<id>.md`) into a new chat. **Default:** copy-paste. **Optional:** MCP `agm_trigger_workflow` — golden path works with the public starter pack ([agm/README.md](../agm/README.md)).
 

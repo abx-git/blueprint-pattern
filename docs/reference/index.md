@@ -16,6 +16,7 @@ Installed application repos receive copies of procedure files under `prompts/ref
 | [base-context-setup.md](./base-context-setup.md) | IDE rules and install layout |
 | [doc-extensions.md](./doc-extensions.md) | Documentation area checkboxes + extensions (Studio Session) |
 | [studio-workspaces.md](./studio-workspaces.md) | Studio cockpit workspaces, state files, context packs |
+| [inbox-pipeline.md](./inbox-pipeline.md) | Multi-step Inbox: raw → proposal → merge |
 | [content-ingest.md](./content-ingest.md) | Paste imports (Confluence, specs, use cases, E2 boards) |
 | [upgrade.md](./upgrade.md) | Refresh workflows/prompts without touching docs |
 | [external-work.md](./external-work.md) | Keep `work/` outside Git (per-developer drafts) |

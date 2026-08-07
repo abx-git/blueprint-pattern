@@ -28,6 +28,9 @@ export function NextStepBanner() {
     text = 'Finish Setup, then browse Architecture or open Prompt from the rail.'
   } else if (phase === 'concepts') {
     text = 'Optional drafts under process/ — create a concept here; lasting facts go to Architecture later.'
+  } else if (phase === 'inbox') {
+    text =
+      'Paste or drop into inbox/raw/ → Analyze → review proposal (set ready) → Merge ready.'
   } else if (phase === 'analyses') {
     text = 'Optional code investigations — create an analysis here when you need one.'
   } else if (phase === 'knowledge') {

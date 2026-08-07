@@ -8,6 +8,7 @@ import { InstallPhase } from './components/InstallPhase'
 import { SessionPhase } from './components/SessionPhase'
 import { SpikePhase } from './components/SpikePhase'
 import { WorkspaceShell } from './components/WorkspaceShell'
+import { InboxPhase } from './components/InboxPhase'
 import { NextStepBanner } from './components/NextStepBanner'
 import { HelpDrawer } from './components/HelpDrawer'
 import './App.css'
@@ -52,6 +53,7 @@ export default function App() {
   const wide =
     phase === 'architecture' ||
     phase === 'knowledge' ||
+    phase === 'inbox' ||
     phase === 'concepts' ||
     phase === 'analyses'
 
@@ -92,6 +94,7 @@ export default function App() {
         {phase === 'knowledge' && (
           <WorkspaceShell workspace="knowledge" lead="domain language & model (domain/)" />
         )}
+        {phase === 'inbox' && <InboxPhase />}
         {phase === 'concepts' && <SpikePhase mode="concepts" />}
         {phase === 'analyses' && <SpikePhase mode="analyses" />}
         {phase === 'session' && <SessionPhase />}

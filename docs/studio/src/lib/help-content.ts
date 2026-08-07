@@ -41,6 +41,7 @@ export const HELP_OVERVIEW: HelpSection[] = [
     body: [
       'Architecture — durable documentation chapters (what should stay true).',
       'Knowledge — domain / fachliche model under domain/.',
+      'Inbox — incoming material: paste or drop files → analyze → review proposal → merge.',
       'Concepts — designs and questions that need not ship (spikes).',
       'Analyses — how the software works (analysis spikes).',
       'Prompt — prepares the copy-paste AI prompt (prompts live in AGM Studio, not in your docs folder).',
@@ -53,6 +54,7 @@ export const HELP_OVERVIEW: HelpSection[] = [
     body: [
       'Adopt — first documentation session.',
       'Extend docs — continue the blueprint checklist (one chapter / item).',
+      'Inbox — multi-step ingest (raw → proposal → merge); long-term provenance stays in sources/.',
       'Context pack — small list of files the AI should read first (keeps context small).',
       'Spike — dated folder under process/spikes/ for exploration.',
       'E2 board — .storm.json workshop board; import into a spike’s boards/ folder.',
@@ -80,6 +82,16 @@ export const WORKSPACE_HELP: Record<
     tips: [
       'Prepare AI prompt opens domain / advanced workflows.',
       'E2 boards can be projected into domain/ via domain-board-ingest.',
+    ],
+  },
+  inbox: {
+    title: 'Inbox',
+    summary:
+      'Incoming material for any area: paste or drop into inbox/raw/, analyze to a proposal, review, then merge.',
+    tips: [
+      'Analyze writes inbox/proposals/ only — no chapter merges yet.',
+      'Set proposal status to ready in Studio, then Merge ready.',
+      'After merge, provenance lives in sources/; proposal moves to inbox/done/.',
     ],
   },
   concepts: {

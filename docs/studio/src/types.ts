@@ -1,15 +1,35 @@
 export type SetupPhase = 'about' | 'start' | 'connect' | 'install'
 
 /** Durable cockpit workspaces after Setup. */
-export type WorkspaceId = 'architecture' | 'knowledge' | 'concepts' | 'analyses' | 'session'
+export type WorkspaceId =
+  | 'architecture'
+  | 'knowledge'
+  | 'inbox'
+  | 'concepts'
+  | 'analyses'
+  | 'session'
 
 /** Which Session tab to open when navigating from a workspace CTA. */
-export type SessionIntent = 'adopt' | 'continue' | 'evolve' | 'verify' | 'advanced'
+export type SessionIntent =
+  | 'adopt'
+  | 'continue'
+  | 'evolve'
+  | 'verify'
+  | 'advanced'
+  | 'inbox-analyze'
+  | 'inbox-refine'
+  | 'inbox-merge'
 
 export type JourneyPhase = SetupPhase | WorkspaceId
 
 /** DocNode classification from path conventions. */
-export type DocWorkspace = 'architecture' | 'knowledge' | 'concepts' | 'analyses' | 'meta'
+export type DocWorkspace =
+  | 'architecture'
+  | 'knowledge'
+  | 'inbox'
+  | 'concepts'
+  | 'analyses'
+  | 'meta'
 
 export type InstallStatus = 'unknown' | 'missing' | 'ready' | 'partial'
 
@@ -92,6 +112,7 @@ export const STORAGE_KEY = 'agm-studio-project'
 export const WORKSPACE_PHASES: WorkspaceId[] = [
   'architecture',
   'knowledge',
+  'inbox',
   'concepts',
   'analyses',
   'session',

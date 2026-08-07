@@ -6,6 +6,7 @@ import { workspaceLabel } from '../lib/session-persist'
 const COCKPIT: { id: WorkspaceId; hint: string }[] = [
   { id: 'architecture', hint: 'Browse docs' },
   { id: 'knowledge', hint: 'Domain' },
+  { id: 'inbox', hint: 'Incoming' },
   { id: 'concepts', hint: 'Drafts' },
   { id: 'analyses', hint: 'Code look' },
   { id: 'session', hint: 'Copy for AI' },

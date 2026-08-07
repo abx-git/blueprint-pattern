@@ -29,8 +29,11 @@ Adoption alternative: [adopt-standalone](../../prompts/adopt-standalone.md)
 |--------|-------------|------------|
 | Sync after code change (paste diff) | `maintenance` | Yes |
 | Import pasted external content | `content-ingest` | Yes |
+| Inbox — analyze raw → proposal | `inbox-analyze` | Optional |
+| Inbox — refine proposal (dialog) | `inbox-refine` | Optional |
+| Inbox — merge ready proposals | `inbox-merge` | Recommended |
 
-Procedure: [content-ingest.md](./content-ingest.md) · Pipeline reference: [maintenance-pipeline](./maintenance-pipeline.md)
+Procedure: [content-ingest.md](./content-ingest.md) · [inbox-pipeline.md](./inbox-pipeline.md) · Pipeline reference: [maintenance-pipeline](./maintenance-pipeline.md)
 
 ---
 
