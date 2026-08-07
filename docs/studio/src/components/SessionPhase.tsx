@@ -422,6 +422,14 @@ export function SessionPhase() {
 
       {(step === 'evolve' || step === 'verify' || step === 'advanced') && (
         <div className="run-card">
+          {step === 'verify' && (
+            <p>
+              <strong>Verify</strong> = quality check of architecture docs in a{' '}
+              <em>fresh</em> AI chat. Report-only (PASS / notes / FAIL) →{' '}
+              <code>process/reviews/</code>. Does not fix chapters in that session. Browse results
+              under Architecture → Verify reports.
+            </p>
+          )}
           <div className="mode-grid">
             {(step === 'evolve'
               ? GOLDEN_EVOLVE

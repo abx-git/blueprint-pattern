@@ -57,6 +57,7 @@ export const HELP_OVERVIEW: HelpSection[] = [
       'Inbox — multi-step ingest (raw → proposal → merge); long-term provenance stays in sources/.',
       'Context pack — small list of files the AI should read first (keeps context small).',
       'Spike — dated folder under process/spikes/ for exploration.',
+      'Verify report (REV) — AI quality check of architecture docs in a fresh chat; report-only under process/reviews/; not a review of Concepts.',
       'E2 board — .storm.json workshop board; import into a spike’s boards/ folder.',
       'Pin — mark a path so it is included in the next prompt’s context pack.',
     ],
@@ -73,6 +74,7 @@ export const WORKSPACE_HELP: Record<
     tips: [
       'Open blueprint.md to see what is still unchecked.',
       'Use Prepare AI prompt (or the Prompt rail) — do not hunt for Adopt/Extend elsewhere.',
+      'Verify reports: AI quality-checks docs in a fresh chat (report-only) → process/reviews/.',
       'After the AI writes files, click Refresh in the header.',
     ],
   },
@@ -100,13 +102,14 @@ export const WORKSPACE_HELP: Record<
     tips: [
       'Create a spike, take notes, optionally import an E2 board.',
       'Promote facts into Architecture only when you decide they should ship.',
+      'Verify reports (doc quality checks) are under Architecture → Verify reports — not here.',
     ],
   },
   analyses: {
     title: 'Analyses',
     summary: 'Structured look at implementation and flows (spike type analysis).',
     tips: [
-      'Use Extend docs → More → Analysis, or create an analysis spike here.',
+      'Use Prompt → More → Analysis, or create an analysis spike here.',
       'Link findings back to architecture chapters when ready.',
     ],
   },
@@ -116,6 +119,7 @@ export const WORKSPACE_HELP: Record<
     tips: [
       'Default: Extend — next open row in blueprint.md.',
       'Adopt is only for the first fill.',
+      'Verify = fresh chat, report-only quality check of docs (results under process/reviews/).',
       'After the AI writes files, use Refresh in the header.',
     ],
   },

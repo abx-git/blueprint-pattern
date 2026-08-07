@@ -13,7 +13,7 @@ Studio uses a **hybrid** model: one-time Setup (Connect → Install), then a dur
 | `analyses` | Analyses | `process/spikes/` with type `analysis` | architecture-work-analysis; interrogate/query |
 | `meta` | (shared state) | `entry-point.md`, `blueprint.md`, `context/`, `index.md`, `log.md` | Always included in context packs |
 
-Reviews under `process/reviews/` remain reachable from Session / Architecture navigation; they are not a top-level workspace chip.
+Reviews under `process/reviews/` are **Verify reports** (AI quality checks of durable docs, report-only). In Studio they live under **Architecture → Verify reports**, not under Concepts.
 
 ## Inbox (multi-step ingest)
 

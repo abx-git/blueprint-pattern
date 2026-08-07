@@ -1816,6 +1816,33 @@ code {
   font-weight: 400;
 }
 
+.arch-tabs {
+  margin-top: 0.45rem;
+}
+
+.reviews-howto {
+  margin: 0.35rem 0 0.65rem;
+  padding-left: 1.15rem;
+  font-size: 0.82rem;
+  color: var(--muted, #64748b);
+  line-height: 1.4;
+}
+
+.reviews-howto li {
+  margin-bottom: 0.35rem;
+}
+
+.reviews-howto--main {
+  color: var(--text, #0f172a);
+  font-size: 0.9rem;
+  max-width: 40rem;
+}
+
+.reviews-panel {
+  min-height: 0;
+  flex: 1;
+}
+
 /* Inbox workspace */
 .inbox-phase {
   display: grid;

@@ -1,12 +1,14 @@
+import { useState } from 'react'
 import { useStudioStore } from '../store/studio-store'
 import type { WorkspaceId } from '../types'
 import { workspaceLabel } from '../lib/session-persist'
 import { WORKSPACE_HELP } from '../lib/help-content'
 import { BrowseMode } from './BrowseMode'
 import { HelpTip } from './HelpTip'
+import { ReviewsPanel } from './ReviewsPanel'
 
 interface Props {
-  workspace: Exclude<WorkspaceId, 'session'>
+  workspace: Exclude<WorkspaceId, 'session' | 'inbox' | 'concepts' | 'analyses'>
   title?: string
   lead?: string
 }
@@ -18,6 +20,7 @@ export function WorkspaceShell({ workspace, title, lead }: Props) {
   const openSession = useStudioStore((s) => s.openSession)
   const label = title || workspaceLabel(workspace)
   const help = WORKSPACE_HELP[workspace]
+  const [archTab, setArchTab] = useState<'docs' | 'verify'>('docs')
 
   if (!index) {
     return (
@@ -50,6 +53,8 @@ export function WorkspaceShell({ workspace, title, lead }: Props) {
         ? ('continue' as const)
         : ('adopt' as const)
 
+  const showVerify = workspace === 'architecture'
+
   return (
     <div className="review-phase">
       <div className="review-toolbar">
@@ -70,19 +75,53 @@ export function WorkspaceShell({ workspace, title, lead }: Props) {
             </span>
           </p>
           <p className="hint review-build-hint">{help.summary}</p>
+          {showVerify && (
+            <div className="panel-tabs arch-tabs" role="tablist">
+              <button
+                type="button"
+                className={archTab === 'docs' ? 'active' : ''}
+                onClick={() => setArchTab('docs')}
+              >
+                Docs
+              </button>
+              <button
+                type="button"
+                className={archTab === 'verify' ? 'active' : ''}
+                onClick={() => setArchTab('verify')}
+                title="Quality checks of architecture docs (AI report-only)"
+              >
+                Verify reports
+              </button>
+            </div>
+          )}
         </div>
         <div className="cmd-row review-toolbar-actions">
-          <button
-            type="button"
-            className="btn primary"
-            onClick={() => openSession(promptIntent)}
-            title="Opens Prompt — copy for your AI chat"
-          >
-            Prepare AI prompt
-          </button>
+          {archTab === 'verify' && showVerify ? (
+            <button
+              type="button"
+              className="btn primary"
+              onClick={() => openSession('verify')}
+              title="Opens Prompt — Verify workflows"
+            >
+              Prepare Verify prompt
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="btn primary"
+              onClick={() => openSession(promptIntent)}
+              title="Opens Prompt — copy for your AI chat"
+            >
+              Prepare AI prompt
+            </button>
+          )}
         </div>
       </div>
-      <BrowseMode embedded workspaceFilter={workspace} />
+      {showVerify && archTab === 'verify' ? (
+        <ReviewsPanel />
+      ) : (
+        <BrowseMode embedded workspaceFilter={workspace} />
+      )}
     </div>
   )
 }

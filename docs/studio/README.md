@@ -22,7 +22,7 @@ Chapters under the template folder, `domain/`, spikes, reviews, and `inbox/` are
 
 | Workspace | Purpose | On disk (typical) |
 |-----------|---------|-------------------|
-| **Architecture** | Durable chapters, blueprint, extensions | Template folders, `extensions/`, state files |
+| **Architecture** | Durable chapters, blueprint, extensions; **Verify reports** for doc quality | Template folders, `extensions/`, `process/reviews/` |
 | **Knowledge** | Domain / fachliche KB | `domain/` |
 | **Inbox** | Incoming paste/files → proposal → merge | `inbox/raw/`, `proposals/`, `done/` |
 | **Concepts** | Designs & spikes that need not ship | `process/spikes/` (non-analysis types) |
