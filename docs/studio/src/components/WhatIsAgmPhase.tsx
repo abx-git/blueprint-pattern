@@ -113,7 +113,7 @@ export function WhatIsAgmPhase() {
           className="btn primary"
           onClick={() => (ready ? setPhase('architecture') : goSetup())}
         >
-          {ready ? 'Open cockpit' : 'Start Setup'}
+          {ready ? 'Open Architecture' : 'Start Setup'}
         </button>
       </div>
     </div>

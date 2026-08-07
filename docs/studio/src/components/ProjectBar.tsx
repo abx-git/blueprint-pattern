@@ -9,7 +9,7 @@ const COCKPIT: { id: WorkspaceId; hint: string }[] = [
   { id: 'inbox', hint: 'New information' },
   { id: 'concepts', hint: 'Ideas & drafts' },
   { id: 'analyses', hint: 'How code works' },
-  { id: 'session', hint: 'Ask the AI' },
+  { id: 'session', hint: 'Copy a prompt' },
 ]
 
 export function JourneyRail() {
@@ -84,7 +84,7 @@ export function JourneyRail() {
 
 export function ProjectBar() {
   const phase = useStudioStore((s) => s.phase)
-  const setPhase = useStudioStore((s) => s.setPhase)
+  const goHome = useStudioStore((s) => s.goHome)
   const goSetup = useStudioStore((s) => s.goSetup)
   const setHelpOpen = useStudioStore((s) => s.setHelpOpen)
   const project = useStudioStore((s) => s.project)
@@ -106,17 +106,27 @@ export function ProjectBar() {
     if (p === 'about') return 'what is AGM'
     if (p === 'start') return 'how it works'
     if (!ready) return 'Setup'
-    if (p === 'architecture' || p === 'knowledge' || p === 'concepts' || p === 'analyses') {
+    if (
+      p === 'architecture' ||
+      p === 'knowledge' ||
+      p === 'concepts' ||
+      p === 'analyses' ||
+      p === 'inbox'
+    ) {
       return workspaceLabel(p)
     }
     if (p === 'session') return 'Ask AI'
-    if (p === 'inbox') return 'Inbox'
     return 'Setup'
   }
 
   return (
     <header className="project-bar">
-      <button type="button" className="studio-brand studio-brand-btn" onClick={() => setPhase('about')}>
+      <button
+        type="button"
+        className="studio-brand studio-brand-btn"
+        onClick={() => goHome()}
+        title={ready ? 'Home — Architecture' : 'Home'}
+      >
         <strong>AGM Studio</strong>
         <span className="studio-tag">{tagForPhase(phase)}</span>
       </button>

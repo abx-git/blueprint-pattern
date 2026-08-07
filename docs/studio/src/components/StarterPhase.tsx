@@ -14,7 +14,7 @@ export function StarterPhase() {
         <p className="starter-brand">AGM Studio</p>
         <h1>Your architecture cockpit</h1>
         <p className="starter-lead">
-          One-time setup binds your docs folder. After that: work in Architecture, Knowledge,
+          One-time setup binds your docs folder. After that: work in Architecture (home), Knowledge,
           Inbox, Concepts, and Analyses — Ask AI builds a short reading list and a copy-paste prompt.
         </p>
         <div className="starter-cta">
@@ -23,7 +23,7 @@ export function StarterPhase() {
             className="btn primary"
             onClick={() => (ready ? setPhase('architecture') : goSetup())}
           >
-            {ready ? 'Open cockpit' : folderLabel ? 'Continue Setup' : 'Start Setup'}
+            {ready ? 'Open Architecture' : folderLabel ? 'Continue Setup' : 'Start Setup'}
           </button>
           <button type="button" className="btn" onClick={() => setPhase('about')}>
             What is AGM?
@@ -127,7 +127,7 @@ export function StarterPhase() {
           className="btn primary"
           onClick={() => (ready ? setPhase('architecture') : goSetup())}
         >
-          {ready ? 'Open cockpit' : 'Start Setup'}
+          {ready ? 'Open Architecture' : 'Start Setup'}
         </button>
       </div>
     </div>

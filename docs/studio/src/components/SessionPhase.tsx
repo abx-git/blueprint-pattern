@@ -60,8 +60,9 @@ function aiLabel(tool: string): string {
 /** Session workspace: context pack + copy-paste prompt (successor to Run / Write). */
 export function SessionPhase() {
   const project = useStudioStore((s) => s.project)
-  const setPhase = useStudioStore((s) => s.setPhase)
   const goSetup = useStudioStore((s) => s.goSetup)
+  const leaveSession = useStudioStore((s) => s.leaveSession)
+  const sessionReturnPhase = useStudioStore((s) => s.sessionReturnPhase)
   const installStatus = useStudioStore((s) => s.installStatus)
   const folderLabel = useStudioStore((s) => s.folderLabel)
   const showToast = useStudioStore((s) => s.showToast)
@@ -169,10 +170,10 @@ export function SessionPhase() {
 
   const primaryStep: RunStep = installStatus === 'ready' ? 'continue' : 'adopt'
   const stepOptions: { id: RunStep; label: string }[] = [
-    { id: 'continue', label: 'Continue docs — next checklist item' },
+    { id: 'continue', label: 'Next checklist item' },
     {
       id: 'adopt',
-      label: installStatus === 'ready' ? 'First fill again (Adopt)' : 'First fill (Adopt)',
+      label: installStatus === 'ready' ? 'First fill again' : 'First fill',
     },
     { id: 'inbox-analyze', label: 'Inbox — structure new information' },
     { id: 'inbox-refine', label: 'Inbox — improve a plan' },
@@ -348,7 +349,7 @@ export function SessionPhase() {
             </pre>
           </details>
           <button type="button" className="btn primary" onClick={() => copyOut(adoptText)}>
-            {copyBtn('Adopt')}
+            {copyBtn('first fill')}
           </button>
         </div>
       )}
@@ -364,7 +365,7 @@ export function SessionPhase() {
             <pre className="preview-box">{continueText.slice(0, 4000)}</pre>
           </details>
           <button type="button" className="btn primary" onClick={() => copyOut(continueText)}>
-            {copyBtn('Extend docs')}
+            {copyBtn('next checklist')}
           </button>
         </div>
       )}
@@ -426,9 +427,6 @@ export function SessionPhase() {
           </details>
           <button type="button" className="btn primary" onClick={() => copyOut(inboxText)}>
             {copyBtn(inboxCopyLabel)}
-          </button>
-          <button type="button" className="btn" onClick={() => setPhase('inbox')}>
-            Back to Inbox
           </button>
         </div>
       )}
@@ -552,8 +550,16 @@ export function SessionPhase() {
           After the AI writes files: header → <strong>Reload folder</strong>, then check the
           checklist in Architecture.
         </p>
-        <button type="button" className="btn" onClick={() => setPhase('architecture')}>
-          Back to Architecture
+        <button type="button" className="btn primary" onClick={() => leaveSession()}>
+          {sessionReturnPhase === 'inbox'
+            ? 'Back to Inbox'
+            : sessionReturnPhase === 'knowledge'
+              ? 'Back to Knowledge'
+              : sessionReturnPhase === 'concepts'
+                ? 'Back to Concepts'
+                : sessionReturnPhase === 'analyses'
+                  ? 'Back to Analyses'
+                  : 'Back to Architecture'}
         </button>
       </div>
     </div>

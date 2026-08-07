@@ -4,8 +4,8 @@ import { DocViewer } from './DocViewer'
 import { HelpTip } from './HelpTip'
 
 /**
- * Doc checks: AI reviews architecture docs in a fresh chat — report only.
- * Lives under Architecture → Check docs, not Concepts.
+ * Doc checks under Architecture → Check docs.
+ * Primary CTA lives in the Architecture toolbar — not duplicated here.
  */
 export function ReviewsPanel() {
   const canWrite = useStudioStore((s) => s.canWrite)
@@ -16,7 +16,6 @@ export function ReviewsPanel() {
   const activePath = useStudioStore((s) => s.activePath)
   const setActivePath = useStudioStore((s) => s.setActivePath)
   const createReview = useStudioStore((s) => s.createReview)
-  const openSession = useStudioStore((s) => s.openSession)
   const toggleContextPin = useStudioStore((s) => s.toggleContextPin)
 
   const [showCreate, setShowCreate] = useState(false)
@@ -42,20 +41,17 @@ export function ReviewsPanel() {
             <HelpTip label="Check docs">
               <p>
                 A <strong>doc check</strong> asks the AI whether your lasting documentation is sound
-                (for a phase or after a sync) — not whether a Concept draft is good.
+                — not whether a Concept draft is good.
               </p>
               <p>
-                <strong>Who:</strong> you copy a prompt into a <em>new</em> AI chat on this project.
-              </p>
-              <p>
-                <strong>Result:</strong> a written report with PASS / notes / FAIL. The AI does not
-                fix the docs in that same chat — you fix later with Ask AI.
+                Use the toolbar button <strong>Ask AI to check docs</strong>, paste into a{' '}
+                <em>new</em> chat, then Reload folder. The AI does not fix docs in that chat.
               </p>
             </HelpTip>
           </h2>
           <button
             type="button"
-            className="btn primary"
+            className="btn"
             disabled={!canWrite}
             onClick={() => setShowCreate(true)}
           >
@@ -65,14 +61,13 @@ export function ReviewsPanel() {
 
         <ol className="reviews-howto">
           <li>
-            <strong>What</strong> — Check that durable docs match reality and the checklist quality.
+            <strong>Optional</strong> — Start a check (empty report folder).
           </li>
           <li>
-            <strong>Who</strong> — You copy a prompt; the AI writes the report in a fresh chat.
+            <strong>Then</strong> — Toolbar → Ask AI to check docs → new chat → Reload folder.
           </li>
           <li>
-            <strong>Then</strong> — Read the verdict here; fix issues later via Ask AI — not in the
-            same check chat.
+            <strong>Fix later</strong> — Use Ask AI · next checklist, not the same check chat.
           </li>
         </ol>
 
@@ -94,17 +89,6 @@ export function ReviewsPanel() {
             </li>
           ))}
         </ul>
-
-        <div className="cmd-row inbox-actions">
-          <button
-            type="button"
-            className="btn primary"
-            onClick={() => openSession('verify')}
-            title="Opens Ask AI with a documentation quality check"
-          >
-            Ask AI to check docs
-          </button>
-        </div>
       </aside>
 
       <section className="spike-main">
@@ -112,8 +96,7 @@ export function ReviewsPanel() {
           <div className="spike-create-dialog">
             <h3>Start a documentation check</h3>
             <p className="hint">
-              Creates an empty report the AI will fill when you run the check in a fresh chat. You
-              choose a short name so you can find it later.
+              Creates an empty report the AI will fill when you run the check in a fresh chat.
             </p>
             <label className="field">
               <span>What is being checked?</span>
@@ -160,23 +143,18 @@ export function ReviewsPanel() {
           <div className="phase-panel">
             <h2>Check documentation quality</h2>
             <p className="lead">
-              These reports check <strong>architecture documentation quality</strong> (links,
-              evidence, readiness) — they do <strong>not</strong> review Concept drafts.
+              These reports check <strong>architecture documentation quality</strong> — they do{' '}
+              <strong>not</strong> review Concept drafts.
             </p>
             <ol className="reviews-howto reviews-howto--main">
-              <li>Optional: start a check (empty report ready for the AI).</li>
+              <li>Optional: click <strong>Start a check</strong> for an empty report folder.</li>
               <li>
-                Click <strong>Ask AI to check docs</strong> → copy into a <em>new</em> AI chat.
+                Use the toolbar <strong>Ask AI to check docs</strong> → copy into a <em>new</em> AI
+                chat.
               </li>
-              <li>The AI writes the report only (PASS / notes / FAIL + findings).</li>
-              <li>
-                Click <strong>Reload folder</strong>, read the verdict, then fix gaps with Ask AI.
-              </li>
+              <li>Reload folder, read the verdict, then fix gaps with Ask AI · next checklist.</li>
             </ol>
             <div className="cmd-row">
-              <button type="button" className="btn primary" onClick={() => openSession('verify')}>
-                Ask AI to check docs
-              </button>
               <button
                 type="button"
                 className="btn"
@@ -194,8 +172,7 @@ export function ReviewsPanel() {
             <div className="spike-files">
               <h3>{activeSpikePath.split('/').pop()}</h3>
               <p className="hint">
-                Report only. Fill via Ask AI → check docs. Do not expect the same chat to edit
-                chapters.
+                Report only. Fill via the toolbar <strong>Ask AI to check docs</strong>.
               </p>
               <ul>
                 {reviewFiles.map((f) => (
@@ -210,13 +187,6 @@ export function ReviewsPanel() {
                   </li>
                 ))}
               </ul>
-              <button
-                type="button"
-                className="btn primary"
-                onClick={() => openSession('verify')}
-              >
-                Ask AI to check docs
-              </button>
             </div>
             <div className="spike-doc">
               {activeDoc ? (

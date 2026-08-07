@@ -26,7 +26,7 @@ export function InboxPhase() {
   const index = useStudioStore((s) => s.index)
   const activePath = useStudioStore((s) => s.activePath)
   const setActivePath = useStudioStore((s) => s.setActivePath)
-  const setPhase = useStudioStore((s) => s.setPhase)
+  const goSetup = useStudioStore((s) => s.goSetup)
   const openSession = useStudioStore((s) => s.openSession)
   const pasteInboxRaw = useStudioStore((s) => s.pasteInboxRaw)
   const setInboxProposalStatus = useStudioStore((s) => s.setInboxProposalStatus)
@@ -105,7 +105,7 @@ export function InboxPhase() {
       <div className="phase-panel">
         <h2>Inbox</h2>
         <p>Choose your documentation folder in Setup first.</p>
-        <button type="button" className="btn primary" onClick={() => setPhase('connect')}>
+        <button type="button" className="btn primary" onClick={() => goSetup()}>
           Go to Setup
         </button>
       </div>

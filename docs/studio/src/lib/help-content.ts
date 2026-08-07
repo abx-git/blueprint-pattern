@@ -21,9 +21,9 @@ export const HELP_OVERVIEW: HelpSection[] = [
     title: 'The loop (remember this)',
     body: [
       '1. Setup once — bind the folder and write the starter files.',
-      '2. Adopt — first fill of entry-point + blueprint facts, and create the first chapter file when that work runs.',
-      '3. Extend docs — repeatedly: next open item in blueprint.md (creates that file if it does not exist yet).',
-      '4. Reload folder — reload from disk after the AI wrote files.',
+      '2. Ask AI · first fill — facts in entry-point + blueprint, and the first chapter.',
+      '3. Ask AI · next checklist — repeatedly: next open item in blueprint.md.',
+      '4. Reload folder — after the AI wrote files.',
       'Setup writes only entry-point.md and blueprint.md. Empty stubs are never pre-created. Concepts / Analyses / Knowledge files appear when you create them.',
     ],
   },
@@ -32,28 +32,28 @@ export const HELP_OVERVIEW: HelpSection[] = [
     title: 'Two files that steer everything',
     body: [
       'entry-point.md — start here for humans and AI (short facts + links). Put this in the AI context.',
-      'blueprint.md — what’s next (checklist). Extend docs always resumes the next [ ] or [~] row.',
+      'blueprint.md — what’s next (checklist). Ask AI · next checklist always resumes the next [ ] or [~] row.',
     ],
   },
   {
     id: 'workspaces',
     title: 'Workspaces',
     body: [
-      'Architecture — lasting documentation.',
+      'Architecture — lasting documentation (home). Brand logo returns here.',
       'Knowledge — domain language and model.',
       'Inbox — new information in three steps: receive → approve plan → apply.',
       'Concepts — optional ideas that need not become official docs.',
       'Analyses — optional looks at how the code works.',
       'Ask AI — copy a prompt for Cursor / Claude / Copilot (Studio does not call an AI).',
-      'Folder, Reload, and Help live only in the top bar.',
+      'Folder, Reload folder, and Help live only in the top bar.',
     ],
   },
   {
     id: 'glossary',
     title: 'Glossary',
     body: [
-      'Adopt — first documentation fill after Setup.',
-      'Extend / continue — next open checklist item.',
+      'First fill — first documentation fill after Setup (also called Adopt in prompts).',
+      'Next checklist — next open checklist item (also called Extend / continue in prompts).',
       'Inbox — bring external notes into the docs with a human check in between.',
       'Reading list — small set of files the AI should open first.',
       'Concept draft — exploration under process/spikes/.',
@@ -72,7 +72,7 @@ export const WORKSPACE_HELP: Record<
     summary: 'Your lasting documentation. Browse it here; ask the AI when you want to grow it.',
     tips: [
       'blueprint.md is the checklist of what is still open.',
-      'Ask AI prepares a prompt you paste into a new chat on this project.',
+      'Ask AI · next checklist prepares a prompt you paste into a new chat.',
       'Check docs: the AI reviews quality in a fresh chat (report only).',
       'After the AI writes files, Reload folder in the header.',
     ],
@@ -81,7 +81,7 @@ export const WORKSPACE_HELP: Record<
     title: 'Knowledge',
     summary: 'Domain language and model — the fachliche side next to architecture chapters.',
     tips: [
-      'Ask AI can help with domain workflows.',
+      'Ask AI · domain & more opens design / domain workflows — not the architecture checklist.',
       'Workshop boards can be turned into domain docs when you are ready.',
     ],
   },
@@ -117,9 +117,10 @@ export const WORKSPACE_HELP: Record<
     summary:
       'Build a short reading list and copy a prompt. You paste it into Cursor / Claude / Copilot — Studio does not call an AI itself.',
     tips: [
-      'Usually: continue the next checklist item in blueprint.md.',
-      'First time only: Adopt fills the starter facts.',
+      'Usually: Ask AI · next checklist item in blueprint.md.',
+      'First time only: Ask AI · first fill.',
       'After the AI writes files, use Reload folder in the header.',
+      'Back returns to the workspace you came from.',
     ],
   },
   setup: {
@@ -136,7 +137,7 @@ export const WORKSPACE_HELP: Record<
     title: 'Setup — starter',
     summary: 'Writes only entry-point.md and blueprint.md. No empty chapter or domain stubs.',
     tips: [
-      'Chapters and domain files appear when Adopt / Extend docs / Studio create them.',
+      'Chapters and domain files appear when Ask AI / Studio create them.',
       'Safe to re-run only if you intend to overwrite those two state files.',
     ],
   },

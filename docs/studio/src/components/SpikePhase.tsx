@@ -24,7 +24,8 @@ export function SpikePhase({ mode }: Props) {
   const saveSpikeFile = useStudioStore((s) => s.saveSpikeFile)
   const createStormBoard = useStudioStore((s) => s.createStormBoard)
   const importStormBoard = useStudioStore((s) => s.importStormBoard)
-  const setPhase = useStudioStore((s) => s.setPhase)
+  const goSetup = useStudioStore((s) => s.goSetup)
+  const openSession = useStudioStore((s) => s.openSession)
   const toggleContextPin = useStudioStore((s) => s.toggleContextPin)
   const showToast = useStudioStore((s) => s.showToast)
   const importInputRef = useRef<HTMLInputElement>(null)
@@ -67,7 +68,7 @@ export function SpikePhase({ mode }: Props) {
       <div className="phase-panel">
         <h2>{title}</h2>
         <p>Finish Setup first — choose your documentation folder.</p>
-        <button type="button" className="btn primary" onClick={() => setPhase('connect')}>
+        <button type="button" className="btn primary" onClick={() => goSetup()}>
           Go to Setup
         </button>
       </div>
@@ -89,17 +90,27 @@ export function SpikePhase({ mode }: Props) {
               </ul>
             </HelpTip>
           </h2>
-          <button
-            type="button"
-            className="btn primary"
-            disabled={!canWrite}
-            onClick={() => {
-              setType(defaultType)
-              setShowCreate(true)
-            }}
-          >
-            {isAnalyses ? 'New analysis' : 'New concept'}
-          </button>
+          <div className="cmd-row">
+            <button
+              type="button"
+              className="btn primary"
+              disabled={!canWrite}
+              onClick={() => {
+                setType(defaultType)
+                setShowCreate(true)
+              }}
+            >
+              {isAnalyses ? 'New analysis' : 'New concept'}
+            </button>
+            <button
+              type="button"
+              className="btn"
+              onClick={() => openSession('advanced')}
+              title="Opens Ask AI — design / domain / analysis prompts"
+            >
+              Ask AI
+            </button>
+          </div>
         </div>
         <p className="spike-lead">
           {help.summary}

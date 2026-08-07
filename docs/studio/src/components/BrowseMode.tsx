@@ -28,7 +28,7 @@ export function BrowseMode({ embedded = false, workspaceFilter }: Props) {
   const setBrowsePanel = useStudioStore((s) => s.setBrowsePanel)
   const connectFolder = useStudioStore((s) => s.connectFolder)
   const connectFolderFallback = useStudioStore((s) => s.connectFolderFallback)
-  const setPhase = useStudioStore((s) => s.setPhase)
+  const goSetup = useStudioStore((s) => s.goSetup)
   const opening = useStudioStore((s) => s.opening)
   const contextPins = useStudioStore((s) => s.contextPins)
   const toggleContextPin = useStudioStore((s) => s.toggleContextPin)
@@ -53,7 +53,7 @@ export function BrowseMode({ embedded = false, workspaceFilter }: Props) {
       <div className="browse-empty">
         <h2>Browse architecture</h2>
         <p>Connect a folder in Setup first.</p>
-        <button type="button" className="btn primary" onClick={() => setPhase('connect')}>
+        <button type="button" className="btn primary" onClick={() => goSetup()}>
           Go to Setup
         </button>
         <button

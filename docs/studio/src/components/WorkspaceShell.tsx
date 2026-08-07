@@ -16,7 +16,7 @@ interface Props {
 /** Shared navigator/viewer — browse + remember files; AI prompts live under Ask AI. */
 export function WorkspaceShell({ workspace, title, lead }: Props) {
   const index = useStudioStore((s) => s.index)
-  const setPhase = useStudioStore((s) => s.setPhase)
+  const goSetup = useStudioStore((s) => s.goSetup)
   const openSession = useStudioStore((s) => s.openSession)
   const label = title || workspaceLabel(workspace)
   const help = WORKSPACE_HELP[workspace]
@@ -31,7 +31,7 @@ export function WorkspaceShell({ workspace, title, lead }: Props) {
           after the AI has written files.
         </p>
         <div className="cmd-row">
-          <button type="button" className="btn primary" onClick={() => setPhase('connect')}>
+          <button type="button" className="btn primary" onClick={() => goSetup()}>
             Go to Setup
           </button>
         </div>
@@ -39,21 +39,27 @@ export function WorkspaceShell({ workspace, title, lead }: Props) {
     )
   }
 
-  const promptIntent =
-    workspace === 'knowledge'
-      ? ('advanced' as const)
-      : [...index.docs.keys()].some(
-            (p) =>
-              p.endsWith('.md') &&
-              !p.endsWith('entry-point.md') &&
-              !p.endsWith('blueprint.md') &&
-              !p.includes('/process/') &&
-              !p.includes('/context/'),
-          )
-        ? ('continue' as const)
-        : ('adopt' as const)
+  const hasChapter = [...index.docs.keys()].some(
+    (p) =>
+      p.endsWith('.md') &&
+      !p.endsWith('entry-point.md') &&
+      !p.endsWith('blueprint.md') &&
+      !p.includes('/process/') &&
+      !p.includes('/context/'),
+  )
 
   const showVerify = workspace === 'architecture'
+  const onCheckDocs = showVerify && archTab === 'verify'
+
+  /** Knowledge must not reuse Architecture’s “Ask AI” — name the intent. */
+  const askLabel =
+    workspace === 'knowledge'
+      ? 'Ask AI · domain & more'
+      : hasChapter
+        ? 'Ask AI · next checklist'
+        : 'Ask AI · first fill'
+  const askIntent =
+    workspace === 'knowledge' ? ('advanced' as const) : hasChapter ? ('continue' as const) : ('adopt' as const)
 
   return (
     <div className="review-phase">
@@ -96,12 +102,12 @@ export function WorkspaceShell({ workspace, title, lead }: Props) {
           )}
         </div>
         <div className="cmd-row review-toolbar-actions">
-          {archTab === 'verify' && showVerify ? (
+          {onCheckDocs ? (
             <button
               type="button"
               className="btn primary"
               onClick={() => openSession('verify')}
-              title="Opens Ask AI — copy a prompt for a documentation quality check"
+              title="Opens Ask AI — documentation quality check"
             >
               Ask AI to check docs
             </button>
@@ -109,15 +115,15 @@ export function WorkspaceShell({ workspace, title, lead }: Props) {
             <button
               type="button"
               className="btn primary"
-              onClick={() => openSession(promptIntent)}
+              onClick={() => openSession(askIntent)}
               title="Opens Ask AI — copy a prompt for your chat"
             >
-              Ask AI
+              {askLabel}
             </button>
           )}
         </div>
       </div>
-      {showVerify && archTab === 'verify' ? (
+      {onCheckDocs ? (
         <ReviewsPanel />
       ) : (
         <BrowseMode embedded workspaceFilter={workspace} />

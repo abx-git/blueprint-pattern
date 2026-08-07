@@ -1,10 +1,11 @@
 import { useStudioStore } from '../store/studio-store'
 import { HELP_OVERVIEW, WORKSPACE_HELP, helpKeyForPhase } from '../lib/help-content'
 
-/** Slide-over help: process, workspaces, glossary — no navigation CTAs. */
+/** Slide-over help: process, workspaces, glossary — About only from here / Start. */
 export function HelpDrawer() {
   const helpOpen = useStudioStore((s) => s.helpOpen)
   const setHelpOpen = useStudioStore((s) => s.setHelpOpen)
+  const setPhase = useStudioStore((s) => s.setPhase)
   const phase = useStudioStore((s) => s.phase)
   const here = WORKSPACE_HELP[helpKeyForPhase(phase)]
 
@@ -45,6 +46,35 @@ export function HelpDrawer() {
               ))}
             </section>
           ))}
+
+          <section className="help-block">
+            <h3>More</h3>
+            <p>
+              The brand logo returns to <strong>Architecture</strong> (home). Method background:
+            </p>
+            <div className="cmd-row">
+              <button
+                type="button"
+                className="btn"
+                onClick={() => {
+                  setHelpOpen(false)
+                  setPhase('about')
+                }}
+              >
+                What is AGM?
+              </button>
+              <button
+                type="button"
+                className="btn"
+                onClick={() => {
+                  setHelpOpen(false)
+                  setPhase('start')
+                }}
+              >
+                How Studio works
+              </button>
+            </div>
+          </section>
         </div>
       </aside>
     </div>

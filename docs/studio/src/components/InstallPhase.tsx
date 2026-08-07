@@ -26,7 +26,7 @@ export function InstallPhase() {
       <h2>Setup — write starter</h2>
       <p className="lead">
         {installStatus === 'ready'
-          ? 'Starter state files are present. Open the cockpit, or rewrite entry-point + blueprint.'
+          ? 'Starter state files are present. Open Architecture, or rewrite entry-point + blueprint.'
           : 'Writes only two state files: entry-point.md and blueprint.md. No empty chapters or stubs.'}
       </p>
 
@@ -34,9 +34,9 @@ export function InstallPhase() {
         <p>
           Into <code>{folderLabel}</code>: <strong>entry-point.md</strong> (facts + links) and{' '}
           <strong>blueprint.md</strong> (what&apos;s next). Template chapters, domain/, spikes, and
-          reviews are created later by <strong>Adopt</strong>, <strong>Extend docs</strong>, or
-          Studio actions — not now. Prompts stay in AGM Studio. Doc paths in prompts use{' '}
-          <code>{project.docRoot || './'}</code>.
+          reviews are created later by <strong>Ask AI · first fill</strong>,{' '}
+          <strong>Ask AI · next checklist</strong>, or Studio actions — not now. Prompts stay in AGM
+          Studio. Doc paths in prompts use <code>{project.docRoot || './'}</code>.
         </p>
         {!canWrite && (
           <p className="warn">
@@ -68,7 +68,7 @@ export function InstallPhase() {
           onClick={() => setPhase('architecture')}
           disabled={installStatus === 'missing'}
         >
-          Open cockpit
+          Open Architecture
         </button>
         {installStatus === 'missing' && (
           <span className="hint">Write the starter first (needs write access).</span>

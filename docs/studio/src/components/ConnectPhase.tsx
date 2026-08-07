@@ -43,7 +43,7 @@ export function ConnectPhase() {
       <p className="lead">
         Step 1 of the process: choose a local folder (usually your repo or{' '}
         <code>docs/architecture</code>). Studio remembers it. After Setup: browse Architecture, then
-        use <strong>Extend docs</strong> to grow chapters with AI.
+        use <strong>Ask AI · next checklist</strong> to grow chapters with AI.
       </p>
 
       <div className="form-grid">
@@ -85,7 +85,7 @@ export function ConnectPhase() {
         )}
 
         <label className="field">
-          <span>AI chat (for Run prompts)</span>
+          <span>AI chat (for Ask AI prompts)</span>
           <select value={project.aiTool} onChange={(e) => setProject({ aiTool: e.target.value })}>
             <option value="cursor">Cursor</option>
             <option value="claude">Claude</option>
@@ -219,7 +219,7 @@ export function ConnectPhase() {
 
       <div className="phase-actions">
         <button type="button" className="btn primary" disabled={!confirmed} onClick={continueNext}>
-          {installStatus === 'ready' ? 'Open cockpit' : 'Continue — starter'}
+          {installStatus === 'ready' ? 'Open Architecture' : 'Continue — starter'}
         </button>
       </div>
     </div>

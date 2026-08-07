@@ -5,6 +5,7 @@ import type {
   JourneyPhase,
   ProjectParams,
   SessionIntent,
+  WorkspaceId,
 } from '../types'
 import { DEFAULT_PROJECT, isWorkspacePhase } from '../types'
 import { buildArchitectureIndex } from '../lib/build-index'
@@ -105,8 +106,10 @@ interface StudioState {
   contextPins: string[]
   docFocus: string[]
   includeOnDemand: boolean
-  /** Preferred Session tab when opening Session from a CTA (consumed once). */
+  /** Preferred Ask AI tab when opening from a CTA (consumed once). */
   sessionIntent: SessionIntent | null
+  /** Workspace to return to from Ask AI (Back). */
+  sessionReturnPhase: Exclude<WorkspaceId, 'session'> | null
   helpOpen: boolean
   error: string | null
   opening: boolean
@@ -114,10 +117,14 @@ interface StudioState {
   toast: string | null
 
   setPhase: (phase: JourneyPhase) => void
-  /** Open Session workspace on a specific tab (Adopt / Extend / …). */
+  /** Open Ask AI on a specific intent; remembers current workspace for Back. */
   openSession: (intent?: SessionIntent) => void
   clearSessionIntent: () => void
+  /** Leave Ask AI → remembered workspace (or Architecture). */
+  leaveSession: () => void
   setHelpOpen: (open: boolean) => void
+  /** Brand / Home: Architecture when ready, else Setup or Start. */
+  goHome: () => void
   goSetup: () => void
   setProject: (patch: Partial<ProjectParams>) => void
   setActivePath: (path: string | null) => void
@@ -237,6 +244,7 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   docFocus: loadDocFocus(),
   includeOnDemand: false,
   sessionIntent: null,
+  sessionReturnPhase: null,
   helpOpen: false,
   error: null,
   opening: false,
@@ -249,13 +257,40 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   },
 
   openSession: (intent = 'continue') => {
+    const { phase, sessionReturnPhase } = get()
+    const returning =
+      isCockpitPhase(phase) && phase !== 'session'
+        ? (phase as Exclude<WorkspaceId, 'session'>)
+        : sessionReturnPhase
     saveLastDailyPhase('session')
-    set({ phase: 'session', sessionIntent: intent })
+    set({ phase: 'session', sessionIntent: intent, sessionReturnPhase: returning })
   },
 
   clearSessionIntent: () => set({ sessionIntent: null }),
 
+  leaveSession: () => {
+    const back = get().sessionReturnPhase ?? 'architecture'
+    if (isCockpitPhase(back)) saveLastDailyPhase(back)
+    set({ phase: back, sessionReturnPhase: null })
+  },
+
   setHelpOpen: (helpOpen) => set({ helpOpen }),
+
+  goHome: () => {
+    const { folderLabel, installStatus, phase } = get()
+    if (folderLabel && installStatus === 'ready') {
+      saveLastDailyPhase('architecture')
+      set({ phase: 'architecture' })
+      return
+    }
+    if (phase === 'about' || phase === 'start') {
+      set({ phase: 'start' })
+      return
+    }
+    if (!folderLabel) set({ phase: 'connect' })
+    else if (installStatus !== 'ready') set({ phase: 'install' })
+    else set({ phase: 'architecture' })
+  },
 
   goSetup: () => {
     const { folderLabel, installStatus } = get()
