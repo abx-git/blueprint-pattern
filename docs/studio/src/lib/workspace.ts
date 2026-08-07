@@ -11,13 +11,15 @@ const ANALYSIS_TYPES = new Set([
 export function classifyDocPath(path: string, spikeType?: string): DocWorkspace {
   const p = path.replace(/\\/g, '/').toLowerCase()
 
+  if (/(^|\/)notes\//.test(p)) return 'notes'
+
   if (/(^|\/)inbox\//.test(p)) return 'inbox'
 
   if (
     /(^|\/)entry-point\.md$/.test(p) ||
     /(^|\/)blueprint\.md$/.test(p) ||
-    (/(^|\/)index\.md$/.test(p) && !/(^|\/)inbox\//.test(p)) ||
-    (/(^|\/)log\.md$/.test(p) && !/(^|\/)inbox\//.test(p)) ||
+    (/(^|\/)index\.md$/.test(p) && !/(^|\/)inbox\//.test(p) && !/(^|\/)notes\//.test(p)) ||
+    (/(^|\/)log\.md$/.test(p) && !/(^|\/)inbox\//.test(p) && !/(^|\/)notes\//.test(p)) ||
     /(^|\/)context\//.test(p)
   ) {
     return 'meta'
@@ -56,6 +58,7 @@ export function docMatchesWorkspace(workspace: DocWorkspace, active: WorkspaceId
     return workspace === 'knowledge' || workspace === 'meta'
   }
   if (active === 'inbox') return workspace === 'inbox'
+  if (active === 'notes') return workspace === 'notes'
   if (active === 'concepts') return workspace === 'concepts'
   if (active === 'analyses') return workspace === 'analyses'
   return true
@@ -80,6 +83,8 @@ export function workflowsForWorkspace(ws: WorkspaceId): string[] {
       ]
     case 'inbox':
       return ['inbox-analyze', 'inbox-refine', 'inbox-merge']
+    case 'notes':
+      return []
     case 'concepts':
       return ['architecture-work-design', 'architecture-work-continue']
     case 'analyses':

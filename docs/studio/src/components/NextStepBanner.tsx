@@ -41,6 +41,11 @@ export function NextStepBanner() {
     text = 'Add information → ask AI to structure it → approve the plan → apply it to your docs.'
     actionLabel = null
     onAction = null
+  } else if (phase === 'notes') {
+    text =
+      'Local scratch only. Ask AI will not use these notes unless you enable Include local notes.'
+    actionLabel = null
+    onAction = null
   } else if (phase === 'analyses') {
     text = 'Optional deep-dives into how the code works. Create an analysis when you need one.'
     actionLabel = 'Ask AI'

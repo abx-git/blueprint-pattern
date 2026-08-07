@@ -45,6 +45,7 @@ import {
   buildRawPasteFile,
   setProposalStatus,
 } from '../lib/inbox'
+import { NOTES_GITIGNORE, buildNoteFile } from '../lib/notes'
 import { isAnalysisSpikeType } from '../lib/workspace'
 import { togglePin } from '../lib/context-pack'
 import { parseBoardJson } from '../lib/e2/storm'
@@ -106,6 +107,10 @@ interface StudioState {
   contextPins: string[]
   docFocus: string[]
   includeOnDemand: boolean
+  /** Opt-in: allow notes/ paths in the Ask AI reading list. */
+  includeLocalNotes: boolean
+  /** Opt-in: allow Concepts/Analyses spikes as evidence in Ask AI. */
+  includeSpikeEvidence: boolean
   /** Preferred Ask AI tab when opening from a CTA (consumed once). */
   sessionIntent: SessionIntent | null
   /** Workspace to return to from Ask AI (Back). */
@@ -139,6 +144,8 @@ interface StudioState {
   toggleContextPin: (path: string) => void
   setDocFocus: (ids: string[]) => void
   setIncludeOnDemand: (v: boolean) => void
+  setIncludeLocalNotes: (v: boolean) => void
+  setIncludeSpikeEvidence: (v: boolean) => void
   showToast: (msg: string) => void
   clearToast: () => void
 
@@ -170,6 +177,8 @@ interface StudioState {
   ) => Promise<string | null>
   /** Paste text into inbox/raw/ (creates inbox scaffold if missing). */
   pasteInboxRaw: (opts: { label: string; body: string; slug?: string }) => Promise<string | null>
+  /** Write a local note under notes/ (ensures notes/.gitignore). */
+  pasteLocalNote: (opts: { title: string; body: string; slug?: string }) => Promise<string | null>
   /** Update status: on an inbox proposal file. */
   setInboxProposalStatus: (
     relativePath: string,
@@ -247,6 +256,8 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   contextPins: loadContextPins(),
   docFocus: loadDocFocus(),
   includeOnDemand: false,
+  includeLocalNotes: false,
+  includeSpikeEvidence: false,
   sessionIntent: null,
   sessionReturnPhase: null,
   helpOpen: false,
@@ -342,6 +353,8 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   },
 
   setIncludeOnDemand: (includeOnDemand) => set({ includeOnDemand }),
+  setIncludeLocalNotes: (includeLocalNotes) => set({ includeLocalNotes }),
+  setIncludeSpikeEvidence: (includeSpikeEvidence) => set({ includeSpikeEvidence }),
 
   showToast: (toast) => {
     set({ toast })
@@ -777,6 +790,50 @@ export const useStudioStore = create<StudioState>((set, get) => ({
       return path
     } catch (err) {
       set({ error: err instanceof Error ? err.message : 'Inbox paste failed' })
+      return null
+    }
+  },
+
+  pasteLocalNote: async ({ title, body, slug }) => {
+    const handle = get().folderHandle
+    if (!handle || !get().canWrite) {
+      set({ error: 'Write access required to save a local note.' })
+      return null
+    }
+    if (!body.trim()) {
+      set({ error: 'Write some note text first.' })
+      return null
+    }
+    try {
+      const filesNow: FileMap = new Map()
+      await walkDirectoryHandle(handle, '', filesNow)
+      const hasIgnore = [...filesNow.keys()].some(
+        (p) => p.replace(/\\/g, '/') === 'notes/.gitignore',
+      )
+      if (!hasIgnore) {
+        await writeTextFile(handle, 'notes/.gitignore', NOTES_GITIGNORE)
+      }
+      const base =
+        (slug || title || 'note')
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '')
+          .slice(0, 48) || 'note'
+      const stamp = new Date().toISOString().slice(0, 10)
+      let path = `notes/${stamp}-${base}.md`
+      let n = 0
+      while (filesNow.has(path) || [...filesNow.keys()].some((p) => p.replace(/\\/g, '/') === path)) {
+        n += 1
+        path = `notes/${stamp}-${base}-${n}.md`
+      }
+      const content = buildNoteFile({ title: title || base, body })
+      await writeTextFile(handle, path, content)
+      await get().refreshIndex({ keepPhase: true })
+      set({ phase: 'notes', activePath: path })
+      get().showToast(`Saved local note ${path}`)
+      return path
+    } catch (err) {
+      set({ error: err instanceof Error ? err.message : 'Note save failed' })
       return null
     }
   },

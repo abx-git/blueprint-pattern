@@ -43,6 +43,9 @@ Record selected template in entry-point.md.
 Do not invent facts. Mark uncertainty explicitly with [[ANCHOR:ASSUMPTION]].
 Every architectural claim needs a trace link to docs or source.
 
+[SA:NON_TRUTH]
+Do not treat local `notes/` (user scratch, often not in Git), Concepts, or Analyses (`process/spikes/`) as durable architecture truth unless the human explicitly asks to use them as evidence in this session. Prefer code, entry-point, blueprint, lasting chapters, and approved Inbox proposals.
+
 [SA:CHECKPOINT]
 Before stopping, output anchors required by the session prompt.
 Then update entry-point links if needed and tick blueprint checklist items; add a short session note.

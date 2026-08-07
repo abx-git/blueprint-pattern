@@ -37,7 +37,8 @@ Instructions:
 4. If **Architecture documentation areas (bootstrap)** is present, add blueprint checklist rows for each selected area (planned paths only — create each file when that work runs, not empty stubs).
 5. Bootstrap (inline role): facts + links in entry-point.md, checklist in blueprint.md, then create and fill the first high-value template section from evidence only.
 6. Do not pre-create empty domain/, process/_template/, or unused chapter files.
-7. Verify relative links among files that exist. Append a short session note to <doc-root>/blueprint.md.
+7. Hard rule — non-durable sources: Do **not** read or promote <doc-root>notes/ unless the human explicitly asks. Do **not** treat Concepts/Analyses (process/spikes/) as established architecture truth unless the human explicitly asks to promote specific findings.
+8. Verify relative links among files that exist. Append a short session note to <doc-root>/blueprint.md.
 
 Output [[ANCHOR:CHANGED_FILES]], [[ANCHOR:TEMPLATE_SELECTED]], [[ANCHOR:PHASE_STATUS]], [[ANCHOR:OPEN_QUESTIONS]], [[ANCHOR:LINK_CHECK]] before stop.
 ```

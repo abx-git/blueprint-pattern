@@ -74,6 +74,10 @@ export function SessionPhase() {
   const setDocFocus = useStudioStore((s) => s.setDocFocus)
   const includeOnDemand = useStudioStore((s) => s.includeOnDemand)
   const setIncludeOnDemand = useStudioStore((s) => s.setIncludeOnDemand)
+  const includeLocalNotes = useStudioStore((s) => s.includeLocalNotes)
+  const setIncludeLocalNotes = useStudioStore((s) => s.setIncludeLocalNotes)
+  const includeSpikeEvidence = useStudioStore((s) => s.includeSpikeEvidence)
+  const setIncludeSpikeEvidence = useStudioStore((s) => s.setIncludeSpikeEvidence)
   const sessionIntent = useStudioStore((s) => s.sessionIntent)
   const clearSessionIntent = useStudioStore((s) => s.clearSessionIntent)
   const tool = aiLabel(project.aiTool)
@@ -102,8 +106,10 @@ export function SessionPhase() {
         pins: contextPins,
         docFocus,
         includeOnDemand,
+        includeLocalNotes,
+        includeSpikeEvidence,
       }),
-    [index, activePath, contextPins, docFocus, includeOnDemand],
+    [index, activePath, contextPins, docFocus, includeOnDemand, includeLocalNotes, includeSpikeEvidence],
   )
 
   const packBlock = useMemo(() => formatContextPackBlock(pack, project), [pack, project])
@@ -135,6 +141,12 @@ export function SessionPhase() {
     if (!inboxWf) return ''
     return personalizeWorkflowPrompt(inboxWf, project, inputs, packBlock)
   }, [inboxWf, project, inputs, packBlock])
+
+  const alignWf = step === 'align' ? byId('studio-align-structure') : null
+  const alignText = useMemo(() => {
+    if (!alignWf) return ''
+    return personalizeWorkflowPrompt(alignWf, project, inputs, packBlock)
+  }, [alignWf, project, inputs, packBlock])
 
   const copyOut = async (text: string) => {
     const ok = await copyText(text)
@@ -175,6 +187,7 @@ export function SessionPhase() {
       id: 'adopt',
       label: installStatus === 'ready' ? 'First fill again' : 'First fill',
     },
+    { id: 'align', label: 'Align folder for Studio' },
     { id: 'inbox-analyze', label: 'Inbox — structure new information' },
     { id: 'inbox-refine', label: 'Inbox — improve a plan' },
     { id: 'inbox-merge', label: 'Inbox — apply approved plans' },
@@ -284,6 +297,28 @@ export function SessionPhase() {
           them only when that file exists and you want the AI to read them. Use{' '}
           <strong>Remember for AI prompt</strong> while browsing to add specific files here.
         </p>
+        <div className="evidence-opt-ins">
+          <label className="focus-chip">
+            <input
+              type="checkbox"
+              checked={includeLocalNotes}
+              onChange={() => setIncludeLocalNotes(!includeLocalNotes)}
+            />
+            Include local notes (<code>notes/</code>) — only when you explicitly want them
+          </label>
+          <label className="focus-chip">
+            <input
+              type="checkbox"
+              checked={includeSpikeEvidence}
+              onChange={() => setIncludeSpikeEvidence(!includeSpikeEvidence)}
+            />
+            Include Concepts/Analyses spikes as evidence — not lasting truth by default
+          </label>
+          <p className="hint">
+            Off by default. Architecture creation must not treat notes or spikes as established
+            facts unless you turn these on (or ask in the prompt).
+          </p>
+        </div>
 
         <details className="focus-details">
           <summary>Optional focus topics</summary>
@@ -366,6 +401,45 @@ export function SessionPhase() {
           </details>
           <button type="button" className="btn primary" onClick={() => copyOut(continueText)}>
             {copyBtn('next checklist')}
+          </button>
+        </div>
+      )}
+
+      {alignWf && (
+        <div className="run-card">
+          <p>
+            Explain the <strong>current</strong> documentation tree to the AI, then have it{' '}
+            <strong>reformat / relocate</strong> files so AGM Studio workspaces (Architecture,
+            Knowledge, Inbox, Concepts, Analyses, Check docs) match the expected layout. Does not
+            invent architecture facts — structure and links only.
+          </p>
+          <p className="hint">{personalizeWorkflowWhen(alignWf, project)}</p>
+          <div className="workflow-inputs">
+            <label className="field">
+              <span>Notes for the AI (what looks wrong?)</span>
+              <input
+                value={inputs.notes || ''}
+                onChange={(e) => setInputs({ ...inputs, notes: e.target.value })}
+                placeholder="e.g. old always-on layout; reviews under spikes; domain mixed into arc42"
+              />
+            </label>
+            <label className="field">
+              <span>Dry-run only?</span>
+              <select
+                value={inputs.dryRun || 'no'}
+                onChange={(e) => setInputs({ ...inputs, dryRun: e.target.value })}
+              >
+                <option value="no">No — apply after proposing the plan</option>
+                <option value="yes">Yes — plan only, do not move files</option>
+              </select>
+            </label>
+          </div>
+          <details open>
+            <summary>Preview</summary>
+            <pre className="preview-box">{alignText.slice(0, 4000)}</pre>
+          </details>
+          <button type="button" className="btn primary" onClick={() => copyOut(alignText)}>
+            {copyBtn('align folder')}
           </button>
         </div>
       )}
@@ -553,7 +627,9 @@ export function SessionPhase() {
         <button type="button" className="btn primary" onClick={() => leaveSession()}>
           {sessionReturnPhase === 'inbox'
             ? 'Back to Inbox'
-            : sessionReturnPhase === 'knowledge'
+            : sessionReturnPhase === 'notes'
+              ? 'Back to Notes'
+              : sessionReturnPhase === 'knowledge'
               ? 'Back to Knowledge'
               : sessionReturnPhase === 'concepts'
                 ? 'Back to Concepts'

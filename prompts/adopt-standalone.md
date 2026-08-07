@@ -35,7 +35,8 @@ Instructions:
 3. If an **Adoption parameters** / **Project parameters** block is present, fill entry-point.md and blueprint.md under <doc-root>; interview only for missing facts.
 4. Bootstrap (inline role): human-in-the-loop scribe — facts + links in entry-point.md, checklist in blueprint.md, then create and fill the first high-value template section under <doc-root> from evidence only. Do not pre-create empty chapter, domain, or process stub files.
 5. Create process/spikes/ or process/reviews/ only when the human starts a spike/review later — not during Adopt unless needed for this session.
-6. Verify relative links among files that exist. Append a short session note to <doc-root>/blueprint.md. Mark the first chapter [~] or [x] as appropriate.
+6. Hard rule — non-durable sources: Do **not** read or promote <doc-root>notes/ unless the human explicitly asks. Do **not** treat Concepts/Analyses (process/spikes/) as established architecture truth unless the human explicitly asks to promote specific findings. Prefer code and lasting chapters.
+7. Verify relative links among files that exist. Append a short session note to <doc-root>/blueprint.md. Mark the first chapter [~] or [x] as appropriate.
 
 Output [[ANCHOR:CHANGED_FILES]], [[ANCHOR:TEMPLATE_SELECTED]], [[ANCHOR:PHASE_STATUS]], [[ANCHOR:OPEN_QUESTIONS]], [[ANCHOR:LINK_CHECK]] before stop.
 ```

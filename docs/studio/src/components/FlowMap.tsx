@@ -145,6 +145,17 @@ export function FlowMap() {
               </p>
             </article>
             <article className="flow-side-card">
+              <h4>Notes</h4>
+              <p className="flow-side-flow">Local scratch (not Git)</p>
+              <p>
+                <strong>Creates:</strong> files under <code>notes/</code> (gitignored content).
+              </p>
+              <p>
+                <strong>Understand:</strong> never architecture truth unless you explicitly include
+                notes in Ask AI.
+              </p>
+            </article>
+            <article className="flow-side-card">
               <h4>Concepts / Analyses</h4>
               <p className="flow-side-flow">Optional drafts</p>
               <p>
@@ -152,7 +163,8 @@ export function FlowMap() {
                 docs.
               </p>
               <p>
-                <strong>Understand:</strong> promote lasting facts into Architecture when ready.
+                <strong>Understand:</strong> not lasting truth until you promote findings; Ask AI
+                excludes them unless you opt in.
               </p>
             </article>
             <article className="flow-side-card">
@@ -195,6 +207,14 @@ export function FlowMap() {
           <div>
             <dt>Inbox plan</dt>
             <dd>Structured proposal you approve before apply</dd>
+          </div>
+          <div>
+            <dt>Notes</dt>
+            <dd>Local scratch — not Git, not truth unless you opt in</dd>
+          </div>
+          <div>
+            <dt>Align folder</dt>
+            <dd>Ask AI to reformat an existing tree for Studio</dd>
           </div>
         </dl>
       </div>

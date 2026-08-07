@@ -41,6 +41,12 @@ function buildStudioPromptNote(): string {
     'Human-in-the-loop scribe: propose; do not invent architecture without evidence. Keep entry-point.md and blueprint.md current.',
     '**Do not create empty stub files.** Create a file only when you have real content for that checklist item (or when the human explicitly asks). Prefer one evidence-based chapter per session.',
     '',
+    '### Non-durable sources (hard rule)',
+    '',
+    '- **`notes/`** — local user notes (often gitignored). Do **not** read, write, or promote them unless the human explicitly asks in this session.',
+    '- **Concepts / Analyses** (`process/spikes/`, legacy `work/`) — exploration drafts. Do **not** copy them into lasting Architecture / Knowledge chapters as established truth unless the human explicitly asks to promote specific findings.',
+    '- Prefer evidence from: source code, entry-point, blueprint, lasting template chapters, `domain/`, and human-approved Inbox proposals (`status: ready`).',
+    '',
   ].join('\n')
 }
 
@@ -125,6 +131,8 @@ function applyWorkflowInputs(
     'proposal-paths': values.proposalPaths || values.proposalPath,
     notes: values.notes,
     'raw-paths': values.rawPaths,
+    'dry-run': values.dryRun,
+    template: values.template,
   }
   for (const [placeholder, val] of Object.entries(map)) {
     if (val == null || val === '') continue

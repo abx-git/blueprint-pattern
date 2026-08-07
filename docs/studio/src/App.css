@@ -1639,6 +1639,21 @@ code {
   max-width: 28rem;
 }
 
+.evidence-opt-ins {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0.65rem 0 0.25rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--line, #e2e8f0);
+  border-radius: 8px;
+  background: #fffbeb;
+}
+
+.evidence-opt-ins .hint {
+  margin: 0.15rem 0 0;
+}
+
 .focus-details {
   margin-top: 0.75rem;
 }

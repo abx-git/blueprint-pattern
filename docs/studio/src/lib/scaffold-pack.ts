@@ -1,5 +1,6 @@
 import type { ProjectParams } from '../types'
 import { resolvedTemplate } from './project-params'
+import { NOTES_GITIGNORE } from './notes'
 
 function okf(type: string, title: string, body: string): string {
   const ts = new Date().toISOString().slice(0, 10)
@@ -96,7 +97,8 @@ Files listed below are **planned** — create them only when Adopt / Extend docs
 |------|-------|
 | What's next (checklist) | [blueprint.md](blueprint.md) |
 
-Further chapters, \`domain/\`, spikes, and reviews appear when you run **Adopt** / **Extend docs** or create them in Studio. Do not invent empty files ahead of time.
+Further chapters, \`domain/\`, spikes, and reviews appear when you run **Adopt** / **Ask AI · next checklist** or create them in Studio. Do not invent empty files ahead of time.
+Local scratch lives in \`notes/\` (gitignored content) — agents must not treat it as architecture truth unless you explicitly ask.
 
 ## Session habit
 
@@ -109,5 +111,6 @@ Further chapters, \`domain/\`, spikes, and reviews appear when you run **Adopt**
   return {
     'entry-point.md': entry,
     'blueprint.md': blueprint,
+    'notes/.gitignore': NOTES_GITIGNORE,
   }
 }

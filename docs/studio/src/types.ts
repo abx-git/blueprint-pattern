@@ -5,6 +5,7 @@ export type WorkspaceId =
   | 'architecture'
   | 'knowledge'
   | 'inbox'
+  | 'notes'
   | 'concepts'
   | 'analyses'
   | 'session'
@@ -16,6 +17,7 @@ export type SessionIntent =
   | 'evolve'
   | 'verify'
   | 'advanced'
+  | 'align'
   | 'inbox-analyze'
   | 'inbox-refine'
   | 'inbox-merge'
@@ -27,6 +29,7 @@ export type DocWorkspace =
   | 'architecture'
   | 'knowledge'
   | 'inbox'
+  | 'notes'
   | 'concepts'
   | 'analyses'
   | 'meta'
@@ -113,6 +116,7 @@ export const WORKSPACE_PHASES: WorkspaceId[] = [
   'architecture',
   'knowledge',
   'inbox',
+  'notes',
   'concepts',
   'analyses',
   'session',

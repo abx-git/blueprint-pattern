@@ -11,6 +11,8 @@ Procedure for workflow **`content-ingest`**. The human pastes Markdown, Confluen
 | **Traceability** | Every claim extracted from a source links back to `sources/YYYY-MM-DD-<slug>.md` |
 | **Code wins conflicts** | When paste contradicts source code, document the conflict as an open assumption |
 | **Redact before write** | Remove secrets, tokens, PII; ask the human if classification is unclear |
+| **Notes ≠ truth** | Do not write pastes into `notes/` as a substitute for `sources/` + durable targets. Local `notes/` are human scratch (often not in Git) and are used by agents only when the human explicitly asks |
+| **Spikes ≠ truth** | Concepts/Analyses (`process/spikes/`) are drafts — promote findings into lasting chapters only when the human asks; do not treat spike text as established architecture by default |
 
 ## Supported paste formats
 

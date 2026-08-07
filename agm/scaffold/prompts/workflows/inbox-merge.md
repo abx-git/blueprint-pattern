@@ -29,7 +29,8 @@ Instructions:
    d. Link every extracted claim back to the sources/ file where practical.
 4. Update entry-point.md links and blueprint.md checklist/session log for areas touched.
 5. Cross-check code via entry-point / always-on source map when claims imply implementation; leave unresolved conflicts as open assumptions in the sources/ note or a spike — do not silently overwrite code-backed facts.
-6. Verify relative links for files you changed.
+6. Hard rule — non-durable sources: Do **not** read or merge <doc-root>notes/ unless the human explicitly asks. Do **not** treat existing Concepts/Analyses spikes as established truth when writing lasting chapters — only apply what the **approved proposal** plans (spikes as targets are OK when the proposal says so).
+7. Verify relative links for files you changed.
 
 Output [[ANCHOR:CHANGED_FILES]], [[ANCHOR:INGEST_SUMMARY]], [[ANCHOR:OPEN_QUESTIONS]], [[ANCHOR:LINK_CHECK]] before stop.
 ```

@@ -9,6 +9,7 @@ export function HelpDrawer() {
   const helpFocusId = useStudioStore((s) => s.helpFocusId)
   const setHelpOpen = useStudioStore((s) => s.setHelpOpen)
   const setPhase = useStudioStore((s) => s.setPhase)
+  const openSession = useStudioStore((s) => s.openSession)
   const phase = useStudioStore((s) => s.phase)
   const here = WORKSPACE_HELP[helpKeyForPhase(phase)]
   const bodyRef = useRef<HTMLDivElement>(null)
@@ -48,6 +49,22 @@ export function HelpDrawer() {
               <strong>Map</strong>).
             </p>
             <FlowMap />
+            <div className="cmd-row" style={{ marginTop: '0.75rem' }}>
+              <button
+                type="button"
+                className="btn primary"
+                onClick={() => {
+                  setHelpOpen(false)
+                  openSession('align')
+                }}
+              >
+                Ask AI · align folder for Studio
+              </button>
+            </div>
+            <p className="hint">
+              Use this when an existing docs tree does not match the map — the AI inventories and
+              reformats structure so workspaces light up correctly.
+            </p>
           </section>
 
           <section className="help-block help-block--here">

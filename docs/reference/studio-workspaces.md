@@ -9,11 +9,14 @@ Studio uses a **hybrid** model: one-time Setup (Connect → Install), then a dur
 | `architecture` | Architecture | Template chapters (`arc42/`, `lean-service/`, …), `interfaces/`, `ops/`, `use-cases/`, `sources/`, `extensions/` | Adopt, Continue/Extend, Evolve, content-ingest |
 | `knowledge` | Knowledge | `domain/` (+ optional KB under `extensions/` tagged for knowledge) | domain-work-*, domain-board-ingest |
 | `inbox` | Inbox | `inbox/raw/`, `inbox/proposals/`, `inbox/done/` | inbox-analyze, inbox-refine, inbox-merge |
+| `notes` | Notes | `notes/` (local; content gitignored) | none by default — opt-in only in Ask AI |
 | `concepts` | Concepts | `process/spikes/` with types `question`, `design`, `domain-*` | architecture-work-design; spike create/edit |
 | `analyses` | Analyses | `process/spikes/` with type `analysis` | architecture-work-analysis; interrogate/query |
 | `meta` | (shared state) | `entry-point.md`, `blueprint.md`, `context/`, `index.md`, `log.md` | Always included in context packs |
 
-Reviews under `process/reviews/` are **Verify reports** (AI quality checks of durable docs, report-only). In Studio they live under **Architecture → Verify reports**, not under Concepts.
+Reviews under `process/reviews/` are **Verify reports** (AI quality checks of durable docs, report-only). In Studio they live under **Architecture → Check docs**, not under Concepts.
+
+**Non-durable truth:** Local `notes/` and Concepts/Analyses spikes must **not** be treated as lasting Architecture/Knowledge facts unless the human explicitly opts in (Ask AI checkboxes / session wording). See [notes.md](./notes.md).
 
 ## Inbox (multi-step ingest)
 
@@ -25,6 +28,10 @@ Incoming material that may touch Architecture, Knowledge, Concepts, Analyses, or
 4. **Merge** — AI applies ready proposals into the graph, writes `sources/` provenance, moves proposal to `inbox/done/`
 
 Procedure: [inbox-pipeline.md](./inbox-pipeline.md). Prefer Inbox over one-shot `content-ingest` when using Studio.
+
+## Align existing trees
+
+If a documentation folder predates Studio (or uses a different layout), use Ask AI → **Align folder for Studio** (`studio-align-structure`). The prompt embeds the target contract above: inventory → plan → move/rename/fixmatter/links so workspaces map correctly. Prefer structure fixes over rewriting prose; then **Reload folder** in Studio.
 
 ## State files (keep LLM context small)
 

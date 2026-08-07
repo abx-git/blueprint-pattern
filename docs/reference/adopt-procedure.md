@@ -63,6 +63,7 @@ Follow on-disk `prompts/role-bootstrap.md` when present; otherwise follow the Ad
 - Create and populate the first high-value section from evidence only (no empty stubs).
 - Keep entry-point (map) and blueprint (checklist) in sync.
 - Create `process/spikes/` / `process/reviews/` only when a spike/review starts — not by default in Adopt.
+- Do **not** read or promote `notes/` unless the human explicitly asks. Do **not** treat Concepts/Analyses spikes as lasting architecture truth unless the human explicitly asks to promote findings.
 - Short session note + required anchors at end.
 
 ## Lifecycle after Build (phase 1)

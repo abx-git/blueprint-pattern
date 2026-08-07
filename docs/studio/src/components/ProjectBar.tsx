@@ -7,6 +7,7 @@ const COCKPIT: { id: WorkspaceId; hint: string }[] = [
   { id: 'architecture', hint: 'Your docs' },
   { id: 'knowledge', hint: 'Domain language' },
   { id: 'inbox', hint: 'New information' },
+  { id: 'notes', hint: 'Local scratch' },
   { id: 'concepts', hint: 'Ideas & drafts' },
   { id: 'analyses', hint: 'How code works' },
   { id: 'session', hint: 'Copy a prompt' },
@@ -112,7 +113,8 @@ export function ProjectBar() {
       p === 'knowledge' ||
       p === 'concepts' ||
       p === 'analyses' ||
-      p === 'inbox'
+      p === 'inbox' ||
+      p === 'notes'
     ) {
       return workspaceLabel(p)
     }

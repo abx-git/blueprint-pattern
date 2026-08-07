@@ -42,8 +42,9 @@ export const HELP_OVERVIEW: HelpSection[] = [
       'Architecture — lasting documentation (home). Brand logo returns here.',
       'Knowledge — domain language and model.',
       'Inbox — new information in three steps: receive → approve plan → apply.',
-      'Concepts — optional ideas that need not become official docs.',
-      'Analyses — optional looks at how the code works.',
+      'Notes — local scratch under notes/ (not for Git). Ask AI ignores them unless you explicitly include notes.',
+      'Concepts — optional ideas that need not become official docs (not lasting truth until promoted).',
+      'Analyses — optional looks at how the code works (not lasting truth until promoted).',
       'Ask AI — copy a prompt for Cursor / Claude / Copilot (Studio does not call an AI).',
       'Folder, Reload folder, Help, and Map live in the top bar. Map shows when files and terms appear.',
     ],
@@ -55,9 +56,11 @@ export const HELP_OVERVIEW: HelpSection[] = [
       'First fill — first documentation fill after Setup (also called Adopt in prompts).',
       'Next checklist — next open checklist item (also called Extend / continue in prompts).',
       'Inbox — bring external notes into the docs with a human check in between.',
+      'Notes — local user scratch; not Git; not architecture truth unless you opt in.',
       'Reading list — small set of files the AI should open first.',
-      'Concept draft — exploration under process/spikes/.',
+      'Concept / Analysis — exploration under process/spikes/; promote only when you decide.',
       'Doc check — AI quality report; does not fix docs in the same chat.',
+      'Align folder — Ask AI inventories an existing tree and reformats it to Studio’s expected layout.',
       'Remember for AI — include a file in the next prompt’s reading list.',
     ],
   },
@@ -95,12 +98,23 @@ export const WORKSPACE_HELP: Record<
       'Step 3: ask the AI to apply approved plans into the real documentation.',
     ],
   },
+  notes: {
+    title: 'Notes',
+    summary:
+      'Local scratch under notes/ — not for Git, not architecture truth. Parallel to AGM flows.',
+    tips: [
+      'Save private reminders here; content is gitignored via notes/.gitignore.',
+      'Ask AI excludes notes unless you enable “Include local notes” (or ask explicitly in the prompt).',
+      'Prefer Inbox when material should become lasting documentation.',
+    ],
+  },
   concepts: {
     title: 'Concepts',
     summary: 'Optional ideas and designs that do not have to become official docs.',
     tips: [
       'Create a draft, take notes, optionally add a workshop board.',
       'Only promote lasting facts into Architecture when you decide they should stay.',
+      'Ask AI does not treat Concepts as architecture truth unless you opt in.',
       'Doc quality checks are under Architecture → Check docs — not here.',
     ],
   },
@@ -109,7 +123,8 @@ export const WORKSPACE_HELP: Record<
     summary: 'Optional investigations of how the software works.',
     tips: [
       'Create an analysis when you need a structured look at code or flows.',
-      'Link findings back to Architecture when ready.',
+      'Link findings back to Architecture when ready — not automatic truth.',
+      'Ask AI excludes Analyses spikes unless you enable Include Concepts/Analyses.',
     ],
   },
   session: {
@@ -121,6 +136,7 @@ export const WORKSPACE_HELP: Record<
       'First time only: Ask AI · first fill.',
       'After the AI writes files, use Reload folder in the header.',
       'Back returns to the workspace you came from.',
+      'Notes and Concepts/Analyses are excluded from the reading list unless you opt in.',
     ],
   },
   setup: {
@@ -135,10 +151,11 @@ export const WORKSPACE_HELP: Record<
   },
   install: {
     title: 'Setup — starter',
-    summary: 'Writes only entry-point.md and blueprint.md. No empty chapter or domain stubs.',
+    summary: 'Writes entry-point.md, blueprint.md, and notes/.gitignore. No empty chapter or domain stubs.',
     tips: [
       'Chapters and domain files appear when Ask AI / Studio create them.',
-      'Safe to re-run only if you intend to overwrite those two state files.',
+      'notes/.gitignore keeps local scratch out of Git; note files are created only when you write them.',
+      'Safe to re-run only if you intend to overwrite the starter state files.',
     ],
   },
 }
